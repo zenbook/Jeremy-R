@@ -1,0 +1,264 @@
+---
+title: "dplyr pacakge"
+author: "扫地老师"
+date: "2017年3月1日"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+```
+
+## 学习内容
+
+- 基本操作
+
+筛选filter()、排序arrange()、选择select()、增加变量mutate()、汇总summarise()、抽样sample等；
+   
+- 高级操作
+
+分组group_by()、连接join、管道操作符%>%。
+
+## 准备工作
+
+- 加载dplyr和ggplot2包
+
+```{r message = FALSE}
+library('dplyr', 'ggplot2')
+```
+
+- 了解dataset结构
+
+```{r}
+str(airquality)
+```
+
+## dplyr - filter()
+
+- 函数功能
+
+按给定的逻辑判断筛选出符合要求的子数据集
+
+- 函数结构 filter(data, condition)
+
+data:被筛选的数据集；condition:筛选条件
+
+- 函数示例
+
+```{r results = 'hide'}
+# 单条件
+filter(airquality, Temp > 90)
+# 多条件
+filter(airquality, Temp > 90 & Wind >8)
+```
+
+- 注意事项
+
+对于多条件的选择，我们要用集合运算符将条件拼接起来。常用的集合运算符有!、|、&、xor(交补)，条件的判断符有>(=)、<(=)、==、!=。
+
+## dplyr - arrange()
+
+- 函数功能
+
+按给定的列名依次对行进行排序。
+
+- 函数结构 arrange(data, col1, col2, ..., coln)
+
+data:数据集；coln:需要排序的列名
+
+- 函数示例
+
+```{r results = 'hide'}
+# 单列升序
+arrange(airquality, Month)
+# 多列升序
+arrange(airquality, Month, Day)
+# 单列降序
+arrange(airquality, -Month)
+# 多列升降序
+arrange(airquality, desc(Month), Day)
+```
+
+## dplyr - select()
+
+- 函数功能
+
+用列名作参数来选择子数据集。
+
+- 函数结构 select(data, col1, col2, ..., coln)
+
+data:数据集；coln:要选择的列名
+
+- 函数示例
+
+```{r results = 'hide'}
+# 选择单列
+select(airquality, Temp)
+# 选择多列
+select(airquality, Month, Day, Temp)
+# 用:连接列名，选择两列之间的所有列
+select(airquality, Ozone:Temp)
+# 用-剔除不需要选择的列
+select(airquality, -(Month:Day))
+# select可以与其他多个函数配合使用，如starts_with, ends_with, contains, ...
+# 选取列名中包含'T'的列
+select(airquality,contains('T'))
+```
+
+## dplyr - mutate()
+
+- 函数功能
+
+用于添加新的变量，直接使用列名进行计算得到新变量。
+
+- 函数结构 mutate(data, expression1, expression2, ..., expressionn)
+
+data:数据集；expressionn:新增列的表达式
+
+- 函数示例
+
+```{r results = 'hide'}
+# 新增单列
+mutate(airquality, Temp_C = (Temp - 32)*5/9)
+# 新增多列
+mutate(airquality, Temp_C = (Temp - 32)*5/9, Temp_K = Temp_C + 273.15)
+# 用:连接列名，选择两列之间的所有列
+select(airquality, Ozone:Temp)
+# 用-剔除不需要选择的列
+select(airquality, -(Month:Day))
+```
+
+- 注意事项
+mutate()可以使用刚添加的变量，也就是在一个语句中可以多个变量，而且变量可以来源于刚新建的变量。
+
+## dplyr - summarise()
+
+- 函数功能
+
+对数据框调用其它函数进行汇总操作
+
+- 函数结构 summarise(data, function1, function2, ..., functionn)
+
+data:数据集；funcitonn:调用的函数
+
+- 函数示例
+
+```{r results = 'hide'}
+# 单列汇总
+summarise(airquality, mean(Temp, na.rm = TRUE))
+# 多列汇总
+summarise(airquality, mean(Temp, na.rm = TRUE), mean(Wind, na.rm = TRUE))
+```
+
+- 注意事项
+summarise可配合统计函数一起使用，比如min,max,sum,mean,median等，也可以跟dplyr包中带的其他函数，如n,n_distinct,first,last,nth等
+
+## dplyr - sample_n() & sample_frac()
+
+- 函数功能
+
+抽样
+
+- 函数结构 
+
+sample_n(data, n) data:数据集；n:样本数量
+
+sample_frac(data, percent) data:数据集; percent:样本比例
+
+- 函数示例
+
+```{r results = 'hide'}
+# 样本数量
+sample_n(airquality, 10)
+# 样本比例
+sample_frac(airquality, 0.1)
+```
+
+## dplyr - group_by()
+
+- 函数功能
+
+把数据集根据一个或多个变量进行分组
+
+- 函数结构 group_by(data, col)
+
+data:数据集；col:分组的列名
+
+- 函数示例
+
+group_by一般与summarise()一起使用，先分组后汇总，从而实现分组汇总的功能
+
+```{r results = 'hide'}
+air2 <- group_by(airquality, Month)
+summarise(air2, mean(Temp, na.rm = TRUE))
+```
+
+## dplyr - 连接join(1)
+
+- 函数功能
+
+根据指定的列连接两个数据框，与数据库的join函数相同
+
+左外连接left_join, 内连接inner_join, semi_join, anti_join
+
+- 函数结构 left_join(data1, data2, by = 'colname')
+
+data1, data2:数据集；by = 'colname':用于连接的列名(在data1和在data2的列名相同)
+
+- 函数示例
+
+```{r results = 'hide'}
+# 准备数据
+boys <- data.frame(name = c("john","paul","george","ringo","stuart","peter"), 
+                   instrument = c("guitar","bass","guitar","drums","bass","drums"),stringsAsFactors = F)
+bands <- data.frame(name = c("john","paul","ringo","brian"),band = c("T","T","T","F"), stringsAsFactors = F)
+# 左外连接，查询男孩们在不在某个乐队中
+left_join(boys, bands, by = 'name')
+# 内连接，查询玩乐器且在乐队中的男孩们
+inner_join(boys, bands, by = 'name')
+```
+
+## dplyr - 连接join(2)
+
+- 函数示例(续)
+
+```{r results = 'hide'}
+# 查询玩乐器且在乐队中的男孩们. semi_join()，保留左表的数据
+semi_join(boys, bands, by = 'name')
+semi_join(bands, boys, by = 'name')
+# 查询玩乐器但不在乐队中的男孩们, anti_join()
+anti_join(boys, bands, by = 'name')
+# intersect(), union(), setdiff()
+# 准备数据2
+boys1 <- data.frame(name = c("john","paul","george"), instrument = c("guitar","bass","guitar"),stringsAsFactors = F)
+boys2 <- data.frame(name = c("stuart","paul","george"), instrument = c("guitar","bass","guitar"),stringsAsFactors = F)
+# 查询两表中均存在的行
+intersect(boys1, boys2, by = 'name')
+# union()
+union(boys1, boys2)
+# 在左表不在右表的行
+setdiff(boys1, boys2)
+```
+
+## dplyr - 管道操作符%>%
+
+- 功能
+
+把一系列操作函数链接起来。
+
+- 结构 function() %>% function() %>% function()
+
+function:操作函数；%>%:管道操作符
+
+- 示例
+
+```{r results = 'hide'}
+# 计算airquality数据集各月平均气温
+# 1.常规方法
+air2 <- group_by(airquality, Month)
+summarise(air2, mean(Temp, na.rm = TRUE))
+# 2.管道操作符
+airquality %>% group_by(Month) %>% summarise(mean(Temp, na.rm = TRUE))
+```
+
+## Thanks!
