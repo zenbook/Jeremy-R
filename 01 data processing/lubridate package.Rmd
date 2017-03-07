@@ -1,0 +1,195 @@
+---
+title: "lubridate package"
+author: "扫地老师"
+date: "2017年3月1日"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+library('dplyr')
+```
+
+## 学习内容
+
+[lubridate](https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html)是[Garrett Grolemund](https://github.com/garrettgman) and [Hadley Wickham](http://hadley.nz/)共同开发的一个用来处理时间类型数据的包。
+
+R语言中时间类型的格式非常多，基础包中提供了两种类型的时间数据，一类是Date日期数据，它不包括时间和时区信息，另一类是POSIXct/POSIXlt类型数据，其中包括了日期、时间和时区信息。还有ts/xts/zoo/tis/fts等格式
+
+lubridate包对这些格式的时间类型数据都能处理，不可谓不强大呀！其重要功能包括：
+
+- 转换格式
+
+- 计算时间差
+
+- 从时间中截取时间
+
+- 处理时区
+
+```{r warning = FALSE, message = FALSE, results = 'hide'}
+library('lubridate')
+```
+
+
+## lubridate - 转换格式(1)
+
+- 指定格式的时间输出
+
+```{r results = 'hide'}
+ymd('20160702')
+mdy('07022016')
+dmy('02072016')
+ymd_hms('2016-07-02 21:30:21', tz = 'asia/shanghai')
+```
+
+- 判断是否为日期型数据
+
+```{r results='hide'}
+is.Date('2017-03-01')
+is.Date(as.Date('2017-03-01'))
+is.Date(as.Date('2017-03-01 19:00:03'))
+```
+
+- 返回系统当前日期
+
+```{r results='hide'}
+now() # 返回系统当前日期+时间
+Sys.Date() # 返回系统当前日期
+```
+
+## lubridate - 转换格式(2)
+
+- 将日期时间形式的字符串转换成日期型
+
+```{r results='hide'}
+x<-c('20131113','120315','12/17/1996','09-01-01','201512 23','2009-1, 5','Created on 2013 4 6')
+parse_date_time(x, orders = c('Ymd', 'mdy', 'dmY', 'ymd'))
+```
+
+- 截取日期
+
+```{r results='hide'}
+# 四舍五入 round_date()
+x <- as.POSIXct('2017-08-23 12:35:54')
+round_date(x, 'year')
+round_date(x, 'month')
+round_date(x, 'day')
+round_date(x, 'hour')
+round_date(x, 'minute')
+round_date(x, 'second')
+# 向下取整 floor_date()
+floor_date(x, 'year')
+floor_date(x, 'month')
+# 向上取整 ceiling_date()
+ceiling_date(x, 'year')
+ceiling_date(x, 'month')
+```
+
+##  lubridate - 转换格式(3)
+
+- 年季月周日时分秒
+
+```{r results='hide'}
+year(x)
+quarter(x)
+month(x)
+week(x)
+day(x)
+wday(x)
+wday(x, label = TRUE)
+yday(x)
+hour(x)
+minute(x)
+second(x)
+```
+
+- 月份最大天数
+
+```{r results='hide'}
+x <- as.Date('2017-01-01')
+y <- x + months(0:11)
+days_in_month(y)
+```
+
+## lubridate - 转换格式(4)
+
+- 月末增加月份
+
+```{r results='hide'}
+x <- as.Date('2017-01-31')
+y <- x + months(0:11);y
+# 用%m+%解决月份天数不等导致的NA值问题
+y <- x %m+% months(0:11);y 
+```
+
+- 日期间隔
+
+```{r results='hide'}
+t1 <- ymd_hms('1989-01-01 12:30:25')
+t2 <- now()
+ti1 <- interval(t1, t2)
+time_length(ti1, 'year')
+time_length(ti1, 'month')
+# year/month/week/day/hour/minute/second
+# 问题：如何计算两个日期间隔**年**月**日**点**分**秒？
+# The answer is:
+as.period(ti1)
+t3 <- ymd_hms('1995-09-01 12:32:45')
+ti2 <- t3 %--% (t2 + dyears(10))
+# 返回两个时间段是否由重叠
+int_overlaps(ti1, ti2)
+# 将时段的开始结束时间调转
+int_flip(ti1)
+# 返回两个时段是否有相同的开始或结束时间
+int_aligns(ti1, ti2)
+# 将一段时间分成多个时段(以天为单位)
+dates <- now() + days(1:10); dates
+int_diff(dates)
+# 将时段的开始结束时间都增加固定的天数
+int <- interval(ymd("2001-01-01"), ymd("2002-01-01"))
+int_shift(int, duration(days = 11))
+```
+
+## lubridate - 时点和时段
+
+-   时点类函数
+
+```{r results='hide'}
+x <- now()
+yday(x)  # 返回一年中的第几天
+minutes(2)
+dminutes(2)
+month(x) <- 1; day(x) <- 10
+month(x); day(x)
+```
+
+- 时段类函数
+
+```{r results='hide'}
+# interval:时段对象，由开始-结束时间组成
+# duration:以秒为单位计算时间长度，不区分闰年闰月
+# period:以较长的时钟周期(天/月/年)来计算时间长度，区分闰年闰月
+x <- ymd('2017-01-01')
+y <- interval(x, now());y
+# as.duration(y)
+now() + ddays(10)
+# dyears()表示duration对象的一年,不区分闰年闰月，认为2012年365天
+ymd('2012-01-01') + dyears(1) 
+# years()表示period对象的一年,区分闰年闰月, 由于2012年2月29天，2012年366天
+ymd('2012-01-01') + years(1) 
+```
+
+## lubridate - 时区
+
+tz(): 提取时区；
+with_tz(): 将时间转换为另一个时区的同一时间；
+force_tz(): 将时间数据的时区转换为另一个时区；
+```{r results='hide'}
+t <- ymd_hms('2017-01-01 12:00:00');t
+tz(t)
+with_tz(t, tzone = 'asia/shanghai')
+force_tz(t, tzone = 'asia/shanghai')
+```
+
+更多信息参见：[Do more with dates and times in R with lubridate 1.3.0](https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html)
+

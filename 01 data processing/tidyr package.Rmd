@@ -1,0 +1,115 @@
+---
+title: "tidyr package"
+author: "扫地老师"
+date: "2017年3月1日"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+```
+
+## 学习内容
+
+[tidyr](http://vita.had.co.nz/papers/tidy-data.html)包是由R语言大神[Hadley Wickham](http://hadley.nz/)写的。做数据处理那是**杠杠的**！
+
+主要函数如下：
+
+- gather() 宽数据转为长数据
+
+- spread() 长数据转为宽数据
+
+- unite() 多列合并为一列
+
+- separate() 将一列分离为多列
+
+
+## tidyr - 数据准备
+
+- 加载包
+
+```{r message = FALSE, warning = FALSE}
+library('tidyr', 'dplyr')
+```
+
+- 准备数据
+
+使用mtcars数据集，新建mrcars2数据集(与mtcars相同)，新增car列并放在第一列的位置
+
+```{r results = 'hide'}
+mtcars2 <- mtcars
+mtcars2$car <- rownames(mtcars2)
+mtcars2 <- mtcars2[, c(12, 1:11)]
+```
+
+## tidyr - gather
+
+- 函数结构 gather(data, key, value, ..., na.rm = F, factor_key = F)
+
+gather()与melt()相似，key:聚合后变量列的列名, value:聚合后值列的列名, ...:要聚合起来的列, na.rm:是否剔除缺失值, factor_key:变量列是否设置为factor
+
+```{r results = 'hide'}
+# 除car列外，其他列均聚合起来，用-car来指定聚合的列
+mtcars2 %>% gather(variable, value, -car)
+# 聚合mpg:gear的所有列
+mtcars2 %>% gather(variable, value, mpg:gear)
+```
+```{r echo = FALSE}
+mtcars2 %>% gather(variable, value, mpg:gear) %>% head()
+```
+
+## tidyr - spread
+
+- 函数结构 spread(data, key, value, ..., fill = NA, drop = T)
+
+spread()与dcast()相似，key:需展开的变量列名, value:需展开的值列名, fill:用什么来替换缺失值, drop:要不要把factor转换成character
+
+```{r results = 'hide'}
+mtcars2 %>% gather(variable, value, -car) %>% 
+  spread(variable, value, fill = NA)
+```
+```{r echo = FALSE}
+mtcars2 %>% gather(variable, value, -car) %>% spread(variable, value) %>% head()
+```
+
+## tidyr - unite
+
+```{r results = 'hide'}
+# 准备数据
+date <- as.Date('2017-01-01') + 0:14
+hour <- sample(0:23, 15)
+minute <- sample(0:59, 15)
+second <- sample(0:59, 15)
+event <- sample(LETTERS, 15)
+test_data <- data.frame(date, hour, minute, second, event)
+# 把日期，时，分，秒合并成datetime字段，格式为:'yyyy-mm-dd hh24:mi:ss'
+# 先把日期与时合并
+test_data %>% unite(datetime, date, hour, sep = ' ')
+# 再合并新的datetime字段和分/秒
+test_data %>% unite(datetime, date, hour, sep = ' ') %>% unite(datetime, minute, second, sep = ':')
+```
+
+```{r echo = FALSE}
+test_data %>% unite(datetime, date, hour, sep = ' ') %>% unite(datetime, datetime, minute, second, sep = ':') %>% head()
+```
+
+## tidyr - separate
+
+```{r results = 'hide'}
+# 先unite
+test_data %>% unite(datetime, date, hour, sep = ' ') %>% unite(datetime, datetime, minute, second, sep = ':') %>% 
+  # 把datetime分成date和time两个字段
+  separate(datetime, c('date', 'time'), sep = ' ') %>% 
+  # 把time分成hour,minute,second三个字段
+  separate(time, c('hour', 'minute', 'second'), sep = ':')
+```
+
+```{r echo = FALSE}
+test_data %>% unite(datetime, date, hour, sep = ' ') %>% unite(datetime, datetime, minute, second, sep = ':') %>% 
+  # 把datetime分成date和time两个字段
+  separate(datetime, c('date', 'time'), sep = ' ') %>% 
+  # 把time分成hour,minute,second三个字段
+  separate(time, c('hour', 'minute', 'second'), sep = ':') %>%
+  head()
+```
+

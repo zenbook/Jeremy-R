@@ -1,0 +1,97 @@
+---
+title: "reshape2 package"
+author: "扫地老师"
+date: "2017年3月1日"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+```
+
+## 学习内容
+
+reshape2是一个强大的数据处理操作的R包。 用户一般使用的是melt()和dcast()。
+
+melt是溶解(分解)的意思，即拆分数据，把数据集溶解成长型数据。reshape2的melt函数是个S3泛型函数，它会根据数据类型（数据框，数组或列表）选择melt.data.frame, melt.array 或 melt.list函数进行实际操作。
+
+dcast是melt的逆操作，把长型数据转换成宽型数据；
+
+- melt()
+- dcast()
+
+```{r message = FALSE, marning = FALSE}
+library('reshape2')
+```
+
+
+## reshape2 - melt(1)
+
+- 函数结构
+
+melt(data, id.vars = c(col1, col2, ...), measure.vars = c(col1, col2, ...), variable.name = 'name1', value.name = 'name2', na.rm = F, factorAsStrings = T)
+
+data:数据集, id.vars:保留在新表中的分组列, measure.vars:被melt的列(转换成两列，一列是原来的变量，一列是变量对应的值), variable.name:变量列的列名, value.name:值列的列名, na.rm:是否剔除缺失值, factorAsStrings:是否将因子转换成字符串
+
+- 函数示例
+
+```{r results = 'hide'}
+melt(airquality, id.vars = c('Ozone', 'Month', 'Day'), measure.vars = c(2:4), variable.name = 'V.type', value.name = 'value')
+```
+
+- 注意事项
+
+id.vars 可以写成id，measure.vars可以写成measure,id（即var.ids）和观测值（即measure.vars）这两个参数可以只指定其中一个，剩余的列被当成另外一个参数的值；如果两个都省略，数值型的列被看成观测值，其他的被当成id。
+
+## reshape2 - melt(2)
+
+- melt()与ggplot()
+
+melt()得到的长型数据用于可视化非常方便，所以melt()与ggplot()经常一起使用。
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+library('ggplot2')
+library('dplyr')
+```
+
+
+```{r warning = FALSE, message = FALSE}
+airquality %>% melt(id.vars = c('Ozone', 'Month', 'Day'), measure.vars = c(2:4), variable.name = 'v.type', value.name = 'value') %>% 
+  ggplot(aes(Ozone, value)) + geom_point() + facet_wrap(~v.type, scales = 'free_y')
+```
+
+## reshape2 - dcast
+
+- 函数结构
+
+dcast(data, col1 + col2 + ... + coln ~ variable)
+
+data:数据集, coln:melt后,表中分组的列, variable:需还原的列
+
+- 函数示例
+
+```{r results = 'hide'}
+airquality %>% melt(id.vars = c('Ozone', 'Month', 'Day'), measure.vars = c(2:4), variable.name = 'v.type', value.name = 'value') %>% 
+  dcast(Ozone + Month + Day ~ v.type)
+```
+
+dcast还可以用来做数据汇总
+
+```{r results = 'hide'}
+airquality %>% melt(id.vars = c('Ozone', 'Month', 'Day'), measure.vars = c(2:4), variable.name = 'v.type', value.name = 'value')  %>% 
+  dcast(Month ~ v.type, fun.aggregate = mean, na.rm = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
