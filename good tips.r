@@ -15,3 +15,5 @@ install.packages(
   type = 'source'
 )
 
+# shiny Valid colors are: 
+#  red, yellow, aqua, blue, light-blue, green, navy, teal, olive, lime, orange, fuchsia, purple, maroon, black.
