@@ -20,6 +20,11 @@ datatable(iris, colnames = c(head(LETTERS, 5)))
 datatable(iris, colnames = c('中文', '中', '我', '哈哈', 'e')) # 可以用中文字符
 datatable(iris, colnames = c('ID' = 1))
 
+# buttons
+datatable(iris[1:50,], extensions = 'Buttons', 
+          options = list(pageLenth = 10, lengthMenu = c(10, 20, 30, 50), 
+                         dom = 'frtipB', buttons = c('copy', 'print', 'excel')))
+
 
 
 
