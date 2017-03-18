@@ -86,3 +86,9 @@ hchart(mpg$displ)
 hchart(diamonds$price)
 highcharts_demo() %>% 
   hc_add_theme(hc_theme_monokai())
+
+
+# 把hchart保存为html文件
+x <- highcharts_demo() %>% 
+  hc_add_theme(hc_theme_monokai())
+saveWidget(x, 'hchart.html')
