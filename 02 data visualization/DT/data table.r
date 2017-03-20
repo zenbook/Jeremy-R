@@ -260,30 +260,113 @@ datatable(iris) %>%
     )
   )
 
+# 12. extension ----------------------------------------------------------------------------------------------------------
+## 12.1 buttons
+### 展示复制/打印/导出excel三个按钮
+datatable(
+  head(iris, 50), 
+  extensions = 'Buttons', 
+  options = list(
+    pageLength = 10, 
+    lengthMenu = c(10, 20, 30, 50), 
+    dom = 'Bftrlp',
+    buttons = c('copy', 'print', 'excel')
+  )
+)
+### 展示复制/打印/下载三个按钮，其中下载按钮中有csv/excel/pdf三种格式
+datatable(
+  head(iris, 50), 
+  extensions = 'Buttons', 
+  options = list(
+    pageLength = 10, 
+    lengthMenu = c(10, 20, 30, 50), 
+    dom = 'Bftrlp', 
+    buttons = list(
+      'copy', 
+      'print',
+      list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      )
+    )
+  )
+)
+### 展示"colvis"按钮，让用户自定义可见列
+datatable(
+  head(iris, 30),
+  extensions = 'Buttons',
+  options = list(
+    dom = 'Bftrlp', 
+    buttons = list('colvis')
+  )
+)
+#### 自定义可供用户选择的可见列
+datatable(
+  head(iris, 30),
+  extensions = 'Buttons',
+  options = list(
+    dom = 'Bftrlp', 
+    buttons = list(
+      list(extend = 'colvis', columns = c(3, 4, 5))
+    )
+  )
+)
 
+## 12.2 colReorder 手动更改列的顺序 ----------------------
+datatable(
+  head(iris, 30), 
+  extensions = 'ColReorder', 
+  options = list(colReorder = TRUE)
+)
+## 12.3 Fixed Columns ------------------------------------
+### 简单版本
+m <- as.data.frame(matrix(round(rnorm(100), 5), 5))
+datatable(
+  m,
+  extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = TRUE
+  )
+)
+### 设置固定的列
+datatable(
+  m,
+  extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  )
+)
 
-# extension
-# buttons
-datatable(iris[1:50,], extensions = 'Buttons', 
-          options = list(pageLenth = 10, lengthMenu = c(10, 20, 30, 50), 
-                         dom = 'Bftrlp',buttons = c('copy', 'print', 'excel')))
+## 12.4 FixedHeader ---------------------------------------
+datatable(
+  iris,
+  extensions = 'FixedHeader',
+  options = list(
+    pageLength = 50, 
+    fixedHeader = TRUE
+  )
+)
 
+## 12.5 Scroller ------------------------------------------
+m = matrix(runif(1000 * 4), ncol = 4, dimnames = list(NULL, letters[1:4]))
+m = cbind(id = seq_len(nrow(m)), round(m, 2))
+datatable(
+  m, 
+  extensions = 'Scroller', 
+  options = list(
+    deferRender = TRUE,
+    scrollY = 200, 
+    scroller = TRUE
+  )
+)
 
-# 把表格保存为html文件
-x = datatable(iris)
+# 13 把表格保存为html文件 --------------------------------------------------------------------------------------
+x = datatable(head(iris, 30))
 saveWidget(x, 'iris-table.html')
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

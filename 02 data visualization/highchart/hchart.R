@@ -87,6 +87,17 @@ hchart(diamonds$price)
 highcharts_demo() %>% 
   hc_add_theme(hc_theme_monokai())
 
+# 饼图 ---------------------------------------------------------------
+mpg2 <- mpg
+mpg2$id <- rownames(mpg2)
+hchart(fy_cat1, 'pie', hcaes(x = cat1, y = num)) %>% 
+  hc_add_theme(hc_theme_darkunica())
+
+library(quantmod)
+
+x <- getSymbols("USD/JPY", src = "oanda", auto.assign = FALSE)
+hchart(x[, c(1:2)])
+
 
 # 把hchart保存为html文件
 x <- highcharts_demo() %>% 
