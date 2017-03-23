@@ -195,15 +195,90 @@ dfdiam <- diamonds %>%
   summarize(price = mean(price))
 hchart(dfdiam, type = 'heatmap', hcaes(x = cut, y = clarity, value = price))
 
+# 曲线图-时间序列图 -----------------------------------------
+data("economics_long")
+eco <- filter(economics_long, variable %in% c('pop', 'uempmed', 'unemploy'))
+hchart(eco, type = 'line', hcaes(x = date, y = value01, group = variable))
 
+# 树图treemap -----------------------------------------------
+data(mpg)
+## 数据处理，得到的结果是：每个厂家的车辆数n/车型数model
+mpgman <- mpg %>% 
+  group_by(manufacturer) %>% 
+  summarise(n = n(),
+            unique = length(unique(model))) %>% 
+  arrange(-n, -unique)
+head(mpgman)
+hchart(mpgman, 'treemap', hcaes(x = manufacturer, value = n, color = unique))
+
+# 条形图 ----------------------------------------------------
+mpgman2 <- count(mpg, manufacturer, year)
+hchart(mpgman2, 'bar', hcaes(x = manufacturer, y = n, group = year),
+       color = c('#0070c0', '#ed7d31'),
+       name = c('year 1999', 'year 2008'))
+  
 
 library(quantmod)
 
-x <- getSymbols("USD/JPY", src = "oanda", auto.assign = FALSE)
+x <- getSymbols("GOOG", auto.assign = FALSE)
 hchart(x[, c(1:2)])
 
+
+day_amount$ORDER_DATE <- parse_date_time(day_amount$ORDER_DATE, orders = c('Ymd', 'mdy', 'dmY', 'ymd'))
+
+highchart() %>% 
+  hc_add_series(
+    day_amount, 
+    type = 'line', 
+    hcaes(x = ORDER_DATE, y = AMOUNT, group = VENDOR_CODE)
+  ) %>% 
+  hc_add_theme(hc_theme_monokai())
 
 # 把hchart保存为html文件
 x <- highcharts_demo() %>% 
   hc_add_theme(hc_theme_monokai())
 saveWidget(x, 'hchart.html')
+
+
+# 建多个Y轴坐标 hc_yAxis_multiples + create_yaxis ------------------------------------------
+highchart() %>% 
+  hc_yAxis_multiples(
+    create_yaxis(
+      naxis = 2,  # 创建2个Y轴坐标
+      heights = c(2, 1), # 两个坐标的高度比例为2:1
+      title = list(text = NULL), # 设置Y轴坐标标题为空(无标题)
+      lineWidth = 1, # 设置Y轴线宽度为1
+      sep = 0.05 # 设置坐标轴之间的间隙宽度,百分比形式
+    )
+  ) %>% 
+  hc_add_series( # 新增一个数据序列，放在第一个Y轴坐标上
+    data = c(1, 3, 2), 
+    yAxis = 0 # 创建的Y轴坐标序号从0开始，0代表第一个
+  ) %>% 
+  hc_add_series( # 新增一个数据序列，放在第二个Y轴坐标上
+    type = 'column',
+    data = c(20, 40, 10),
+    yAxis = 1
+  ) %>% 
+  hc_add_theme(hc_theme_darkunica())
+
+highchart() %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+  hc_yAxis_multiples(
+    create_yaxis(naxis = 3, sep = 0.05, lineWidth = 1, title = list(text = NULL))
+  ) %>% 
+  hc_add_series(data = c(1, 3, 2)) %>% 
+  hc_add_series(data = c(20, 40, 10), yAxis = 1) %>% 
+  hc_add_series(data = c(200, 400, 500), type = 'column', yAxis = 2) %>% 
+  hc_add_series(data = c(500, 300, 400), type = 'column', yAxis = 2)
+
+day_amount_fy <- filter(day_amount, VENDOR_CODE == 'FYLYSM')
+highchart() %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+  hc_yAxis_multiples(create_yaxis(naxis = 3, sep = 0.05, lineWidth = 1, title = list(text = NULL))) %>% 
+  hc_plotOptions(series = list(marker = list(enabled = FALSE))) %>% 
+  hc_add_series(day_amount, 'line', hcaes(x = ORDER_DATE, y = AMOUNT, group = VENDOR_CODE)) %>% 
+  hc_add_series(day_amount, 'line', hcaes(x = ORDER_DATE, y = CUST_NUM, group = VENDOR_CODE), yAxis = 1) %>% 
+  hc_add_series(day_amount, 'line', hcaes(x = ORDER_DATE, y = MAS_NUM, group = VENDOR_CODE), yAxis = 2)
+
+
