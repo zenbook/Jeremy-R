@@ -272,13 +272,54 @@ highchart() %>%
   hc_add_series(data = c(200, 400, 500), type = 'column', yAxis = 2) %>% 
   hc_add_series(data = c(500, 300, 400), type = 'column', yAxis = 2)
 
-day_amount_fy <- filter(day_amount, VENDOR_CODE == 'FYLYSM')
 highchart() %>% 
   hc_add_theme(hc_theme_darkunica()) %>% 
   hc_yAxis_multiples(create_yaxis(naxis = 3, sep = 0.05, lineWidth = 1, title = list(text = NULL))) %>% 
-  hc_plotOptions(series = list(marker = list(enabled = FALSE))) %>% 
-  hc_add_series(day_amount, 'line', hcaes(x = ORDER_DATE, y = AMOUNT, group = VENDOR_CODE)) %>% 
-  hc_add_series(day_amount, 'line', hcaes(x = ORDER_DATE, y = CUST_NUM, group = VENDOR_CODE), yAxis = 1) %>% 
-  hc_add_series(day_amount, 'line', hcaes(x = ORDER_DATE, y = MAS_NUM, group = VENDOR_CODE), yAxis = 2)
+  hc_add_series(day_amount, 'spline', hcaes(x = ORDER_DATE, y = AMOUNT, group = VENDOR_CODE)) %>% 
+  hc_add_series(day_amount, 'spline', hcaes(x = ORDER_DATE, y = CUST_NUM, group = VENDOR_CODE), yAxis = 1) %>% 
+  hc_add_series(day_amount, 'spline', hcaes(x = ORDER_DATE, y = MAS_NUM, group = VENDOR_CODE), yAxis = 2) %>% 
+  hc_plotOptions(
+    spline = list(marker = FALSE, lineWidth = 4)
+  ) %>% 
+  hc_tooltip(table = TRUE, sort = TRUE)
+
+
+library("quantmod")
+usdjpy <- getSymbols("USD/JPY", src="oanda", auto.assign = FALSE)
+dates <- as.Date(c("2016-05-08", "2016-09-12"), format = "%Y-%m-%d")
+highchart(type = "stock") %>%
+hc_add_series_xts(usdjpy, id = "usdjpy") %>%
+hc_add_series_flags(dates,
+title = c("E1", "E2"),
+text = c("This is event 1", "This is the event 2"),
+id = "usdjpy")
+
+
+
+
+
+
+highchart(type = 'stock') %>% 
+  hc_add_theme(hc_theme_monokai()) %>% 
+  hc_yAxis_multiples(create_yaxis(naxis = 3, sep = 0.05, lineWidth = 1, title = list(text = NULL))) %>% 
+  hc_add_series_xts(day2[,1], name = 'amount') %>% 
+  hc_add_series_xts(day2[,3], name = 'cust_num', yAxis = 1) %>% 
+  hc_add_series_xts(day2[,4], name = 'mas_num', yAxis = 2)
+  
+highchart(type = 'stock') %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+  hc_yAxis_multiples(
+    list(top = '0%', height = '33%', title = list(text = '成交金额'), position = 'left'),
+    list(top = '33%', height = '33%', title = list(text = '客户数')),
+    list(top = '66%', height = '34%', title = list(text = '成交笔数'))
+  ) %>% 
+  hc_add_series(day_amount_fy[, 1], name = 'fy_amount', color = '#2B908F') %>% 
+  hc_add_series(day_amount_fy[, 2], name = 'fy_cust_num', color = '#2B908F', yAxis = 1) %>% 
+  hc_add_series(day_amount_fy[, 3], name = 'fy_mas_num', color = '#2B908F', yAxis = 2) %>% 
+  hc_add_series(day_amount_tl[, 1], name = 'tl_amount', color = '#90EE7E', yAxis = 0) %>% 
+  hc_add_series(day_amount_tl[, 2], name = 'tl_cust_num', color = '#90EE7E', yAxis = 1) %>% 
+  hc_add_series(day_amount_tl[, 3], name = 'tl_mas_num', color = '#90EE7E', yAxis = 2)
+
+hcts(day_amount_fy[,1])
 
 
