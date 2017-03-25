@@ -1,11 +1,15 @@
 
-# load packages and datasets------------------------------------------
-data(diamonds, economics_long, mpg, package = "ggplot2")
+# load packages and datasets -----------------------------------------
+
 library(dplyr)
 library(tidyr)
 library(highcharter)
 library(broom)
 library(ggplot2)
+
+data("favorite_bars")
+data("favorite_pies")
+data(diamonds, economics_long, mpg, package = "ggplot2")
 
 # use hchart() function-----------------------------------------------
 hchart(mpg, 'scatter', hcaes(x = cty, y = displ, group = drv))
@@ -146,6 +150,60 @@ mpg2 <- mpg
 mpg2$id <- rownames(mpg2)
 hchart(fy_cat1, 'pie', hcaes(x = cat1, y = num)) %>% 
   hc_add_theme(hc_theme_darkunica())
+
+fy_cat1 %>% 
+  highchart() %>% 
+
+
+
+highchart() %>%
+  hc_title(text = "This is a bar graph describing my favorite pies
+           including a pie chart describing my favorite bars") %>%
+  hc_subtitle(text = "In percentage of tastiness and awesomeness") %>%
+  hc_add_series_labels_values(favorite_pies$pie, favorite_pies$percent, name = "Pie",
+                              colorByPoint = TRUE, type = "column") %>%
+  hc_add_series_labels_values(favorite_bars$bar, favorite_bars$percent,
+                              colors = substr(terrain.colors(5), 0 , 7), type = "pie",
+                              name = "Bar", colorByPoint = TRUE, center = c('35%', '10%'),
+                              size = 100, dataLabels = list(enabled = FALSE)) %>%
+  hc_yAxis(title = list(text = "percentage of tastiness"),
+           labels = list(format = "{value}%"), max = 100) %>%
+  hc_xAxis(categories = favorite_pies$pie) %>%
+  hc_legend(enabled = FALSE) %>%
+  hc_tooltip(pointFormat = "{point.y}%")
+
+
+
+highchart() %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+  hc_title(text = 'This is title') %>% 
+  hc_add_series_labels_values(favorite_bars$bar, 
+                              favorite_bars$percent, 
+                              type = 'pie',
+                              colorByPoints = TRUE,
+                              dataLabels = list(enabled = FALSE)
+  ) %>% 
+  hc_xAxis(categories = favorite_bars$bar) %>% 
+  hc_legend(enabled = TRUE) %>% 
+  hc_tooltip(pointFormat = "数量占比：{point.y}%")
+  
+  
+  
+  
+  
+
+
+
+set.seed(123)
+x <- cumsum(rnorm(10))
+hcspark(x)
+hcspark(x, "column")
+hcspark(c(1, 4, 5), "pie")
+hcspark(x, type = "area")
+
+
+
+
 
 # 雷达图 -------------------------------------------------------------
 highchart() %>% 
@@ -321,5 +379,121 @@ highchart(type = 'stock') %>%
   hc_add_series(day_amount_tl[, 3], name = 'tl_mas_num', color = '#90EE7E', yAxis = 2)
 
 hcts(day_amount_fy[,1])
+
+
+library(PerformanceAnalytics)
+
+data(edhec)
+R <- edhec[, 1:3]
+
+hc <- highchart(type = "stock")
+hc <- hc_yAxis_multiples(hc, create_yaxis(naxis = 3, heights = c(2,1,1)))
+
+for(i in 1:ncol(R)) {
+  hc <- hc_add_series(hc, R[, i], yAxis = i - 1, name = names(R)[i])
+}
+
+hc <- hc_scrollbar(hc, enabled = TRUE) %>%
+  hc_add_theme(hc_theme_flat())
+
+hc
+
+
+axis <- create_yaxis(naxis = 3, heights = c(2,1,1))
+names <- c("A", "B", "C") 
+newaxis <- purrr::map2(axis, names, function(x, y){x$title <- list(text = y);x}) 
+newaxis <- purrr::map2(axis, names, function(x, y){x$title <- y;x}) 
+
+
+hc_yAxis_multiples(newaxis)
+hc <- highchart(type = "stock")
+hc <- hc_yAxis_multiples(newaxis)
+
+for(i in 1:ncol(R)) {
+  hc <- hc_add_series(hc, R[, i], yAxis = i - 1, name = names(R)[i])
+}
+
+hc <- hc_scrollbar(hc, enabled = TRUE) %>%
+  hc_add_theme(hc_theme_flat())
+
+hc
+
+highchart(type = 'stock') %>%   
+  hc_title(text = 'title')%>%  #图标标题  
+  hc_add_theme(hc_theme_darkunica()) %>% 
+  hc_yAxis_multiples(  
+    list(top = "0%", height = "30%", lineWidth = 1,  
+         title = list(text = "y轴标题（上面）"),  
+         labels = list(format = "{value}%", rotation = 30 )  
+    ),     
+    #设置上半部分y轴坐标属性，高度30%，线宽1，标签为%格式，标签倾斜30度  
+    list(top = "30%", height = "70%",showFirstLabel = T,   
+         showLastLabel = F, offset = 0,  
+         title = list(text = "y轴标题（下面）"),  
+         labels = list(format = "{value}"))         #设置下半部分y轴坐标属性，顶端从30%的高度开始，整体高度70%，不显示第一个标签和最后一个标签  
+  ) %>% 
+  hc_add_series(day_amount_fy[,1], name = 'amount') %>% 
+  hc_add_series(day_amount_fy[,2], name = 'cust_num', yAxis = 1)
+
+
+axis1 <- create_yaxis(naxis = 3, heights = c(2,1,1), title = list(text =NULL))
+
+
+highchart() %>%
+  hc_add_series(data = abs(rnorm(5)), type = "column") %>%
+  hc_add_series(data = purrr::map(0:4, function(x) list(x, x)), type = "scatter", color = "blue")
+
+
+append(list(a=1,b=2), list(c=3,d=4)) 
+
+merge(list(a=1, b="test"), list('hh'))
+
+births %>% 
+  filter(between(year, 2013, 2014)) %>% 
+  filter(date_of_month %in% c(6, 13, 20)) %>% 
+  mutate(day = ifelse(date_of_month == 13, 'thirteen', 'not_thirteen')) %>% 
+  group_by(day_of_week, day) %>% 
+  summarise(mean_births = mean(births)) %>% 
+  arrange(day_of_week)
+
+
+caption = htmltools::tags$caption(
+  style = 'caption-side:top; text-align:center; font-size:25px','奖金收入榜'
+),
+
+, 
+initComplete = JS(
+  "function(settings, json) {",
+  "$(this.api().table().header()).css({'background-color': '#3C8DBC', 'color': '#fff', 
+  'font-size':'13px'});",
+  "}"
+  )
+
+
+
+highchart() %>% 
+  hc_chart(type = 'column') %>% 
+  hc_add_theme(hc_theme_flat()) %>% 
+  hc_xAxis(categories = unique(bonus$NAME)) %>% 
+  hc_add_series(data = bonus[bonus$QUOTA_NAME == '帮客户订货', 'BONUS'], 
+                name = '帮客户订货') %>% 
+  hc_add_series(data = bonus[bonus$QUOTA_NAME == '完成累计订货额', 'BONUS'], 
+                name = '完成累计订货额') %>% 
+  hc_add_series(data = bonus[bonus$QUOTA_NAME == '完善客户信息', 'BONUS'], 
+                name = '完善客户信息') %>% 
+  hc_plotOptions(column = list(stacking = 'normal'))
+
+
+hchart(bonus[bonus$QUOTA_ID != 'ORDER1',], 'column',
+       hcaes(x = NAME, y = BONUS, group = QUOTA_NAME)) %>% 
+  hc_add_theme(hc_theme_flat()) %>% 
+  hc_yAxis(title = list(text = ''), labels = list(format = '{value}元')) %>% 
+  hc_xAxis(title = list(text = '')) %>% 
+  hc_tooltip(table = TRUE, sort = TRUE) %>% 
+  hc_plotOptions(column = list(stacking = 'normal'))
+
+
+
+
 
 
