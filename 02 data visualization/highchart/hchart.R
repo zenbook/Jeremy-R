@@ -1,14 +1,17 @@
 
-# load packages and datasets -----------------------------------------
-
+# load packages ------------------------------------------------------
 library(dplyr)
 library(tidyr)
 library(highcharter)
 library(broom)
+library(forecast)
 library(ggplot2)
+library(quantmod)
 
+# load datasets ------------------------------------------------------
 data("favorite_bars")
 data("favorite_pies")
+data("citytemp")
 data(diamonds, economics_long, mpg, package = "ggplot2")
 
 # use hchart() function-----------------------------------------------
@@ -20,21 +23,22 @@ highchart() %>%
   hc_title(text = 'A highcharter chart') %>% 
   hc_xAxis(categories = 2012:2016) %>% 
   hc_add_series(data = c(3900, 4300,5700, 8500, 11900), name = 'users') %>% 
-  hc_add_theme(hc_theme_economist())
+  hc_add_theme(hc_theme_flat())
 
 # highchart绘图步骤---------------------------------------------------
-data("citytemp")
-head(citytemp)
+## demo
+highcharts_demo()
+## citytemp
 highchart() %>% 
-  hc_add_series(name = 'tokyo', data = citytemp$tokyo) %>% # 添加数据系列
   hc_title(text = 'city temperatrue') %>% # 添加标题
   hc_subtitle(text = 'this is the subtitle') %>% # 添加副标题
   hc_xAxis(categories = citytemp$month) %>% # 设置x轴坐标系列名称
-  hc_add_series(name = 'new york', data = citytemp$new_york, type = 'spline') %>% 
-  hc_add_series(name = 'london', data = citytemp$london) %>% 
   hc_yAxis(title = list(text = 'Temperature'), labels = list(format = '{value}℃'))  %>% 
-  hc_add_theme(hc_theme_darkunica()) %>% 
-  hc_tooltip(table = TRUE, sort = TRUE)
+  hc_add_series(name = 'tokyo', data = citytemp$tokyo) %>% # 添加数据系列
+  hc_add_series(name = 'new york', data = citytemp$new_york) %>% # 添加数据序列
+  hc_add_series(name = 'london', data = citytemp$london) %>% # 添加数据序列
+  hc_add_theme(hc_theme_darkunica()) %>% # 添加主题
+  hc_tooltip(table = TRUE, sort = TRUE) # 设置工具提示
   
 # 不同类型的字段产生不同类型的图形------------------------------------
 ## character data
@@ -43,6 +47,52 @@ hchart(diamonds$cut, colorByPoint = TRUE, name = 'cut') %>%
 ## numeric data
 hchart(diamonds$price, color = '#B71C1C', name = 'price') %>% 
   hc_title(text = 'numeric data')
+
+# 建多个Y轴坐标 hc_yAxis_multiples + create_yaxis ---------------------
+highchart() %>% 
+  hc_yAxis_multiples(
+    create_yaxis(
+      naxis = 2,  # 创建2个Y轴坐标
+      heights = c(2, 1), # 两个坐标的高度比例为2:1
+      title = list(text = NULL), # 设置Y轴坐标标题为空(无标题)
+      lineWidth = 1, # 设置Y轴线宽度为1
+      sep = 0.05 # 设置坐标轴之间的间隙宽度,百分比形式
+    )
+  ) %>% 
+  hc_add_series( # 新增一个数据序列，放在第一个Y轴坐标上
+    data = c(1, 3, 2), 
+    yAxis = 0 # 创建的Y轴坐标序号从0开始，0代表第一个
+  ) %>% 
+  hc_add_series( # 新增一个数据序列，放在第二个Y轴坐标上
+    type = 'column',
+    data = c(20, 40, 10),
+    yAxis = 1
+  ) %>% 
+  hc_add_theme(hc_theme_darkunica())
+
+highchart() %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+  hc_yAxis_multiples(
+    create_yaxis(naxis = 3, sep = 0.05, lineWidth = 1, title = list(text = NULL))
+  ) %>% 
+  hc_add_series(data = c(1, 3, 2)) %>% 
+  hc_add_series(data = c(20, 40, 10), yAxis = 1) %>% 
+  hc_add_series(data = c(200, 400, 500), type = 'column', yAxis = 2) %>% 
+  hc_add_series(data = c(500, 300, 400), type = 'column', yAxis = 2)
+
+# 柱形图 type = 'column' ----------------------------------------------
+hchart(favorite_bars, 'column', hcaes(x = bar, y = percent)) %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+  hc_legend(enabled = FALSE) %>% 
+  hc_xAxis(title = list(text = NULL)) %>% 
+  hc_title(text = 'My favorite bars') %>% 
+  hc_yAxis(title = list(text = NULL))
+
+highchart() %>% 
+  hc_add_series(favorite_bars$percent, type = 'column', name = 'percent') %>% 
+  hc_xAxis(categories = favorite_bars$bar) %>% 
+  hc_add_theme(hc_theme_darkunica())
+
 
 
 highchart() %>% 
@@ -66,6 +116,21 @@ highchart() %>%
       data = c(3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8)
     )
   )
+
+# 散点图 + 气泡图 -----------------------------------------------------
+## hchart()
+### 散点图
+hchart(mtcars, 'scatter', hcaes(x = wt, y = mpg))
+### 气泡图
+hchart(mtcars, "scatter", hcaes(x = wt, y = mpg, z = drat, color = hp))
+## highchart()
+### 散点图
+highchart() %>% 
+  hc_add_series_scatter(mtcars$wt, mtcars$mpg)
+### 气泡图
+highchart() %>% 
+  hc_add_series_scatter(mtcars$wt, mtcars$mpg, mtcars$drat, mtcars$hp)
+
 
 
 # 面积图 ---------------------------------------------------------
@@ -97,12 +162,12 @@ highchart() %>%
   hc_add_theme(hc_theme_monokai())
 
 # highchart with forecast---------------------------------------------
-library(forecast)
+
 dataset <- forecast(auto.arima(AirPassengers), level = 95)
 hchart(dataset)
 
 # highstock-----------------------------------------------------------
-library(quantmod)
+
 x <- getSymbols('GOOG', auto.assign = FALSE)
 y <- getSymbols('AMZN', auto.assign = FALSE)
 highchart(type = 'stock') %>% 
@@ -135,45 +200,25 @@ hchart(airquality, 'line', hcaes(x = as.factor(Day), y = Temp, group = Month),
   )
 
 
-# 散点图--------------------------------------------------------------
-hchart(mpg, "scatter", hcaes(x = displ, y = hwy, group = class))
 
-table(mpg$drv)
-str(mpg)
-hchart(mpg$displ)
-hchart(diamonds$price)
-highcharts_demo() %>% 
-  hc_add_theme(hc_theme_monokai())
+# 气泡图 + 拟合曲线 -----------------------------------------
+set.seed(123)
+data <- sample_n(diamonds, 300)
+modlss <- loess(price ~ carat, data = data)
+fit <- arrange(augment(modlss), carat)
+head(fit)
+highchart() %>% 
+  hc_add_series(data, type = 'scatter',
+                hcaes(x = carat, y = price, size = depth, group = cut)) %>% 
+  hc_add_series(fit, type = 'spline', hcaes(x = carat, y = .fitted),
+                name = "Fit", id = 'fit') %>% 
+  hc_add_series(fit, type = 'arearange',
+                hcaes(x = carat, low = .fitted - 2*.se.fit, high = .fitted + 2*.se.fit),
+                linkedTo = 'fit')
+
+
 
 # 饼图 ---------------------------------------------------------------
-mpg2 <- mpg
-mpg2$id <- rownames(mpg2)
-hchart(fy_cat1, 'pie', hcaes(x = cat1, y = num)) %>% 
-  hc_add_theme(hc_theme_darkunica())
-
-fy_cat1 %>% 
-  highchart() %>% 
-
-
-
-highchart() %>%
-  hc_title(text = "This is a bar graph describing my favorite pies
-           including a pie chart describing my favorite bars") %>%
-  hc_subtitle(text = "In percentage of tastiness and awesomeness") %>%
-  hc_add_series_labels_values(favorite_pies$pie, favorite_pies$percent, name = "Pie",
-                              colorByPoint = TRUE, type = "column") %>%
-  hc_add_series_labels_values(favorite_bars$bar, favorite_bars$percent,
-                              colors = substr(terrain.colors(5), 0 , 7), type = "pie",
-                              name = "Bar", colorByPoint = TRUE, center = c('35%', '10%'),
-                              size = 100, dataLabels = list(enabled = FALSE)) %>%
-  hc_yAxis(title = list(text = "percentage of tastiness"),
-           labels = list(format = "{value}%"), max = 100) %>%
-  hc_xAxis(categories = favorite_pies$pie) %>%
-  hc_legend(enabled = FALSE) %>%
-  hc_tooltip(pointFormat = "{point.y}%")
-
-
-
 highchart() %>% 
   hc_add_theme(hc_theme_darkunica()) %>% 
   hc_title(text = 'This is title') %>% 
@@ -184,25 +229,29 @@ highchart() %>%
                               dataLabels = list(enabled = FALSE)
   ) %>% 
   hc_xAxis(categories = favorite_bars$bar) %>% 
-  hc_legend(enabled = TRUE) %>% 
+  hc_legend(align = 'left') %>% 
   hc_tooltip(pointFormat = "数量占比：{point.y}%")
+
+highchart() %>% 
+  hc_add_theme(hc_theme_flat()) %>% 
+  hc_add_series_labels_values(fy_cat1$cat1, 
+                              fy_cat1$num, 
+                              type = 'pie', 
+                              dataLabels = list(enabled = FALSE)) %>% 
+  hc_xAxis(categories = fy_cat1$cat1) %>% 
+  hc_legend(align = 'bottom', 
+            verticalAlign = 'top', 
+            layout = 'vertical', 
+            x = 0, 
+            y = 100) %>% 
+  hc_tooltip(pointFormat = '商品数量：{point.y}')
   
-  
-  
-  
-  
-
-
-
-set.seed(123)
-x <- cumsum(rnorm(10))
-hcspark(x)
-hcspark(x, "column")
-hcspark(c(1, 4, 5), "pie")
-hcspark(x, type = "area")
-
-
-
+highchart() %>%
+  hc_xAxis(categories = citytemp$month) %>%
+  hc_add_series(name = "Tokyo", data = citytemp$tokyo) %>%
+  hc_add_series(name = "London", data = citytemp$london) %>%
+  hc_legend(align = "left", verticalAlign = "top",
+            layout = "vertical", x = 0, y = 100)
 
 
 # 雷达图 -------------------------------------------------------------
@@ -221,31 +270,17 @@ highchart() %>%
     list(
       name = "Allocated Budget",
       data = c(43000, 19000, 60000, 35000, 17000, 10000),
-      pointPlacement = "on"
-    ),
+      pointPlacement = "on"),
     list(
       name = "Actual Spending",
       data = c(50000, 39000, 42000, 31000, 26000, 14000),
-      pointPlacement = "on"
-    )
+      pointPlacement = "on")
   ) %>% 
-  hc_add_theme(hc_theme_monokai())
+  hc_add_theme(hc_theme_darkunica())
 
 
-# 气泡图 + 拟合曲线 -----------------------------------------
-set.seed(123)
-data <- sample_n(diamonds, 300)
-modlss <- loess(price ~ carat, data = data)
-fit <- arrange(augment(modlss), carat)
-head(fit)
-highchart() %>% 
-  hc_add_series(data, type = 'scatter',
-                hcaes(x = carat, y = price, size = depth, group = cut)) %>% 
-  hc_add_series(fit, type = 'spline', hcaes(x = carat, y = .fitted),
-                name = "Fit", id = 'fit') %>% 
-  hc_add_series(fit, type = 'arearange',
-                hcaes(x = carat, low = .fitted - 2*.se.fit, high = .fitted + 2*.se.fit),
-                linkedTo = 'fit')
+
+
 
 # 热力图heatmap ---------------------------------------------
 dfdiam <- diamonds %>% 
@@ -271,78 +306,26 @@ hchart(mpgman, 'treemap', hcaes(x = manufacturer, value = n, color = unique))
 
 # 条形图 ----------------------------------------------------
 mpgman2 <- count(mpg, manufacturer, year)
-hchart(mpgman2, 'bar', hcaes(x = manufacturer, y = n, group = year),
+hchart(mpgman2, 
+       'bar', 
+       hcaes(x = manufacturer, y = n, group = year),
        color = c('#0070c0', '#ed7d31'),
-       name = c('year 1999', 'year 2008'))
-  
+       name = c('year 1999', 'year 2008')) %>% 
+  hc_add_theme(hc_theme_flat())
 
-library(quantmod)
+
 
 x <- getSymbols("GOOG", auto.assign = FALSE)
 hchart(x[, c(1:2)])
 
 
-day_amount$ORDER_DATE <- parse_date_time(day_amount$ORDER_DATE, orders = c('Ymd', 'mdy', 'dmY', 'ymd'))
-
-highchart() %>% 
-  hc_add_series(
-    day_amount, 
-    type = 'line', 
-    hcaes(x = ORDER_DATE, y = AMOUNT, group = VENDOR_CODE)
-  ) %>% 
-  hc_add_theme(hc_theme_monokai())
-
-# 把hchart保存为html文件
+# 把hchart保存为html文件 ------------------------------------
 x <- highcharts_demo() %>% 
   hc_add_theme(hc_theme_monokai())
 saveWidget(x, 'hchart.html')
 
 
-# 建多个Y轴坐标 hc_yAxis_multiples + create_yaxis ------------------------------------------
-highchart() %>% 
-  hc_yAxis_multiples(
-    create_yaxis(
-      naxis = 2,  # 创建2个Y轴坐标
-      heights = c(2, 1), # 两个坐标的高度比例为2:1
-      title = list(text = NULL), # 设置Y轴坐标标题为空(无标题)
-      lineWidth = 1, # 设置Y轴线宽度为1
-      sep = 0.05 # 设置坐标轴之间的间隙宽度,百分比形式
-    )
-  ) %>% 
-  hc_add_series( # 新增一个数据序列，放在第一个Y轴坐标上
-    data = c(1, 3, 2), 
-    yAxis = 0 # 创建的Y轴坐标序号从0开始，0代表第一个
-  ) %>% 
-  hc_add_series( # 新增一个数据序列，放在第二个Y轴坐标上
-    type = 'column',
-    data = c(20, 40, 10),
-    yAxis = 1
-  ) %>% 
-  hc_add_theme(hc_theme_darkunica())
 
-highchart() %>% 
-  hc_add_theme(hc_theme_darkunica()) %>% 
-  hc_yAxis_multiples(
-    create_yaxis(naxis = 3, sep = 0.05, lineWidth = 1, title = list(text = NULL))
-  ) %>% 
-  hc_add_series(data = c(1, 3, 2)) %>% 
-  hc_add_series(data = c(20, 40, 10), yAxis = 1) %>% 
-  hc_add_series(data = c(200, 400, 500), type = 'column', yAxis = 2) %>% 
-  hc_add_series(data = c(500, 300, 400), type = 'column', yAxis = 2)
-
-highchart() %>% 
-  hc_add_theme(hc_theme_darkunica()) %>% 
-  hc_yAxis_multiples(create_yaxis(naxis = 3, sep = 0.05, lineWidth = 1, title = list(text = NULL))) %>% 
-  hc_add_series(day_amount, 'spline', hcaes(x = ORDER_DATE, y = AMOUNT, group = VENDOR_CODE)) %>% 
-  hc_add_series(day_amount, 'spline', hcaes(x = ORDER_DATE, y = CUST_NUM, group = VENDOR_CODE), yAxis = 1) %>% 
-  hc_add_series(day_amount, 'spline', hcaes(x = ORDER_DATE, y = MAS_NUM, group = VENDOR_CODE), yAxis = 2) %>% 
-  hc_plotOptions(
-    spline = list(marker = FALSE, lineWidth = 4)
-  ) %>% 
-  hc_tooltip(table = TRUE, sort = TRUE)
-
-
-library("quantmod")
 usdjpy <- getSymbols("USD/JPY", src="oanda", auto.assign = FALSE)
 dates <- as.Date(c("2016-05-08", "2016-09-12"), format = "%Y-%m-%d")
 highchart(type = "stock") %>%
@@ -493,6 +476,22 @@ hchart(bonus[bonus$QUOTA_ID != 'ORDER1',], 'column',
   hc_plotOptions(column = list(stacking = 'normal'))
 
 
+# 组合图 -----------------------------------------------------------
+highchart() %>%
+  hc_title(text = "This is a bar graph describing my favorite pies
+           including a pie chart describing my favorite bars") %>%
+  hc_subtitle(text = "In percentage of tastiness and awesomeness") %>%
+  hc_add_series_labels_values(favorite_pies$pie, favorite_pies$percent, name = "Pie",
+                              colorByPoint = TRUE, type = "column") %>%
+  hc_add_series_labels_values(favorite_bars$bar, favorite_bars$percent,
+                              colors = substr(terrain.colors(5), 0 , 7), type = "pie",
+                              name = "Bar", colorByPoint = TRUE, center = c('35%', '10%'),
+                              size = 100, dataLabels = list(enabled = FALSE)) %>%
+  hc_yAxis(title = list(text = "percentage of tastiness"),
+           labels = list(format = "{value}%"), max = 100) %>%
+  hc_xAxis(categories = favorite_pies$pie) %>%
+  hc_legend(enabled = FALSE) %>%
+  hc_tooltip(pointFormat = "{point.y}%")
 
 
 

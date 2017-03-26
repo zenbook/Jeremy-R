@@ -122,6 +122,14 @@ datatable(iris[c(1:10, 60:70, 110:120),], filter = 'top')
 
 # 11.options() 有多自定义的设置，熟练掌握 -----------------------------------------------------------------------------
 ## datatable官方网站：https://datatables.net/reference/option/
+datatable(head(iris, 20), 
+          options = list(
+            initComplete = JS(
+              "function(settings, json) {",
+              "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+              "}")
+            )
+          )
 
 ## 11.1 默认设置 -------------------------------------------------
 ### a.按第一列排序；
