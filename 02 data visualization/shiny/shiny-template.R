@@ -7,7 +7,7 @@ ui <- fluidPage(
   
   ## App title ---------------------------------
   titlePanel(
-    
+    title = 'This is title'
   ),
   
   ## sidebar layout with a input and output ----
