@@ -290,7 +290,7 @@ hchart(dfdiam, type = 'heatmap', hcaes(x = cut, y = clarity, value = price))
 
 # 曲线图-时间序列图 -----------------------------------------
 data("economics_long")
-eco <- filter(economics_long, variable %in% c('pop', 'uempmed', 'unemploy'))
+eco <- filter(economics_long, variable %in% c('uempmed', 'unemploy'))
 hchart(eco, type = 'line', hcaes(x = date, y = value01, group = variable))
 
 # 树图treemap -----------------------------------------------
