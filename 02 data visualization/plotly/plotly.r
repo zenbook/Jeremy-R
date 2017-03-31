@@ -45,7 +45,40 @@ allCities %>%
 
 
 
+bonus_day %>% 
+  filter(QUOTA_ID == 'CINFO') %>% 
+  group_by(NAME) %>% 
+  plot_ly(x = ~CREATE_DATE, y = ~ CUST_NUM) %>% 
+  add_lines()
 
+
+bonus_day$CREATE_DATE <- parse_date_time(bonus_day$CREATE_DATE, 
+                                         orders = c('Ymd', 'mdy', 'dmY', 'ymd'))
+bonus_day$CREATE_DATE <- as.Date(bonus_day$CREATE_DATE, format = "%Y-%m-%d")
+
+
+bonus_day %>% 
+  filter(QUOTA_ID == 'CINFO') %>% 
+  group_by(CREATE_DATE, NAME) %>% 
+  summarise(CUST_NUM = sum(CUST_NUM), BONUS_AMOUNT = sum(BONUS_AMOUNT)) %>% 
+  arrange(NAME, CREATE_DATE) %>% 
+  hchart('column', hcaes(x = CREATE_DATE, y = BONUS_AMOUNT, group = NAME))
+
+bonus_day %>% 
+  arrange(NAME, CREATE_DATE) %>% 
+  hc_xAxis(categories = uniue(CREATE_DATE)) %>% 
+  highchart() %>% 
+  hc_add_theme(hc_theme_flat()) %>% 
+  hc_add_series_labels_values(BONUS_AMOUNT)
+
+
+  hchart(type = 'column', hcaes(x = CREATE_DATE, y = BONUS_AMOUNT, group = QUOTA_NAME)) %>% 
+  
+  hc_plotOptions(column = list(stacking = 'normal'))
+
+p <- ggplot(bonus_day, aes(x = CREATE_DATE, y = BONUS_AMOUNT, group = NAME)) + 
+  geom_line(aes(color = NAME))
+ggplotly(p)
 
 
 
