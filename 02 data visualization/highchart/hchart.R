@@ -7,17 +7,16 @@ library(broom)
 library(forecast)
 library(ggplot2)
 library(quantmod)
+library(treemap)
+library(viridis)
+
 
 # load datasets ------------------------------------------------------
-data("favorite_bars")
-data("favorite_pies")
-data("citytemp")
-data(diamonds, economics_long, mpg, package = "ggplot2")
 
 # use hchart() function-----------------------------------------------
 hchart(mpg, 'scatter', hcaes(x = cty, y = displ, group = drv))
 
-# use highchart API---------------------------------------------------
+# use highchart ------------------------------------------------------
 highchart() %>% 
   hc_chart(type = 'column') %>% 
   hc_title(text = 'A highcharter chart') %>% 
@@ -39,36 +38,29 @@ highchart() %>%
   hc_add_series(name = 'london', data = citytemp$london) %>% # 添加数据序列
   hc_add_theme(hc_theme_darkunica()) %>% # 添加主题
   hc_tooltip(table = TRUE, sort = TRUE) # 设置工具提示
-  
-# 不同类型的字段产生不同类型的图形------------------------------------
-## character data
-hchart(diamonds$cut, colorByPoint = TRUE, name = 'cut') %>% 
-  hc_title(text = 'character data')
-## numeric data
-hchart(diamonds$price, color = '#B71C1C', name = 'price') %>% 
-  hc_title(text = 'numeric data')
 
 # 建多个Y轴坐标 hc_yAxis_multiples + create_yaxis ---------------------
 highchart() %>% 
   hc_yAxis_multiples(
-    create_yaxis(
-      naxis = 2,  # 创建2个Y轴坐标
-      heights = c(2, 1), # 两个坐标的高度比例为2:1
-      title = list(text = NULL), # 设置Y轴坐标标题为空(无标题)
-      lineWidth = 1, # 设置Y轴线宽度为1
-      sep = 0.05 # 设置坐标轴之间的间隙宽度,百分比形式
-    )
-  ) %>% 
-  hc_add_series( # 新增一个数据序列，放在第一个Y轴坐标上
-    data = c(1, 3, 2), 
-    yAxis = 0 # 创建的Y轴坐标序号从0开始，0代表第一个
-  ) %>% 
-  hc_add_series( # 新增一个数据序列，放在第二个Y轴坐标上
-    type = 'column',
-    data = c(20, 40, 10),
-    yAxis = 1
-  ) %>% 
-  hc_add_theme(hc_theme_darkunica())
+    create_yaxis(naxis = 2,  # 创建2个Y轴坐标
+                 heights = c(2, 3), # 两个坐标的高度比例为2:1
+                 title = list(text = NULL), # 设置Y轴坐标标题为空(无标题)
+                 lineWidth = 1, # 设置Y轴线宽度为1
+                 sep = 0.10, # 设置坐标轴之间的间隙宽度,百分比形式
+                 turnopposite = FALSE # 默认是TRUE,控制y轴的位置是否调转一下
+                 )) %>% 
+  # 新增一个数据序列，放在第一个Y轴坐标上
+  hc_add_series(data = c(1, 3, 2, 5, 1, 7), 
+                yAxis = 0 # 创建的Y轴坐标序号从0开始，0代表第一个
+                ) %>% 
+  # 新增一个数据序列，放在第二个Y轴坐标上
+  hc_add_series(type = 'column',  # 图表类型改成柱形图
+                data = c(20, 40, 10, 59, 23, 13),
+                yAxis = 1) %>% 
+  # 调整一下主题颜色
+  hc_add_theme(hc_theme_flat()) %>% 
+  # 添加图表标题
+  hc_title(text = 'THIS IS TITLE')
 
 highchart() %>% 
   hc_add_theme(hc_theme_darkunica()) %>% 
@@ -79,6 +71,14 @@ highchart() %>%
   hc_add_series(data = c(20, 40, 10), yAxis = 1) %>% 
   hc_add_series(data = c(200, 400, 500), type = 'column', yAxis = 2) %>% 
   hc_add_series(data = c(500, 300, 400), type = 'column', yAxis = 2)
+  
+# 不同类型的字段产生不同类型的图形------------------------------------
+## character data
+hchart(diamonds$cut, colorByPoint = TRUE, name = 'cut') %>% 
+  hc_title(text = 'character data')
+## numeric data
+hchart(diamonds$price, color = '#B71C1C', name = 'price') %>% 
+  hc_title(text = 'numeric data')
 
 # 柱形图 type = 'column' ----------------------------------------------
 hchart(favorite_bars, 'column', hcaes(x = bar, y = percent)) %>% 
@@ -93,8 +93,101 @@ highchart() %>%
   hc_xAxis(categories = favorite_bars$bar) %>% 
   hc_add_theme(hc_theme_darkunica())
 
+# 条形图 ---------------------------------------------------------------
+## hcbar() 快捷函数
+hcbar(favorite_bars$bar, favorite_bars$percent)
+
+# 箱线图 ---------------------------------------------------------------
+hcboxplot(iris$Sepal.Length, var = iris$Species, color = 'red') %>% 
+  hc_add_theme(hc_theme_flat())
+
+highchart() %>% 
+  hc_add_series_boxplot(iris$Sepal.Length, iris$Species) %>% 
+  hc_add_theme(hc_theme_flat())
 
 
+# 密度图 ---------------------------------------------------------------
+hcdensity(iris$Sepal.Length)
+
+# icon图 ---------------------------------------------------------------
+hciconarray(c('nice', 'good'), c(10, 20))
+hciconarray(c('nice', 'good'), c(10, 20), size = 10)
+hciconarray(c('nice', 'good'), c(10, 20), icons = 'child')
+hciconarray(c('car', 'truck', 'plane'), c(10, 20, 45), icons = c('car', 'truck', 'plane'))
+hciconarray(c('plane', 'truck', 'car'), c(35, 20, 10), icons = c('plane', 'truck', 'car')) %>% 
+  hc_add_theme(hc_theme_merge(hc_theme_flatdark(), 
+                              hc_theme_null(chart = list(backgroundColor = '#34495e'))))
+
+# 地图 hcmap -----------------------------------------------------------
+# https://code.highcharts.com/mapdata/
+data("USArrests", package = 'datasets')
+usarrests <- mutate(USArrests, 'woe-name' = rownames(USArrests))
+hcmap(map = 'countries/us/us-all', 
+      data = usarrests, 
+      joinBy = 'woe-name', 
+      value = 'UrbanPop', 
+      name = 'Urban Population')
+hcmap(map = 'countries/us/us-all',
+      data = usarrests,
+      joinBy = 'woe-name',
+      value = 'UrbanPop',
+      name = 'Urban Population',
+      download_map_data = TRUE)
+
+# 饼图 -----------------------------------------------------------------
+## hcpie() 快捷绘图 ----------------------------------
+hcpie()
+
+highchart() %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+  hc_title(text = 'This is title') %>% 
+  hc_add_series_labels_values(favorite_bars$bar, 
+                              favorite_bars$percent, 
+                              type = 'pie',
+                              colorByPoints = TRUE,
+                              dataLabels = list(enabled = FALSE)
+  ) %>% 
+  hc_xAxis(categories = favorite_bars$bar) %>% 
+  hc_legend(align = 'left') %>% 
+  hc_tooltip(pointFormat = "数量占比：{point.y}%")
+
+# Sparklines -----------------------------------------------------------
+x <- cumsum(rnorm(10))
+hcspark(x) # 折线图，默认
+hcspark(x, 'column') # 柱形图
+hcspark(c(1, 4, 5, 2, 9), 'pie') # 饼图
+hcspark(x, type = 'area') # 面积图
+
+# 树图treemap ----------------------------------------------------------
+## hctreemap() 
+data("GNI2014")
+tm <- treemap(GNI2014, 
+              index = c('continent', 'iso3'),
+              vSize = 'population',
+              vColor = 'GNI',
+              type = 'comp',
+              palette = rev(viridis(6)),
+              draw = FALSE)
+hctreemap(tm,
+          allowDrillToNode = TRUE,
+          layoutAlgorithm = 'squarified') %>% 
+  hc_title(text = 'Gross National Income World Data') %>% 
+  hc_tooltip(pointFormat = "<b>{point.name}</b>:<br>
+                            Pop:{point.value:,.0f}<br>
+                            GNI:{point.valuecolor:,.0f}")
+## hchart()  
+mpgman <- mpg %>%  ## 数据处理，得到的结果是：每个厂家的车辆数n/车型数model
+  group_by(manufacturer) %>% 
+  summarise(n = n(),
+            unique = length(unique(model))) %>% 
+  arrange(-n, -unique)
+hchart(mpgman, 'treemap', hcaes(x = manufacturer, value = n, color = unique))
+
+# hcts() 时间序列或折线图 -----------------------------------------------
+hcts(c(1, 5, 2, 10, 5, 20))
+
+
+# 折线图 ----------------------------------------------------------------
 highchart() %>% 
   hc_chart(type = "line") %>% 
   hc_title(text = "Monthly Average Temperature") %>% 
@@ -117,7 +210,14 @@ highchart() %>%
     )
   )
 
-# 散点图 + 气泡图 -----------------------------------------------------
+highchart() %>%
+  hc_xAxis(categories = citytemp$month) %>%
+  hc_add_series(name = "Tokyo", data = citytemp$tokyo) %>%
+  hc_add_series(name = "London", data = citytemp$london) %>%
+  hc_legend(align = "left", verticalAlign = "top",
+            layout = "vertical", x = 0, y = 100)
+
+# 散点图 + 气泡图 --------------------------------------------------------
 ## hchart()
 ### 散点图
 hchart(mtcars, 'scatter', hcaes(x = wt, y = mpg))
@@ -131,9 +231,7 @@ highchart() %>%
 highchart() %>% 
   hc_add_series_scatter(mtcars$wt, mtcars$mpg, mtcars$drat, mtcars$hp)
 
-
-
-# 面积图 ---------------------------------------------------------
+# 面积图 ------------------------------------------------------------------
 highchart() %>% 
   hc_chart(type = "area") %>% 
   hc_title(text = "Historic and Estimated Worldwide Population Distribution by Region") %>% 
@@ -160,6 +258,16 @@ highchart() %>%
   hc_add_series(name = "America", data = c(18, 31, 54, 156, 339, 818, 1201)) %>% 
   hc_add_series(name = "Oceania", data = c(2, 2, 2, 6, 13, 30, 46)) %>% 
   hc_add_theme(hc_theme_monokai())
+
+# hc_add_series() ------------------------------------------------------------
+highchart() %>% 
+  hc_add_series(data = abs(rnorm(5)), 
+                type = 'column',
+                color = 'orange') %>% 
+  hc_add_series(data = purrr::map(0:4, function(x)list(x, x)), 
+                type = 'scatter', 
+                color = 'blue')
+
 
 # highchart with forecast---------------------------------------------
 
@@ -218,40 +326,9 @@ highchart() %>%
 
 
 
-# 饼图 ---------------------------------------------------------------
-highchart() %>% 
-  hc_add_theme(hc_theme_darkunica()) %>% 
-  hc_title(text = 'This is title') %>% 
-  hc_add_series_labels_values(favorite_bars$bar, 
-                              favorite_bars$percent, 
-                              type = 'pie',
-                              colorByPoints = TRUE,
-                              dataLabels = list(enabled = FALSE)
-  ) %>% 
-  hc_xAxis(categories = favorite_bars$bar) %>% 
-  hc_legend(align = 'left') %>% 
-  hc_tooltip(pointFormat = "数量占比：{point.y}%")
 
-highchart() %>% 
-  hc_add_theme(hc_theme_flat()) %>% 
-  hc_add_series_labels_values(fy_cat1$cat1, 
-                              fy_cat1$num, 
-                              type = 'pie', 
-                              dataLabels = list(enabled = FALSE)) %>% 
-  hc_xAxis(categories = fy_cat1$cat1) %>% 
-  hc_legend(align = 'bottom', 
-            verticalAlign = 'top', 
-            layout = 'vertical', 
-            x = 0, 
-            y = 100) %>% 
-  hc_tooltip(pointFormat = '商品数量：{point.y}')
   
-highchart() %>%
-  hc_xAxis(categories = citytemp$month) %>%
-  hc_add_series(name = "Tokyo", data = citytemp$tokyo) %>%
-  hc_add_series(name = "London", data = citytemp$london) %>%
-  hc_legend(align = "left", verticalAlign = "top",
-            layout = "vertical", x = 0, y = 100)
+
 
 
 # 雷达图 -------------------------------------------------------------
@@ -293,16 +370,7 @@ data("economics_long")
 eco <- filter(economics_long, variable %in% c('uempmed', 'unemploy'))
 hchart(eco, type = 'line', hcaes(x = date, y = value01, group = variable))
 
-# 树图treemap -----------------------------------------------
-data(mpg)
-## 数据处理，得到的结果是：每个厂家的车辆数n/车型数model
-mpgman <- mpg %>% 
-  group_by(manufacturer) %>% 
-  summarise(n = n(),
-            unique = length(unique(model))) %>% 
-  arrange(-n, -unique)
-head(mpgman)
-hchart(mpgman, 'treemap', hcaes(x = manufacturer, value = n, color = unique))
+
 
 # 条形图 ----------------------------------------------------
 mpgman2 <- count(mpg, manufacturer, year)
@@ -342,7 +410,10 @@ id = "usdjpy")
 
 highchart(type = 'stock') %>% 
   hc_add_theme(hc_theme_monokai()) %>% 
-  hc_yAxis_multiples(create_yaxis(naxis = 3, sep = 0.05, lineWidth = 1, title = list(text = NULL))) %>% 
+  hc_yAxis_multiples(create_yaxis(naxis = 3, 
+                                  sep = 0.05, 
+                                  lineWidth = 1, 
+                                  title = list(text = NULL))) %>% 
   hc_add_series_xts(day2[,1], name = 'amount') %>% 
   hc_add_series_xts(day2[,3], name = 'cust_num', yAxis = 1) %>% 
   hc_add_series_xts(day2[,4], name = 'mas_num', yAxis = 2)
@@ -413,7 +484,8 @@ highchart(type = 'stock') %>%
     list(top = "30%", height = "70%",showFirstLabel = T,   
          showLastLabel = F, offset = 0,  
          title = list(text = "y轴标题（下面）"),  
-         labels = list(format = "{value}"))         #设置下半部分y轴坐标属性，顶端从30%的高度开始，整体高度70%，不显示第一个标签和最后一个标签  
+         labels = list(format = "{value}"))         
+    #设置下半部分y轴坐标属性，顶端从30%的高度开始，整体高度70%，不显示第一个标签和最后一个标签  
   ) %>% 
   hc_add_series(day_amount_fy[,1], name = 'amount') %>% 
   hc_add_series(day_amount_fy[,2], name = 'cust_num', yAxis = 1)
