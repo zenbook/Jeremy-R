@@ -269,18 +269,30 @@ highchart() %>%
                 color = 'blue')
 
 
-# highchart with forecast---------------------------------------------
 
-dataset <- forecast(auto.arima(AirPassengers), level = 95)
-hchart(dataset)
-
-# highstock-----------------------------------------------------------
-
+# highstock() -----------------------------------------------------------------
 x <- getSymbols('GOOG', auto.assign = FALSE)
 y <- getSymbols('AMZN', auto.assign = FALSE)
 highchart(type = 'stock') %>% 
   hc_add_series(x) %>% 
   hc_add_series(y, type = 'ohlc')
+# hc_add_series_flags
+usdjpy <- getSymbols("USD/JPY", src="oanda", auto.assign = FALSE)
+dates <- as.Date(c("2016-05-08", "2016-09-12"), format = "%Y-%m-%d")
+highchart(type = "stock") %>%
+  hc_add_series_xts(usdjpy, id = "usdjpy") %>%
+  hc_add_series_flags(dates,
+                      title = c("E1", "E2"),
+                      text = c("This is event 1", "This is the event 2"),
+                      id = "usdjpy")
+
+
+
+# highchart with forecast---------------------------------------------
+
+dataset <- forecast(auto.arima(AirPassengers), level = 95)
+hchart(dataset)
+
 
 # highmaps------------------------------------------------------------
 # 有点问题
@@ -394,45 +406,9 @@ saveWidget(x, 'hchart.html')
 
 
 
-usdjpy <- getSymbols("USD/JPY", src="oanda", auto.assign = FALSE)
-dates <- as.Date(c("2016-05-08", "2016-09-12"), format = "%Y-%m-%d")
-highchart(type = "stock") %>%
-hc_add_series_xts(usdjpy, id = "usdjpy") %>%
-hc_add_series_flags(dates,
-title = c("E1", "E2"),
-text = c("This is event 1", "This is the event 2"),
-id = "usdjpy")
 
 
 
-
-
-
-highchart(type = 'stock') %>% 
-  hc_add_theme(hc_theme_monokai()) %>% 
-  hc_yAxis_multiples(create_yaxis(naxis = 3, 
-                                  sep = 0.05, 
-                                  lineWidth = 1, 
-                                  title = list(text = NULL))) %>% 
-  hc_add_series_xts(day2[,1], name = 'amount') %>% 
-  hc_add_series_xts(day2[,3], name = 'cust_num', yAxis = 1) %>% 
-  hc_add_series_xts(day2[,4], name = 'mas_num', yAxis = 2)
-  
-highchart(type = 'stock') %>% 
-  hc_add_theme(hc_theme_darkunica()) %>% 
-  hc_yAxis_multiples(
-    list(top = '0%', height = '33%', title = list(text = '成交金额'), position = 'left'),
-    list(top = '33%', height = '33%', title = list(text = '客户数')),
-    list(top = '66%', height = '34%', title = list(text = '成交笔数'))
-  ) %>% 
-  hc_add_series(day_amount_fy[, 1], name = 'fy_amount', color = '#2B908F') %>% 
-  hc_add_series(day_amount_fy[, 2], name = 'fy_cust_num', color = '#2B908F', yAxis = 1) %>% 
-  hc_add_series(day_amount_fy[, 3], name = 'fy_mas_num', color = '#2B908F', yAxis = 2) %>% 
-  hc_add_series(day_amount_tl[, 1], name = 'tl_amount', color = '#90EE7E', yAxis = 0) %>% 
-  hc_add_series(day_amount_tl[, 2], name = 'tl_cust_num', color = '#90EE7E', yAxis = 1) %>% 
-  hc_add_series(day_amount_tl[, 3], name = 'tl_mas_num', color = '#90EE7E', yAxis = 2)
-
-hcts(day_amount_fy[,1])
 
 
 library(PerformanceAnalytics)
@@ -549,22 +525,45 @@ hchart(bonus[bonus$QUOTA_ID != 'ORDER1',], 'column',
 
 
 # 组合图 -----------------------------------------------------------
-highchart() %>%
-  hc_title(text = "This is a bar graph describing my favorite pies
-           including a pie chart describing my favorite bars") %>%
-  hc_subtitle(text = "In percentage of tastiness and awesomeness") %>%
-  hc_add_series_labels_values(favorite_pies$pie, favorite_pies$percent, name = "Pie",
-                              colorByPoint = TRUE, type = "column") %>%
-  hc_add_series_labels_values(favorite_bars$bar, favorite_bars$percent,
-                              colors = substr(terrain.colors(5), 0 , 7), type = "pie",
-                              name = "Bar", colorByPoint = TRUE, center = c('35%', '10%'),
-                              size = 100, dataLabels = list(enabled = FALSE)) %>%
-  hc_yAxis(title = list(text = "percentage of tastiness"),
-           labels = list(format = "{value}%"), max = 100) %>%
-  hc_xAxis(categories = favorite_pies$pie) %>%
-  hc_legend(enabled = FALSE) %>%
-  hc_tooltip(pointFormat = "{point.y}%")
+# hc_add_series_labels_values()
+highchart() %>% 
+  hc_title(text = 'THIS IS TITLE') %>% 
+  hc_subtitle(text = 'THIS IS SUBTITLE') %>% 
+  hc_add_series_labels_values(favorite_pies$pie, 
+                              favorite_pies$percent, 
+                              name = 'pie', 
+                              colorByPoint = TRUE, 
+                              type = 'column') %>% 
+  hc_add_series_labels_values(favorite_bars$bar, 
+                              favorite_bars$percent,
+                              type = 'pie',
+                              name = 'bar',
+                              colors = substr(terrain.colors(5), 0, 7),
+                              colorByPoint = TRUE,
+                              center = c('35%', '10%'),
+                              size = 100, 
+                              dataLabels = list(enabled = FALSE)) %>% 
+  hc_xAxis(categories = favorite_pies$pie) %>% 
+  hc_yAxis(text = list('percent'),
+           labels = list(format = '{value}%'),
+           max = 100) %>% 
+  hc_legend(enabled = FALSE) %>% 
+  hc_tooltip(pointFormat = '{point.y}%') %>% 
+  hc_add_theme(hc_theme_flat())
 
 
+# hc_add_series_df() 已过时，基本不用 -------------------------------------
+# 使用dataframe绘制图形
+n <- 50
+df <- data_frame(
+  x = rnorm(n),
+  y = x * 2 + rnorm(n),
+  w = x^2
+)
+hc_add_series_df(highchart(), 
+                 data = df, 
+                 type = 'point',
+                 x = x, 
+                 y = y)
 
 
