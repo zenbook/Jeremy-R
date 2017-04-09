@@ -10,7 +10,6 @@ library(quantmod)
 library(treemap)
 library(viridis)
 
-
 # load datasets ------------------------------------------------------
 
 # use hchart() function-----------------------------------------------
