@@ -13,7 +13,8 @@ dygraph(deaths)
 
 # 用管道函数为dygraph图形添加其他元素，或进行一些自定义
 # 添加区域选择控件
-dygraph(deaths) %>% dyRangeSelector()
+dygraph(deaths) %>% 
+  dyRangeSelector()
 # 其他一些设置
 dygraph(deaths) %>% 
   dySeries('mdeaths', label = 'Male') %>% 
@@ -32,7 +33,7 @@ dygraph(predicted, main = 'This is title') %>%
 # shiny dygraph
 # dygraphOutput();renderdygraph
 
-# dygraph的一些设置 ---------------------------------------------------
+# dygraph的一些设置 series options -----------------------------------
 deaths <- cbind(ldeaths, mdeaths, fdeaths)
 
 ## 线条颜色
@@ -70,7 +71,7 @@ dygraph(ldeaths,
   dySeries("V1", strokePattern = 'dashed', strokeWidth = 2) 
 ## 可设置的线条样式有："dotted", "dashed", "dotdash"
 
-## 线条高亮 dyHighlight
+## 线条高亮 dyHighlight -----------------------------------------------
 dygraph(deaths,
         main = 'This is title') %>% 
   dyHighlight(highlightCircleSize = 5, # 数据点大小
@@ -82,7 +83,7 @@ dygraph(deaths,
         main = "This is title") %>% 
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 3)) # 单独设置高亮样式
 
-## 坐标轴设置
+## 坐标轴设置 ---------------------------------------------------------
 dygraph(nhtemp, 
         main = 'This is title') %>% 
   dyAxis('y', 
@@ -120,26 +121,81 @@ dygraph(weather,
   dyAxis('y2', label = 'Rainfall', independentTicks = TRUE) %>% 
   dySeries('rainfall', axis = 'y2')
   
+## labels and legends 标签和图例 ------------------------------------
+## 标签labels，标题/x轴标题/y轴标题
+dygraph(deaths,
+        main = 'This is title', 
+        xlab = 'xlab title', 
+        ylab = 'ylab title')
+dygraph(deaths, 
+        main = 'This is title') %>% 
+  dyAxis('x', label = 'xlab title') %>% 
+  dyAxis('y', label = 'ylab title')
 
+## 图例legend
+## 当有两个及以上数据序列时，图例时默认展示的；
+## 默认：只有当鼠标移到某个数据点时，图例上才会先是数据点的数据
+dygraph(ldeaths, 
+        main = 'This is title') %>% 
+  dySeries('V1', label = 'ldeaths') %>% 
+  dyLegend(show = 'always',  # 只有一个数据系列，也显示图例
+           hideOnMouseOut = FALSE)  # 即使鼠标移出数据点，图例上也显示数据点
+## show = c("auto", "always", "onmouseover", "follow", "never")
+## 图例的位置设置成跟随鼠标移动
+dygraph(ldeaths, 
+        main = 'This is title') %>% 
+  dySeries('V1', label = 'ldeaths') %>% 
+  dyLegend(show = 'follow')
+## 图例的默认宽度是250px，为了避免图例换行，修改图例的宽度
+dygraph(deaths, 
+        main = 'This is title') %>%
+  dyLegend(width = 300)
 
+## time zones --------------------------------------------------------
+## dygraphs默认使用客户端的时区，可以设置时区
+datetimes <- seq.POSIXt(from = as.POSIXct('2017-01-01', tz = 'GMT'),
+                        to = as.POSIXct('2017-01-02', tz = 'GMT'),
+                        by = '3 hours')
+values <- rnorm(length(datetimes))
+series <- xts(values, order.by = datetimes, tz = 'GMT')
+dygraph(series)  # 客户端所在时区
+dygraph(series) %>% 
+  dyOptions(labelsUTC = TRUE) # 使用协调世界时
+dygraph(series) %>% 
+  dyOptions(useDataTimezone = TRUE) # 使用数据集自带的时区
 
+## dyRangeSelector() -------------------------------------------------
+## dyRangeSelector(dygraph, dateWindow = NULL, height = 40,
+## fillColor = " #A7B1C4", strokeColor = "#808FAB", keepMouseZoom = TRUE,
+## retainDateWindow = FALSE)
+## 时间筛选区域
+dygraph(ldeaths) %>% 
+  dyRangeSelector()
+## 设置dyRangeSelector的初始范围
+dygraph(nhtemp) %>% 
+  dyRangeSelector(dateWindow = c('1920-01-01', '1960-01-01'))
 
+## Candlestick蜡烛图 -------------------------------------------------
+data("sample_matrix")
+m <- tail(sample_matrix, 32)
+dygraph(m) %>% 
+  dyCandlestick()
+## 蜡烛图主要用于股票交易分析中，取数据集的前四列，分别是开盘价/最高价/最低价/收盘价
+## 如果数据集多于4列，那么剩余的列会绘制成折线
+m <- cbind(m, apply(m[, 1:3], 1, mean))
+colnames(m)[5] <- 'Mean'
+dygraph(m) %>% 
+  dyCandlestick() %>% 
+  dyLegend(width = 300) # 由于图例较多，增加一下图例宽度，使图例不换行
+## 比较以下两个代码的差别
+dygraph(sample_matrix) %>% 
+  dyCandlestick()
+dygraph(sample_matrix) %>% 
+  dyCandlestick(compress = TRUE)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## 多图同步，同时缩放 ------------------------------------------------
+dygraph(ldeaths, main = 'All', group = 'deaths')
+dygraph(fdeaths, main = 'Female', group = 'deaths')
+dygraph(mdeaths, main = 'Male', group = 'deaths')
 
 
