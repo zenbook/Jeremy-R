@@ -98,14 +98,41 @@ edges <- data.frame(from = c(2,4,3,3),
                     font.size = c(10, 20))
 visNetwork(nodes, edges, width = '100%')
 
-
-
-
-
-
-
-
-
+# edges --------------------------------------------------------------
+visEdges(edges,
+         title = ,
+         value = ,
+         label = ,
+         length = ,
+         width = ,
+         dashes = ,
+         hidden = ,
+         hoverWidth = ,
+         id = ,
+         physics = ,
+         selectionWidth = ,
+         selfReferenceSize = ,
+         labelHighlightBold = ,
+         color = ,
+         font = ,
+         arrows = ,
+         arrowStrikethrough = ,
+         smooth = ,
+         shadow = ,
+         scaling = )
+nodes <- data.frame(id = 1:10, 
+                     group = c('A', 'B'))
+edges <- data.frame(from = sample(1:10, 8), 
+                    to = sample(1:10, 8),
+                    label = paste("Edge", 1:8),
+                    length = c(100, 500),
+                    width = c(4, 1),
+                    arrows = c('to', 'from', 'middle', 'middle;to'),
+                    dashes = c(TRUE, FALSE),
+                    title = paste("Edge", 1:8),
+                    smooth = c(FALSE, TRUE),
+                    shadow = c(FALSE, TRUE, FALSE, TRUE))
+visNetwork(nodes, edges, height = '500px', width = '100%')
 
 
 
