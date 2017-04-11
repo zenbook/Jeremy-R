@@ -45,7 +45,7 @@ t <- tuneRF(train[, -22], train[, 22],
 # 可以看出，mtry = 8时OOB error最小
 
 # 修改模型参数，再次生成模型
-rf2 <- randomForest(NSP ~ ., data = train, 
+rf2 <- randomForest(NSP ~ ., data = train,
                     ntree = 300,
                     mtry = 8,
                     importance = TRUE,
@@ -68,13 +68,13 @@ hist(treesize(rf2),
 importance(rf)
 varImpPlot(rf)
 importance(rf2)
-varImpPlot(rf2) 
+varImpPlot(rf2)
 # 左图表示：how worse the model performs without each variable
 # 右图表示：how pure the nodes are at the end of the tree without each variable
 # 排在最上方的变量最重要，最下方的最不重要
 
 # 选取最重要的10个变量
-varImpPlot(rf2, 
+varImpPlot(rf2,
            sort = TRUE,
            n.var = 10,
            main = 'TOP 10 variables importance')
