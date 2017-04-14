@@ -1,6 +1,7 @@
 # this note is based on the cource from courera
 # https://www.coursera.org/learn/data-cleaning/home/welcome
 library('rstudioapi')
+library('dplyr')
 # 将当前文件所在的目录设置为工作目录
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
@@ -136,6 +137,8 @@ teams
 
 # good doc about extract data from xml file
 # https://www.stat.berkeley.edu/~statcur/Workshop2/Presentations/XML.pdf
+# Short Introduction to XML: http://www.omegahat.net/RSXML/shortIntro.pdf
+# Long Introduction to XML: http://www.omegahat.net/RSXML/Tour.pdf
 
 # read data from JSON -------------------------------------
 library('jsonlite')
@@ -176,6 +179,39 @@ dt[, c(2, 3)]
 # adding new columns
 dt[, w:= a^2 * 10]
 dt
+
+# week01 quiz ---------------------------------------
+# 01
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv",
+              destfile = './data01.csv',
+              method = 'curl')
+data01 <- read.csv('data01.csv',
+                   header = TRUE)
+data01 <- tbl_df(data01)
+data01 %>% 
+  filter(VAL == 24) %>% 
+  summarize(n())
+# the right answer is 53
+# 02
+
+# 03
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FDATA.gov_NGAP.xlsx",
+              destfile = 'gov_ngap.xlsx',
+              method = 'curl')
+dat <- read.xlsx("gov_ngap.xlsx",
+                      sheetIndex = 1,
+                      header = TRUE,
+                      colIndex = 7:15,
+                      rowIndex = 18:23)
+sum(dat$Zip * dat$Ext, na.rm = TRUE)
+
+# 04
+fileurl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Frestaurants.xml"
+doc <- xmlTreeParse(fileurl, useInternal = TRUE)
+
+# 05
+
+
 # week 02  -------------------------------------------------------------------------
 
 
