@@ -80,12 +80,15 @@ hchart(diamonds$price, color = '#B71C1C', name = 'price') %>%
   hc_title(text = 'numeric data')
 
 # 柱形图 type = 'column' ----------------------------------------------
+skill <- data.frame(skill = c('R', 'Python', 'Hadoop', 'Tableau', 'SPSS', 'SAS', 'Matlab'))
+
 hchart(favorite_bars, 'column', hcaes(x = bar, y = percent)) %>% 
   hc_add_theme(hc_theme_darkunica()) %>% 
   hc_legend(enabled = FALSE) %>% 
   hc_xAxis(title = list(text = NULL)) %>% 
   hc_title(text = 'My favorite bars') %>% 
-  hc_yAxis(title = list(text = NULL))
+  hc_yAxis(title = list(text = NULL)) %>% 
+  hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))
 
 highchart() %>% 
   hc_add_series(favorite_bars$percent, type = 'column', name = 'percent') %>% 
