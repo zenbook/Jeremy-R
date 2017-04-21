@@ -1,0 +1,27 @@
+library(jiebaR)
+wk = worker()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
