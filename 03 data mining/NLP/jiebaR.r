@@ -5,7 +5,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # 加载包
 library(jiebaR)
 
-# 简单分词
+# 简单分词  ----------------------------------------------------------------------------
 wk = worker()
 wk['大家好，我是来自杭州的Jeremy，一个数据分析爱好者']
 wk['上海自来水来自海上']
@@ -18,14 +18,14 @@ wk['南京市市长江大桥同志视察南京市长江大桥']
 wk<='大家好，我是来自杭州的Jeremy，一个数据分析爱好者'
 segment('上海自来水来自海上', wk)
 
-# 对文本文件分词
+# 对文本文件分词  ----------------------------------------------------------------------
 wk['./B2B.txt']
 # 在当前工作目录下生成一个分词后的文本文件，词与词之前以空格间隔
 
 # 分词引擎
 # mix, mp, hmm, full, query, tag, simhash, and keywords.
 
-# 分词函数结构
+# 分词函数结构 -------------------------------------------------------------------------
 worker(type = 'mix',  # 分词引擎的类型,默认使用mix混合模型
        dict = DICTPATH,  # 系统词典的路径，默认DICTPATH
        hmm = HMMPATH,  # HMM模型的路径
@@ -52,7 +52,7 @@ library(pryr)
 otype(wk)
 class(wk)
 
-# 配置词典
+# 配置词典  -----------------------------------------------------------------------------
 # 词典对分词结果的好坏影响重大，虽然jiebaR有默认的标准词典，但是不同行业使用不同词典，效果更好
 # 查看现有的默认词典
 show_dictpath()  # 词典路径
@@ -86,8 +86,17 @@ scan(file = 'C:/Users/dakongyi/Documents/R/win-library/3.3/jiebaRD/dict/user.dic
      sep = '\n', 
      encoding = 'utf-8', 
      fileEncoding = 'utf-8')
+# 可以发现用户词典只有5个词，而且没有词频，用户词典中的词频默认为系统词典中的最大词频
 
+# 可以自定义一个用户词典，如user.uft8, 放入dict目录下
+# 定义以下词：
+# 市长
+# 江大桥
+wk = worker(user = 'user.utf8')  # 报错，不知道什么原因
+wk['南京市长江大桥同志视察南京市长江大桥']
 
+# 使用搜狗词典
+# D:\application\SogouInput\7.7.0.6625\scd\14108.scel
 
 
 
