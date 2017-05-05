@@ -94,10 +94,12 @@ scan(file = 'C:/Users/dakongyi/Documents/R/win-library/3.3/jiebaRD/dict/user.dic
 # 江大桥
 wk = worker(user = 'C:/Users/dakongyi/Documents/R/win-library/3.3/jiebaRD/dict/user.utf8')  
 wk['南京市长江大桥同志视察南京市长江大桥']
+# 以上也有问题，就是后面的"南京市长江大桥"也被分成了南京 市长 江大桥
 
 # 使用搜狗词典  ----------------------------------------------------------------------------
 # D:\application\SogouInput\7.7.0.6625\scd\14108.scel
-# 需安装cidian项目，但目前无法安装，暂不尝试
+# 需安装cidian项目
+
 
 # 停止词过滤  ------------------------------------------------------------------------------
 # 停止词的概念：分词结果中不需要的词，比如的/得/地/你/我/他……
