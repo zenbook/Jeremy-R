@@ -92,19 +92,52 @@ scan(file = 'C:/Users/dakongyi/Documents/R/win-library/3.3/jiebaRD/dict/user.dic
 # 定义以下词：
 # 市长
 # 江大桥
-wk = worker(user = 'user.utf8')  # 报错，不知道什么原因
+wk = worker(user = 'C:/Users/dakongyi/Documents/R/win-library/3.3/jiebaRD/dict/user.utf8')  
 wk['南京市长江大桥同志视察南京市长江大桥']
 
-# 使用搜狗词典
+# 使用搜狗词典  ----------------------------------------------------------------------------
 # D:\application\SogouInput\7.7.0.6625\scd\14108.scel
+# 需安装cidian项目，但目前无法安装，暂不尝试
 
+# 停止词过滤  ------------------------------------------------------------------------------
+# 停止词的概念：分词结果中不需要的词，比如的/得/地/你/我/他……
+# jiebaR中过滤停止词有两个方法：
+# 1.配置停止词文件，如默认的停止词文件stop_words.utf8
+wk = worker(
+  stop_word = 'C:/Users/dakongyi/Documents/R/win-library/3.3/jiebaRD/dict/stop_word1.utf8')
+segment <- wk['之乎者也，我是Jeremy, 他是jimmy，你是谁？']
+segment
+# 2.使用filter_segment()函数
+wk = worker()
+segment <- wk['之乎者也，我是Jeremy, 他是jimmy，你是谁？']
+filter <- c('之', '乎', '者', '也', '你', '我', '他')
+filter_segment(segment, filter)
+# 系统默认的停止词文件中的停止词还是很多的，比如几乎所有的标点符号都在其中
 
-
-
-
-
-
-
-
-
+# 关键词提取  ------------------------------------------------------------------------------
+#    关键词提取是文本处理非常重要的一个环节，一个经典算法是TF-IDF算法。
+# 其中，TF（Term Frequency）代表词频，IDF（Inverse Document Frequency）表示逆文档频率。
+# 如果某个词在文章中多次出现，而且不是停止词，那么它很可能就反应了这段文章的特性，这就是我们
+# 要找的关键词
+# TF-IDF = TF(词频) * 逆文档频率(IDF)
+# 对文档中每个词计算TF-IDF的值，把结果从大到小排序，就得到了这篇文档的关键性排序列表。
+# 在安装目录中的idf.utf8文件，为IDF的语料库
+# 查看idf.utf8文件的前50行
+scan(file = 'C:/Users/dakongyi/Documents/R/win-library/3.3/jiebaRD/dict/idf.utf8',
+     what = character(), 
+     nlines = 50, 
+     sep = '\n', 
+     encoding = 'utf-8', 
+     fileEncoding = 'utf-8')
+# idf.utf8文件每一行有2列，第一列是词项，第二列为权重
+wk = worker()
+text = 'R的极客理想系列文章，涵盖了R的思想，使用，工具，创新等的一系列要点，以我个人的学习和体验去诠释R的强大。'
+segment<-wk[text]
+segment
+freq(segment)
+# 取tf-idf前5的关键词
+keys = worker('keywords', topn = 5)
+vector_keywords(segment, keys)
+# ？问题：
+# 如果idf语料库中没有词，那么怎么计算tf_idf值呢？
 
