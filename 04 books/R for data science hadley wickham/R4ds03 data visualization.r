@@ -192,4 +192,36 @@ demo <- tribble(
   "Premium",    13791,
   "Ideal",      21551
 )
-  
+
+ggplot(data = demo) + 
+  geom_bar(mapping = aes(x = cut)) # 但结果并不是我们想要的
+ggplot(data = demo) + 
+  geom_bar(mapping = aes(x = cut, y = freq), 
+           stat = 'identity')
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+
+ggplot(data = diamonds) + 
+  stat_summary(
+    mapping = aes(x = cut, y = depth),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  )
+
+ggplot(data = demo) + 
+  geom_col(mapping = aes(x = cut, y = freq))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop..)) # 没有group，有问题
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = color, y = ..prop..))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = color, y = ..prop.., group = 100))
+
