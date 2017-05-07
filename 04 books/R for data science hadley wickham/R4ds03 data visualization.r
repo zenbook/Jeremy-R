@@ -274,21 +274,54 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 ggplot(data = mpg, mapping = aes(x = drv, y = hwy)) + 
   geom_boxplot()
 
+## coordinate system  -----------------------
+
+## coord_flip(), 转换x/y坐标
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot() + 
+  coord_flip()
+
+## coord_quickmap()
+nz <- map_data('nz')
+
+ggplot(data = nz, 
+       mapping = aes(x = long, y = lat, group = group)) + 
+  geom_polygon(fill = 'white', color = 'black')
+
+ggplot(data = nz, 
+       mapping = aes(x = long, y = lat, group = group)) + 
+  geom_polygon(fill = 'white', color = 'black') + 
+  coord_quickmap()
+
+ggplot(data = nz, 
+       mapping = aes(x = long, y = lat, group = group)) + 
+  geom_polygon(fill = 'white', color = 'black') + 
+  coord_map()
 
 
+## coord_polar(), 极坐标系统
 
+p <- ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = cut), 
+           show.legend = FALSE, 
+           width = 1) + 
+  theme(aspect.ratio = 1) + 
+  labs(x = NULL, y = NULL)
+p
+p + coord_flip()
+p + coord_polar()
 
+p <- ggplot(data = diamonds, 
+            mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar()
+  
+p + coord_polar()
 
-
-
-
-
-
-
-
-
-
-
-
-
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point() + 
+  geom_abline() + 
+  coord_fixed()
 
