@@ -7,7 +7,7 @@ library(tidyverse)
 
 # ggplot  ------------------------------------------------------------------------------
 
-## First try  ---------------------------------
+## 3.2 First try  ---------------------------------
 
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy))
@@ -18,7 +18,7 @@ ggplot(data = mpg) +
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = drv, y = hwy))
 
-## Aesthetic mappings  ------------------------
+## 3.3 Aesthetic mappings  ------------------------
 ## size, color, shape，alpha, fill, group, stroke
 
 ggplot(data = mpg) + 
@@ -63,7 +63,7 @@ ggplot(data = mpg) +
                            y = hwy, 
                            color = hwy > mean(mpg$hwy)))
 
-## facets
+## 3.5 facets  ------------------------------
 ## facet_wrap
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy)) + 
@@ -92,7 +92,7 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy)) +
   facet_grid(. ~ cyl)
 
-## geometric object
+## 3.6 geometric object  -------------------------
 ## different plot types
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy))
@@ -112,7 +112,8 @@ ggplot(data = mpg,
        mapping = aes(x = displ, y = hwy)) +
   geom_point() +　
   geom_smooth()
-## mapping:
+
+## mapping
 ## 在ggplot()中的mapping是全局的，里面的设置影响所有的图层；
 ## 在geom_()中的mapping是局部的，里面的设置只影响当前的图层；
 ggplot(data = mpg, 
@@ -176,7 +177,7 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
   geom_point(mapping = aes(color = drv))
 
-## statistic transformation
+## 3.7 statistic transformation  -----------------
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut))
 ## geom_bar()用的统计变换是count
@@ -224,4 +225,70 @@ ggplot(data = diamonds) +
 
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = color, y = ..prop.., group = 100))
+
+## 3.8 position adjustments ---------------
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, color = cut))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = cut))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+
+## position:stack,identity,fill,dodge,jitter
+
+## stack，堆积，默认
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+
+## identity，适用于散点图
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar(alpha = 0.2, position = 'identity')
+ggplot(data = diamonds, mapping = aes(x = cut, color = clarity)) + 
+  geom_bar(fill = NA, position = 'identity')
+
+## fill，方便对比各项占比
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity, color = I('white')), 
+           position = 'fill')
+
+## dodge，常规柱形图，对比每项的值
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity, color = I('white')),
+           position = 'dodge')
+
+## jitter，适用于散点图，添加扰动，画出每一个点
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(alpha = 0.5, position = 'jitter')
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_jitter()
+
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point() + 
+  geom_jitter()
+
+ggplot(data = mpg, mapping = aes(x = drv, y = hwy)) + 
+  geom_boxplot()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
