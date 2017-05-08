@@ -10,7 +10,8 @@ data(flights)
 # Filter rows with filter()  ---------------------------
 filter(flights, month == 1, day == 1)
 jan1 <- filter(flights, month == 1, day == 1)
-(jan1 <- filter(flights, month == 1, day == 1))  # 这种写法可以既显示数据，又保存到变量中
+## 这种写法可以既显示数据，又保存到变量中:
+(jan1 <- filter(flights, month == 1, day == 1))  
 
 ## >, <, >= , <=, ==, !=, %in%, between
 ## 注意：在判断是否等于时，用"=="而不是"="
@@ -106,6 +107,75 @@ select(flights, one_of(vars))
 select(flights, contains('TIME'))  # not case sensitive
 
 # add new variables with mutate()  --------------------------
+## get a smaller dataframe
+flight_sml <- select(flights, year:day, 
+                     ends_with('delay'), 
+                     distance, air_time)
+## add new variables at the end of the dataframe
+mutate(flight_sml, 
+       gain = arr_delay - dep_delay, 
+       speed = distance / air_time * 60)  # 每小时飞行多少英里
+## 在同一个mutate()函数中，可以引用刚刚创建的新变量
+mutate(flight_sml, 
+       miles_per_minute = distance / air_time, 
+       miles_per_hour = miles_per_minute * 60)
+## only want to keep the new variables using transmute()
+transmute(flight_sml, 
+          gain = arr_delay - dep_delay, 
+          speed_minute = distance / air_time, 
+          spped_hour = speed_minute * 60)
+## arithmetic operators: +, -, *, /, ^
+## modular arithmetic: 
+## %/%:整除，取整数，如:5%/%2 = 2
+5 %/% 2
+## %%:取余，如:5 %% 2 = 1
+5 %% 2
+transmute(flights, dep_time, 
+          dep_hour = dep_time %/% 100, 
+          dep_minur = dep_time %% 100)
+## Logs: log(), log2(), log10()
+## offsets:lead(): next value; lag(): previous value
+x <- 1:10
+lead(x)
+lag(x)
+## Cumulative and rolling aggregates: 
+## cumsum(), cumprod(), cummin(), cummax(), cummean()
+cumsum(x)
+cumprod(x)
+cummin(x)
+cummax(x)
+cummean(x)
+## Logical comparisons, <, <=, >, >=, !=, ==
+## ranking
+y <- c(1, 2, 2, NA, 3, 4)
+min_rank(y)  # 升序，最小值排第一, NA值不参与排名, 相同值排相同名次
+min_rank(desc(y))  # 降序
+row_number(y)  # 升序，最小值排第一, NA值不参与排名, 相同值排不同名次
+row_number(desc(y))
+dense_rank(y)  # 升序，最小值排第一, NA值不参与排名, 相同值排相同名次
+dense_rank(desc(y))
+percent_rank(y)
+percent_rank(desc(y))
+cume_dist(y)
+ntile(y, 2)
+
+## exercise
+transmute(flights, 
+          dep_time, 
+          dep_time_new = (dep_time %/% 100 * 60) + dep_time %% 100, 
+          sched_dep_time, 
+          sched_dep_time_new = sched_dep_time %/% 100 * 60 + sched_dep_time %% 100)
+transmute(flights, 
+          dep_time, 
+          dep_time_new = (dep_time %/% 100 * 60) + dep_time %% 100, 
+          arr_time, 
+          arr_time_new = (arr_time %/% 100 * 60) + arr_time %% 100, 
+          air_time, 
+          air_time2 = arr_time_new - dep_time_new)
+
+select(flights, dep_time, sched_dep_time, dep_delay)
+## dep_delay = dep_time - sched_dep_time
+1:3 + 1:10
 
 
 
