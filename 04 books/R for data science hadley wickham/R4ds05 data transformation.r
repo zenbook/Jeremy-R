@@ -53,16 +53,30 @@ NA ^ 0
 NA * 0
 
 
-#arrange rows with arranges()  ------------------------
+# arrange rows with arranges()  ------------------------
+## one variable
+arrange(flights, dep_delay)
+## multiple variables
+arrange(flights, year, month, day)
+## descending order
+arrange(flights, desc(dep_delay))
+arrange(flights, -dep_delay)
+## missing values are always at the end
+arrange(df, x)
+arrange(df, -x)
 
+## exercise
+## how to arrange missing values at the top?
+## missig value at top and ascending order
+arrange(df, -is.na(x))
+## missig value at top and descending order
+arrange(df, -is.na(x), -x)
 
-
-
-
-
-
-
-
+arrange(flights, -arr_delay)
+arrange(flights, dep_delay)
+arrange(flights, distance / air_time)
+arrange(flights, distance)
+arrange(flights, -distance)
 
 
 
