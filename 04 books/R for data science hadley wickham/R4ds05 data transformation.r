@@ -78,6 +78,50 @@ arrange(flights, distance / air_time)
 arrange(flights, distance)
 arrange(flights, -distance)
 
+# select variables with select()  -----------------------
+## select multiple variables
+select(flights, year, month, day)
+select(flights, year:day)
+## drop multiple variables
+select(flights, -(year:day))
+## tricks
+starts_with('abc')
+ends_with('abc')
+contains('abc')
+matchs('(.)\\1')  # regular expression
+num_range('x', 1:3)  # x1, x2, x3
+vars <- c('A', 'B', 'C')
+one_of(vars)
+## rename variables using rename(), keeping other variables
+rename(flights, tail_num = tailnum)
+## reorder variables using select() and everything()
+select(flights, tailnum, everything())
+
+## exercise
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+select(flights, starts_with('dep'), starts_with('arr'))
+select(flights, year, year)  # select year once, not twice
+vars <- c("year", "month", "day", "dep_delay", "arr_delay")
+select(flights, one_of(vars))
+select(flights, contains('TIME'))  # not case sensitive
+
+# add new variables with mutate()  --------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
