@@ -7,7 +7,7 @@ library(tidyverse)
 library(nycflights13)
 data(flights)
 
-# Filter rows with filter()  ---------------------------
+# Filter rows with filter()  ==================================
 filter(flights, month == 1, day == 1)
 jan1 <- filter(flights, month == 1, day == 1)
 ## 这种写法可以既显示数据，又保存到变量中:
@@ -39,6 +39,7 @@ filter(flights, arr_delay >= 120, dep_delay >= 120)
 ## filter时，只取结果为TRUE的记录，过滤FALSE和NA的记录
 df <- tibble(x = c(1, NA, 3))
 filter(df, x > 1)
+## 如果需要提取NA值的记录，则用is.na()
 filter(df, is.na(x) | x >1) 
 
 ## exercises
@@ -54,7 +55,7 @@ NA ^ 0
 NA * 0
 
 
-# arrange rows with arranges()  ------------------------
+# arrange rows with arranges()  ==================================
 ## one variable
 arrange(flights, dep_delay)
 ## multiple variables
@@ -79,7 +80,7 @@ arrange(flights, distance / air_time)
 arrange(flights, distance)
 arrange(flights, -distance)
 
-# select variables with select()  -----------------------
+# select variables with select()  ==================================
 ## select multiple variables
 select(flights, year, month, day)
 select(flights, year:day)
@@ -106,7 +107,7 @@ vars <- c("year", "month", "day", "dep_delay", "arr_delay")
 select(flights, one_of(vars))
 select(flights, contains('TIME'))  # not case sensitive
 
-# add new variables with mutate()  --------------------------
+# add new variables with mutate()  ==================================
 ## get a smaller dataframe
 flight_sml <- select(flights, year:day, 
                      ends_with('delay'), 
@@ -174,8 +175,119 @@ transmute(flights,
           air_time2 = arr_time_new - dep_time_new)
 
 select(flights, dep_time, sched_dep_time, dep_delay)
+flights %>% 
+  select(tailnum, arr_delay) %>% 
+  arrange(-arr_delay) %>% 
+  mutate(arr_top = min_rank(desc(arr_delay))) %>% 
+  filter(arr_top <=10)
 ## dep_delay = dep_time - sched_dep_time
 1:3 + 1:10
+
+# Grouped summaries data with summarise()  ==================================
+## one variable
+summarise(flights, 
+          delay = mean(dep_delay, na.rm = TRUE))
+## multiple variables          
+summarise(flights, 
+          dep_delay = mean(dep_delay, na.rm = TRUE), 
+          arr_delay = mean(arr_delay, na.rm = TRUE))
+## use summarise with group_by()
+by_month <- group_by(flights, year, month)
+summarise(by_month, delay = mean(dep_delay, na.rm = TRUE))
+
+## pipe
+by_dest <- group_by(flights, dest)
+delay <- summarise(by_dest, 
+                   count = n(), 
+                   distance = mean(distance, na.rm = TRUE), 
+                   delay = mean(arr_delay, na.rm = TRUE))
+delay <- filter(delay, count > 20, dest != 'HNL')
+delay <- arrange(delay, distance, delay)
+View(delay)
+ggplot(data = delay, mapping = aes(x = distance, y = delay)) + 
+  geom_point(aes(size = count), alpha = 1/3) + 
+  geom_smooth(se = FALSE)
+## 从原始数据中看不出任何的规律
+# ggplot(data = flights, mapping = aes(x = distance, y = arr_delay)) + 
+#   geom_point(alpha = 1/5, position = 'jitter')
+flights %>% 
+  group_by(dest) %>% 
+  summarise(count = n(),
+            dist = mean(distance, na.rm = TRUE), 
+            delay = mean(arr_delay, na.rm = TRUE)) %>% 
+  filter(count > 20,
+         dest != 'HNL') %>% 
+  ggplot(mapping = aes(x = dist, y = delay)) + 
+  geom_point(aes(size = count), 
+             alpha = 1/3) + 
+  geom_smooth(se = FALSE)
+  
+## missing values
+flights %>% 
+  group_by(year, month) %>% 
+  summarise(delay = mean(dep_delay))  # 如果不设置na.rm = TRUE,则分组中有NA的，结果也是NA
+## 筛选非缺失值的数据
+## dep_delay和arr_delay为NA的，即为取消的航班
+not_cancelled_flights <- flights %>% 
+  filter(!is.na(dep_delay), 
+         !is.na(arr_delay))
+not_cancelled_flights %>% 
+  group_by(year, month) %>% 
+  summarise(count = n(), 
+            dist = mean(distance), 
+            delay = mean(arr_delay))
+
+## counts
+## 做汇总时，最好带上计数n()或sum(!is.na())
+not_cancelled_flights %>% 
+  group_by(tailnum) %>% 
+  summarise(delay = mean(arr_delay)) %>% 
+  ggplot(mapping = aes(x = delay)) + 
+  geom_freqpoly(binwidth = 10)
+## 从频率直方图上看，有的航班的延误时间达到了5个小时(300分钟)以上
+## 但延迟这么长时间的航班数可能非常少，我们加入count来看一下
+not_cancelled_flights %>% 
+  group_by(tailnum) %>% 
+  summarise(n = n(), 
+            delay = mean(arr_delay)) %>% 
+  ggplot(mapping = aes(x = n, y = delay)) + 
+  geom_point(alpha = 1/5)
+## 果然非常少(接近0)
+## 我们排除飞行次数非常少的航班，再来看看数据分布情况
+not_cancelled_flights %>% 
+  group_by(tailnum) %>% 
+  summarise(n = n(), 
+            delay = mean(arr_delay)) %>% 
+  filter(n > 30) %>% 
+  ggplot(mapping = aes(x = n, y = delay)) + 
+  geom_point(alpha = 1/5)
+## 可以发现多数航班的延迟时间还是在-20-30之间
+## 重复执行同一个代码块的技巧：Ctrl + Shift + P
+## 1.ctrl + enter， 执行第一次， 如上面的代码
+## 2.修改代码块中的部分代码，如:n > 25 改成 n > 30
+## 3.想要执行修改后的代码块，则按快捷键：Ctrl + Shift + P
+
+batting <- as_tibble(Lahman::Batting)
+batting %>% 
+  group_by(playerID) %>% 
+  summarise(ba = sum(H, na.rm = TRUE) / sum(AB, na.rm = TRUE),
+            ab = sum(AB, na.rm = TRUE)) %>% 
+  filter(ab > 100) %>% 
+  ggplot(mapping = aes(x = ab, y = ba)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+
+## useful summary functions
+## measure of location:mean(), median()
+not_cancelled_flights %>% 
+  group_by(year, month) %>% 
+  summarise(delay_mean = mean(arr_delay), 
+            delay_median = median(arr_delay))
+## 在汇总的时候加入筛选，常常有意想不到的功效：
+
+
+
+
 
 
 
