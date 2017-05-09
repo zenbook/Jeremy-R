@@ -277,18 +277,32 @@ batting %>%
   geom_point() + 
   geom_smooth(se = FALSE)
 
-## useful summary functions
-## measure of location:mean(), median()
+## useful summary functions：
+## 1.measure of location:mean(), median()
 not_cancelled_flights %>% 
   group_by(year, month) %>% 
   summarise(delay_mean = mean(arr_delay), 
             delay_median = median(arr_delay))
 ## 在汇总的时候加入筛选，常常有意想不到的功效：
+not_cancelled_flights %>% 
+  group_by(year, month) %>% 
+  summarise(delay_avg1 = mean(arr_delay), 
+            delay_avg2 = mean(arr_delay[arr_delay > 0])) # 筛选确实延迟的航班
 
+## 2.measures of spread:
+## var(): 
+## sd():标准差
+## IQR():四分位距
+## mad():这个有点歧义，有mean absolute deviation和median absolute deviation
+not_cancelled_flights %>% 
+  group_by(year, month) %>% 
+  summarise(delay_sd = sd(arr_delay), 
+            delay_IQR = IQR(arr_delay), 
+            delay_mad = mad(arr_delay))
 
-
-
-
+x <- c(1, 2, 3, 4, 5)
+median(x)
+mad(x)
 
 
 
