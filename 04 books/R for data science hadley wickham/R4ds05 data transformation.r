@@ -304,19 +304,113 @@ x <- c(1, 2, 3, 4, 5)
 median(x)
 mad(x)
 
+## 3.measure of rank:
+## min()
+## quantile(x, 0.25) # quantile(x, 0.25)表示上四分位数，还可设置0.5， 0.75，甚至0-1的任何数
+## max()
+not_cancelled_flights %>% 
+  group_by(year, month, day) %>% 
+  summarise(first_flight = min(dep_time), 
+            last_flight = max(dep_time))
 
+## 4.measute of position:
+## first():数据集当前排序中的第一条数据
+## nth(x, 2):数据集当前排序中的第2条数据
+## last():数据集当前排序中的最后一条数据
+flights %>% 
+  filter(!is.na(dep_time)) %>% 
+  arrange(year, month, day, dep_time) %>% 
+  group_by(year, month, day) %>% 
+  summarise(first_dep = first(dep_time), 
+            last_dep = last(dep_time))
+test <- flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  group_by(year, month, day) %>% 
+  mutate(r = min_rank(desc(dep_time))) %>% 
+  filter(r %in% range(r))
+View(test)
 
+## 5.counts:
+## n():所有的记录(不论是否缺失值)
+## sum(!is.na(x)):非缺失值
+## n_distinct(x):不重复值
+## count()
 
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  group_by(dest) %>% 
+  summarise(carriers = n_distinct(carrier)) %>% 
+  arrange(desc(carriers))
 
+## count is very useful:
+## count one variable
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  count(dest) %>% 
+  arrange(-n)
+## count multiple variables
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  count(year, month, day)
+## use count to sum with wt parameter
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  count(tailnum, wt = distance) %>% 
+  arrange(-n)
 
+## 6.counts and proportions of logical values:
+## sum(x > 10) mean(y == 0)
+## true = 1, false = 0
+## sum() get counts of true,mean() get proportion of true
+## 每天多少趟航班？其中多少趟出发时间早于5点，比例是多少？
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  group_by(year, month, day) %>% 
+  summarise(dep_all = n(), 
+            dep_5_n = sum(dep_time < 500), 
+            dep_5_p = mean(dep_time < 500)) %>% 
+  arrange(-dep_5_p)
 
+## grouping by multiple variables
+### 每天多少次航班起飞
+(per_day <- 
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  group_by(year, month, day) %>% 
+  summarise(flights = n()))
+### 每月多少次航班起飞
+### 根据前面的数据可以直接汇总
+(per_month <- summarise(per_day, flights = sum(flights)))
+### 2013年多少次航班起飞
+(per_year <- summarise(per_month, flights = sum(flights)))
+## 往上汇总rolling up
 
+## ungroup
+daily <- group_by(flights, year, month, day)
+daily %>% 
+  ungroup() %>% 
+  summarise(n = n())
 
+## exercise
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  group_by(flight) %>% 
+  summarise(n = n(), 
+            late10_n = sum(dep_delay == 10),
+            late10_p = mean(dep_delay == 10)) %>% 
+  arrange(-late10_p) %>% 
+  filter(n >= 2, late10_p >= 0.33)
 
-
-
-
-
+  
+  
 
 
 
