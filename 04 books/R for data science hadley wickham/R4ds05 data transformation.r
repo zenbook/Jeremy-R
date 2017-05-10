@@ -55,7 +55,7 @@ NA ^ 0
 NA * 0
 
 
-# arrange rows with arranges()  ==================================
+# Arrange rows with arranges()  ==================================
 ## one variable
 arrange(flights, dep_delay)
 ## multiple variables
@@ -80,7 +80,7 @@ arrange(flights, distance / air_time)
 arrange(flights, distance)
 arrange(flights, -distance)
 
-# select variables with select()  ==================================
+# Select variables with select()  ==================================
 ## select multiple variables
 select(flights, year, month, day)
 select(flights, year:day)
@@ -107,7 +107,7 @@ vars <- c("year", "month", "day", "dep_delay", "arr_delay")
 select(flights, one_of(vars))
 select(flights, contains('TIME'))  # not case sensitive
 
-# add new variables with mutate()  ==================================
+# Add new variables with mutate()  ==================================
 ## get a smaller dataframe
 flight_sml <- select(flights, year:day, 
                      ends_with('delay'), 
@@ -183,7 +183,7 @@ flights %>%
 ## dep_delay = dep_time - sched_dep_time
 1:3 + 1:10
 
-# Grouped summaries data with summarise()  ==================================
+# Grouped summaries data with summarise() and group_by()  =================
 ## one variable
 summarise(flights, 
           delay = mean(dep_delay, na.rm = TRUE))
@@ -409,11 +409,58 @@ flights %>%
   arrange(-late10_p) %>% 
   filter(n >= 2, late10_p >= 0.33)
 
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  group_by(flight) %>% 
+  summarise(n = n(), 
+            ontime_n = sum(dep_delay == 0),
+            ontime_p = mean(dep_delay == 0)) %>% 
+  filter(ontime_p >= 0.99) %>% 
+  arrange(-ontime_p)
   
-  
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  group_by(dest) %>% 
+  summarise(n = n())
 
+flights %>% 
+  filter(!is.na(dep_time), 
+         !is.na(arr_time)) %>% 
+  group_by(tailnum) %>% 
+  summarise(dist = sum(distance))
 
+flights %>% 
+  group_by(year, month, day) %>% 
+  summarise(n = n(), 
+            cancel_n = sum(is.na(arr_time)), 
+            cancel_p = mean(is.na(arr_time)), 
+            arr_delay_mean = mean(arr_delay, na.rm = TRUE)) %>% 
+  mutate(date = paste(year, month, day, sep = '-')) %>% 
+  # filter(month == 1) %>% 
+  ggplot(mapping = aes(x = arr_delay_mean, y = cancel_n)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
 
+## grouped mutate and filter
+## use group_by with mutate() and filter()
+### 每月晚点TOP3
+flights %>% 
+  group_by(month) %>% 
+  filter(rank(desc(arr_delay)) < 4)
 
+### 筛选目的地城市到达航班超过365次的所有航班记录
+flights %>% 
+  group_by(dest) %>% 
+  filter(n() > 365)
+
+flights %>% 
+  group_by(dest) %>% 
+  filter(n() > 365) %>% 
+  filter(arr_delay > 0) %>% 
+  count(dest, wt = arr_delay) %>% 
+  mutate(delay_t = n, delay_prop = n / sum(n)) %>% 
+  arrange(-delay_prop)
 
 
