@@ -463,4 +463,53 @@ flights %>%
   mutate(delay_t = n, delay_prop = n / sum(n)) %>% 
   arrange(-delay_prop)
 
+### 哪些飞机最坑人？从来不准点
+flights %>% 
+  group_by(tailnum) %>% 
+  summarise(total_n = n(), 
+            cancel_n = sum(is.na(dep_delay)), 
+            cancel_p = mean(is.na(dep_delay)), 
+            delay_n = sum(dep_delay > 0), 
+            delay_p = mean(dep_delay > 0), 
+            delay_time_mean = mean(dep_delay[dep_delay > 0])) %>% 
+  filter(total_n > 4) %>% 
+  arrange(-delay_p, -delay_n)
+
+### 一天中什么时候坐飞机最不可能晚点嘞？
+flights %>% 
+  group_by(hour) %>% 
+  summarise(total_n = n(), 
+            cancel_n = sum(is.na(dep_delay)), 
+            cancel_p = mean(is.na(dep_delay)), 
+            ontime_n = sum(dep_delay <= 0, na.rm = TRUE), 
+            ontime_p = mean(dep_delay <= 0, na.rm = TRUE)) %>% 
+  arrange(-ontime_p)
+  
+flights %>% 
+  group_by(month, day) %>% 
+  summarise(n = n(), 
+            tiqian_n = sum(dep_delay < 0, na.rm = TRUE),
+            tiqian_time = mean(dep_delay, na.rm = TRUE))
+  
+flights %>% 
+  group_by(dest) %>% 
+  summarise(delay = sum(arr_delay, na.rm = TRUE)) %>% 
+  arrange(-delay)
+
+flights %>% 
+  group_by(dest, flight) %>% 
+  mutate(delay_p = arr_delay / sum(arr_delay, na.rm = TRUE)) %>% 
+  arrange(dest, - delay_p)
+  
+  
+  
+  
+
+
+
+
+
+
+
+
 
