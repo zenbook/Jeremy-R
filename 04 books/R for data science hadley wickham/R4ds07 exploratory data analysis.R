@@ -4,6 +4,11 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # 加载包
 library(tidyverse)
+library(ggstance)
+library(lvplot)
+library(ggbeeswarm)
+library(d3heatmap)
+library(modelr)
 library(nycflights13)
 data(flights)
 
@@ -121,32 +126,292 @@ diamonds %>%
   geom_histogram(binwidth = 0.01) + 
   xlim(0.5, 1.5)
 
+# 7.4 Missing values ===========================================
+
+## actions about unusul values:
+
+## 1.drop the entire data point:
+diamonds %>% 
+  filter(between(y, 3, 20))
+## that is not a good idea!
+
+## 2.use NA to replace the unusual value:
+diamonds %>% 
+  mutate(y = ifelse(y < 3 | y > 20, NA, y))
+
+## ifelse(test, value if test == TRUE, value if test == FALSE)
+
+## ggplot() will warn you if it remove some missing values:
+ggplot(data = flights, mapping = aes(x = dep_delay)) + 
+  geom_histogram(binwidth = 10)
+
+## suppress the warning messange with na.rm = TRUE:
+ggplot(data = flights, mapping = aes(x = dep_delay)) + 
+  geom_histogram(binwidth = 10,
+                 na.rm = TRUE)
+
+## 遇到缺失值时，首先要了解为什么有缺失值，
+## 比如flights数据集中dep_time为NA代表着这趟航班取消了，没有起飞
+
+flights %>% 
+  mutate(cancelled = is.na(dep_time), 
+         sched_dep_hour = sched_dep_time %/% 100 + 
+           sched_dep_time %% 100 / 60) %>% 
+  ggplot(mapping = aes(x = sched_dep_hour)) + 
+  geom_freqpoly(mapping = aes(color = cancelled), 
+                binwidth = 1/4)
+
+## 7.4.1 exercise ==============================================
+
+sum(is.na(flights$dep_delay))
+
+ggplot(data = flights, mapping = aes(x = dep_delay)) + 
+  geom_histogram(binwidth = 10)
+
+ggplot(data = flights, mapping = aes(x = dep_delay)) + 
+  geom_bar()
+
+# 7.5 Corvariation =============================================
+
+## 7.5.1 A categorical and continuous variable =================
+
+ggplot(data = diamonds, mapping = aes(x = price)) + 
+  geom_freqpoly(mapping = aes(color = cut), binwidth = 500)
+
+## 不同切割质量的钻石数量相差太大，不好比较
+ggplot(data = diamonds, mapping = aes(x = cut)) + 
+  geom_bar()
+
+## 不用count,用density来比较一下：
+ggplot(data = diamonds, mapping = aes(x = price, y = ..density..)) + 
+  geom_freqpoly(mapping = aes(color = cut), binwidth = 500)
+
+## 还有一个更好的展现方式：boxplot
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) + 
+  geom_boxplot()
+## 从图中我们至少有两个较为明显的发现：
+## 1.每个cut类别下的异常值都比较多；
+## 2.Fair类别的平均价竟然是最高的！不可置信呀！这是为什么呢？
+## 应该是其他变量导致的吧
+
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+## 箱线图的箱子比较多呀？不太好对比，可以排序一下：
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = reorder(class, hwy, FUN = median), 
+                             y = hwy))
+## 如果x轴上标签字段比较长，可以把箱线图转个方向：
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = reorder(class, -hwy, FUN = median), 
+                             y = hwy)) + 
+  coord_flip()
+
+## 7.5.1.1 exercise ===========================================
+
+flights %>% 
+  mutate(cancelled = is.na(dep_time), 
+         sched_dep_hour = sched_dep_time %/% 100, 
+         sched_dep_minute = sched_dep_time %% 100, 
+         sched_dep = sched_dep_hour + sched_dep_minute / 60) %>% 
+  ggplot(mapping = aes(x = sched_dep, y = ..density..)) + 
+  geom_freqpoly(mapping = aes(color = cancelled), 
+                binwidth = 0.5)
+
+## carat with price
+ggplot(data = diamonds, mapping = aes(x = carat, y = price)) + 
+  geom_point()
+
+## log(carat) with log(price)
+diamonds %>% 
+  ggplot(mapping = aes(x = log(carat), y = log(price))) + 
+  geom_point()
+
+## color with price
+ggplot(data = diamonds, mapping = aes(x = color, y = price)) + 
+  geom_boxplot()
+
+## clarity with price
+ggplot(data = diamonds, mapping = aes(x = clarity, y = price)) + 
+  geom_boxplot()
+
+## cut with carat
+ggplot(data = diamonds, mapping = aes(x = reorder(cut, carat, FUN = median), 
+                                      y = carat)) + 
+  geom_boxplot()
+
+## 总结：钻石越重，价格越高；Fair切割的钻石虽然没切割好，但是钻石更重，所以价格更高
+
+## ggstance,注意看mapping中x和y设置的是哪个字段？正好跟原来coord_flip的相反
+ggplot(data = diamonds, mapping = aes(x = price, y = cut)) + 
+  geom_boxploth()
+
+## lvplot::geom_lv
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) + 
+  geom_lv()
+
+## geom_violin
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) + 
+  geom_violin()
+
+ggplot(data = diamonds, mapping = aes(x = price)) + 
+  geom_histogram(binwidth = 1000) + 
+  facet_grid(. ~ cut)
+
+ggplot(data = diamonds, mapping = aes(x = price)) + 
+  geom_histogram(binwidth = 1000) + 
+  facet_wrap(~ cut)
+
+## ggbeeswarm
+## geom_quasirandom()
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) + 
+  geom_quasirandom()
+## geom_beeswarm() don't use it if dataset is too large
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) + 
+  geom_beeswarm()
+
+## geom_jitter
+ggplot(data = iris, mapping = aes(x = Species, y = Sepal.Length)) + 
+  geom_jitter()
+## geom_quasirandom
+ggplot(data = iris, mapping = aes(x = Species, y = Sepal.Length)) + 
+  geom_quasirandom()
+## geom_beeswarm
+ggplot(data = iris, mapping = aes(x = Species, y = Sepal.Length)) + 
+  geom_beeswarm()
+
+## 7.5.2 Two categorical variables ===========================
+
+## geom_count
+ggplot(data = diamonds, mapping = aes(x = cut, y = color)) + 
+  geom_count()
+
+## dplyr::count()
+diamonds %>% 
+  count(cut, color)
+
+## geom_tile():类似热力图
+diamonds %>% 
+  count(cut, color) %>% 
+  ggplot(mapping = aes(x = cut, y = color)) + 
+  geom_tile(mapping = aes(fill = n))
+
+## seriation, d3heatmap and heatmaply
 
 
+## 7.5.2.1 exercise ==========================================
+
+flights %>% 
+  group_by(dest, month) %>% 
+  summarise(dep_delay_mean = mean(dep_delay)) %>% 
+  ggplot(mapping = aes(x = month, y = dest)) + 
+  geom_tile(mapping = aes(fill = dep_delay_mean))
+## 尼玛亮瞎眼呐，目的地太多了，这样展示实在不友好，怎么破？
+
+## 答：因为color字段取值都比较短，展示更美观
+
+## 7.5.3 Two continuous variables ============================
+ggplot(data = diamonds, mapping = aes(x = carat, y = price)) + 
+  geom_point()
+
+## 数据集太大了，散点图上点太多，都重叠在一起了
+ggplot(data = diamonds, mapping = aes(x = carat, y = price)) + 
+  geom_point(alpha = 0.01)
+
+## 如果数据集太大，用alpha也不一定是最好的办法，还可以用别的：
+## geom_bin2d()
+ggplot(data = diamonds, mapping = aes(x = carat, y = price)) + 
+  geom_bin2d()
+## geom_hex()
+ggplot(data = diamonds, mapping = aes(x = carat, y = price)) + 
+  geom_hex()
+
+## 还可以把其中一个字段"切割"成不同组
+diamonds %>% 
+  filter(carat < 3) %>% 
+  ggplot(mapping = aes(x = carat, y = price)) + 
+  geom_boxplot(mapping = aes(group = cut_width(carat, 0.1)))
+
+## 不同箱线图中的数据集数量其实是不同的，怎么表示出来呢？
+
+## 1.varwidth = TRUE
+diamonds %>% 
+  filter(carat < 3) %>% 
+  ggplot(mapping = aes(x = carat, y = price)) + 
+  geom_boxplot(mapping = aes(group = cut_width(carat, 0.1)), 
+               varwidth = TRUE)
+## 不是很好看哈，特别是1.5以后的都太细了
+
+## 2.cut_number()：分成多少个箱线图
+diamonds %>% 
+  filter(carat < 3) %>% 
+  ggplot(mapping = aes(x = carat, y = price)) + 
+  geom_boxplot(mapping = aes(group = cut_number(carat, 020)))
+
+## 7.5.3.1 exercise ===========================================
+
+ggplot(data = diamonds, 
+       mapping = aes(x = price, 
+                     y = ..density.., 
+                     color = cut_width(carat, 0.5))) + 
+  geom_freqpoly()
+
+## carat with price
+ggplot(data = diamonds, 
+       mapping = aes(x = carat,  
+                     y = ..density.., 
+                     color = cut_width(price, 5000))) + 
+  geom_freqpoly()
+
+ggplot(data = diamonds, 
+       mapping = aes(x = cut_width(price, 5000),  
+                     y = carat)) + 
+  geom_boxplot() + 
+  coord_flip()
+
+# 7.6 Patterns and models =====================================
+
+## Could this pattern be due to coincidence (i.e. random chance)?
+## How can you describe the relationship implied by the pattern?
+## How strong is the relationship implied by the pattern?
+## What other variables might affect the relationship?
+## Does the relationship change if you look at individual subgroups of the data?
+
+ggplot(faithful, aes(x = waiting, y = eruptions)) + 
+  geom_point()
+
+## 如果A变量与B变量相关，那么可以用B变量来预测A变量
+## 如果A变量与B变量是因果关系，那么可以用自变量来控制因变量
+
+mod <- lm(log(price) ~ log(carat), data = diamonds)
+
+diamonds2 <- diamonds %>% 
+  add_residuals(mod) %>% 
+  mutate(resid = exp(resid))
+
+ggplot(diamonds2, aes(carat, resid)) + 
+  geom_point()
+
+ggplot(diamonds2, aes(cut, resid)) + 
+  geom_boxplot()
+
+x <- c(3, 2, 6, 7, 9)
+y <- c(6.1, 3.9, 11.8, 14.2, 20)
+test <- data.frame(x = x, y = y)
+model <- lm(y ~ x, data = test)
+model$residuals
+mean(model$residuals)
+var(model$residuals)
+sd(model$residuals)
+test$resid = model$residuals
 
 
+# 7.7 ggplot2 calls ==========================================
+## 当对ggplot函数熟悉之后，可以省略参数名，这样节省时间
+ggplot(diamonds, aes(carat, price)) + 
+  geom_point()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+diamonds %>% 
+  count(cut, clarity) %>% 
+  ggplot(aes(cut, clarity, fill = n)) + 
+  geom_tile()
 
