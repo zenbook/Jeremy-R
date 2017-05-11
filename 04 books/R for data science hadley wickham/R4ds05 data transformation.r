@@ -501,15 +501,3 @@ flights %>%
   mutate(delay_p = arr_delay / sum(arr_delay, na.rm = TRUE)) %>% 
   arrange(dest, - delay_p)
   
-  
-  
-  
-
-
-
-
-
-
-
-
-
