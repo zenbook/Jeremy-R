@@ -1,6 +1,3 @@
-# 将当前文件所在的路径设置为工作目录
-library('rstudioapi')
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # 加载包
 library(tidyverse)
@@ -10,7 +7,6 @@ library(ggbeeswarm)
 library(d3heatmap)
 library(modelr)
 library(nycflights13)
-data(flights)
 
 # 7.3 variation =============================================
 
