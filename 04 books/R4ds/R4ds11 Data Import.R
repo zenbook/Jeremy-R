@@ -3,6 +3,7 @@
 library(tidyverse)
 library(nycflights13)
 library(hms)
+library(feather)
 
 # 11.2 Getting Started ====================================================
 
@@ -231,3 +232,136 @@ parse_date(d4, '%B %d (%Y)')
 parse_date(d5, '%m/%d/%y')
 parse_time(t1, '%H%M')
 parse_time(t2)
+
+# 11.4 parsing a file  ====================================================
+
+## How readr automatically guesses the type of each column.
+## How to override the default specification.
+
+## 11.4.1 strategy  =========================
+
+## 读取数据集的前1000行，根据这1000行来判断每列的数据格式
+
+guess_parser('2010-01-01')
+guess_parser('12:40')
+guess_parser('FALSE')
+guess_parser('123')
+guess_parser('1.23')
+guess_parser('123,456,789')
+str(parse_guess('2013-01-01'))
+
+# how guess_parser guess?
+# logical: contains only “F”, “T”, “FALSE”, or “TRUE”.
+# integer: contains only numeric characters (and -).
+# double: contains only valid doubles (including numbers like 4.5e-5).
+# number: contains valid doubles with the grouping mark inside.
+# time: matches the default time_format.
+# date: matches the default date_format.
+# date-time: any ISO8601 date.
+# 如果上面的规则都不符合，则guess_parser返回字符串
+
+## 11.4.2 problems  =========================
+
+## 可能的问题：
+## 1.前1000行的数据比较特殊，不足以完全代表该列的字段类型；
+## 2.前1000行都是NA，则无论1000行后是什么数据类型，guess_parser都会认为是字符串；
+
+challenge <- read_csv(readr_example('challenge.csv'))
+problems(challenge)
+
+challenge <- read_csv(
+  readr_example('challenge.csv'), 
+  col_types = cols(
+    x = col_integer(), 
+    y = col_character()
+  )
+)
+
+## x列不是integer,而应该转换为double
+challenge <- read_csv(
+  readr_example('challenge.csv'), 
+  col_types = cols(
+    x = col_double(), 
+    y = col_character()
+  )
+)
+head(challenge)
+## 没报错了，但是我们看看y列的最后几行数据点：
+tail(challenge)
+## 哦噢，怎么是日期格式的？
+## 因此我们猜测y列应该是日期格式的：
+challenge <- read_csv(
+  readr_example('challenge.csv'), 
+  col_types = cols(
+    x = col_double(),
+    y = col_date()
+  )
+)
+challenge
+
+## 对于每一个parse_*，有一个相应的col_*，用来设置列的格式
+## 建议导入数据的时候，用col_types = cols()来设置每列的格式
+
+## 11.4.3 other strategies ==================
+
+## 1.读入多一些数据
+challenge <- read_csv(
+  readr_example('challenge.csv'), 
+  guess_max = 1001
+)
+challenge
+
+## 2.把所有列都当做字符串导入
+challenge <- read_csv(
+  readr_example('challenge.csv'), 
+  col_types = cols(.default = col_character())
+)
+challenge
+## 然后用type_convert()把字符串做转换
+df <- tribble(
+  ~x, ~y,
+  '1', '1.23',
+  '3', '4.35',
+  '6', '7.21'
+)
+df
+type_convert(df)
+
+## 3.当读取非常大的文件时，设置n_max()
+
+## 4.read_lines(), read_file()
+
+# 11.5 Writing to a file ==================================================
+## write_csv(), write_tsv(), write_excel_csv()
+
+write_csv(x = challenge, 
+          path = 'challenge.csv', 
+          na = 'NA', 
+          append = FALSE)
+## 注意：当写入到csv中后，数据类型就丢失了：
+read_csv('challenge.csv')
+## 可以发现：x/y的类型都变了
+
+write_tsv(x = challenge, 
+          path = 'challenge.csv')
+read_tsv('challenge.csv')
+
+## 貌似只能导出xls的excel文件
+write_excel_csv(challenge, 'challenge.xls')
+
+## 以上导出的方法都把数据原来的格式丢失了，有没有保留数据格式的方法呢？
+## 当然有啦，而且还不止一个：
+
+## 1.write_rds,read_rds
+write_rds(challenge, 'challenge.rds')
+read_rds('challenge.rds')
+
+## 2.feather package write.feather() read_feather()
+write_feather(challenge, 'challenge.feather')
+read_feather('challenge.feather')
+
+# 11.6 Other types of data ================================================
+
+# https://cran.r-project.org/doc/manuals/r-release/R-data.html
+# https://jennybc.github.io/purrr-tutorial/
+
