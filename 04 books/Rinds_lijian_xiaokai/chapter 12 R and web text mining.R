@@ -1,18 +1,19 @@
 
-# 将当前文件所在的路径设置为工作目录
-library('rstudioapi')
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-# 12.1 网络数据获取
+# 12.1 网络数据获取 ====================================================
 ## 12.1.1 XML和XPath
 require("XML")
 require("RCurl")
 require("rjson")
 # 抓取table报表 readHHTMLTable()
 url_china <- "http://zh.wikipedia.org/wiki/中国一级行政区"
-tables <- readHTMLTable(url_china, header = FALSE, stringsAsFactors = FALSE)  # 不能连接到维基百科网站
+tables <- readHTMLTable(url_china, 
+                        header = FALSE, 
+                        stringsAsFactors = FALSE)  # 不能连接到维基百科网站
 url_abcchina <- "http://data.eastmoney.com/zjlx/601288.html"
-tables <- readHTMLTable(url_abcchina, header = TRUE, stringsAsFactors = FALSE)  # XML在windows系统下貌似不能很好地显示中文字符
+tables <- readHTMLTable(url_abcchina, 
+                        header = TRUE, 
+                        stringsAsFactors = FALSE)  
+# XML在windows系统下貌似不能很好地显示中文字符
 tables[1]
 
 ## 问题：现在越来越多的https协议，怎么去抓取采取https协议的网页数据呢？
@@ -20,7 +21,8 @@ tables[1]
 # 抓取非结构化的数据 htmlParse() 和 getNodeSet()
 ## htmlParse() 负责抓取页面数据并形成树状结构
 ## getNodeSet()  对抓取的数据根据XPath语法来选取特定的节点集合
-douban_url <- "https://movie.douban.com/top250"  # 豆瓣采取的协议是https协议，不能直接抓取
+douban_url <- "https://movie.douban.com/top250"  
+# 豆瓣采取的协议是https协议，不能直接抓取
 dianping_url <- "http://t.dianping.com/list/hangzhou-category_253"
 jingdian <- htmlParse(dianping_url)
 class(jingdian)
@@ -65,11 +67,11 @@ jingdian <- sapply(nodes, xmlValue)
 
 
 
-# 12.2 中文文本处理 ------------------------------------------------------------
+# 12.2 中文文本处理 =====================================================
 
-## 12.2.1 文本处理 -------------------------------
+## 12.2.1 文本处理 ==================================
 
-### 12.2.1.1 字符串的操作 ------------
+### 12.2.1.1 字符串的操作
 
 #### 获取字符串长度
 # nchar():获取字符串的长度，支持字符串向量操作， 和length有区别
@@ -121,6 +123,8 @@ Encoding(x) <- 'utf-8'
 x
 
 ### 12.2.1.3 tmcn包简介 ------------
+
+## 12.2.3 中文分词 ============================
 
 
 
