@@ -16,7 +16,7 @@ mystat <- function(x, na.omit = FALSE){
   n = length(x)
   m = mean(x)
   s = sd(x)
-  skew = 
+  skew = sum()
 }
 
 
