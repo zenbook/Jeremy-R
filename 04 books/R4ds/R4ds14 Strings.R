@@ -88,7 +88,8 @@ str_c(c('x', 'y', 'z'), collapse = '-')
 x <- 'R for data science'
 str_sub(x, (str_length(x) + 1)/2, (str_length(x) + 1)/2)
 
-str_wrap()
+x <- str_wrap('hello, world!', width = 2)
+writeLines(x)
 
 str_trim(' hello, world! ')
 str_trim(' hello, world! ', side = 'left')
@@ -98,6 +99,7 @@ str_trim(' hello, world! ', side = 'both')
 # 14.3 Matching patterns with regular expressions ====================
 
 ## 14.3.1 Basic matches
+## 字符串的匹配对大小写是敏感的
 x <- c("apple", "banana", "pear")
 str_view(x, 'an')
 ## .代表任何字符串
@@ -137,17 +139,45 @@ abc|d..f
 abc|xyz
 str_view(c('gray', 'grey'), 'gr(e|a)y')
 
+## 14.3.4 Repetition
+## 希望查询到的字符串重复多少次？
+## ?: 0 or 1
+## +: 1 or more
+## *: 0 or more
 
+x <- "1888 is the longest year in Roman numerals: MDCCCLXXXVIII"
+str_view(x, 'CC?')
+str_view(x, 'CC+')
+str_view(x, 'C[LX]+')
 
+x <- 'colour panels'
+str_view(x, 'colou?r') # color or colour
 
+## 除了用?/+/*，还可以指定出现的次数
+## {n} 正好n次
+## {n,} 至少n次
+## {,m} 至多m次
+## {n,m}  n到m次之间
+str_view(x, 'C{2}')
+str_view(x, 'C{2,}')
+str_view(x, 'C{3}')
+str_view(x, 'C{1,4}')
 
+## 这种匹配是很"贪心"的，返回的都是可匹配的最长的字符串
+## 如果想返回最短的字符串，可以在正则表达式后再加一个"?"
+str_view(x, 'C{1,3}')
+str_view(x, 'C{1,3}?')
+str_view(x, 'C[LX]+')
+str_view(x, 'C[LX]+?')
 
+## exercise
+## 因此，?/+/*可以用数字范围来表示
+## ?:{0,1}
+## +:{1,}
+## *:{0,}
 
-
-
-
-
-
+## 14.3.5 Grouping and backreferences
+str_view(fruit, '(..)\\1', match = TRUE)
 
 
 

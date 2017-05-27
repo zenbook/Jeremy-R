@@ -19,8 +19,6 @@ mystat <- function(x, na.omit = FALSE){
   skew = sum()
 }
 
-
-
 describe(mtcars)
 
 
