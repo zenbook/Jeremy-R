@@ -150,9 +150,6 @@ str_view(x, 'CC?')
 str_view(x, 'CC+')
 str_view(x, 'C[LX]+')
 
-x <- 'colour panels'
-str_view(x, 'colou?r') # color or colour
-
 ## 除了用?/+/*，还可以指定出现的次数
 ## {n} 正好n次
 ## {n,} 至少n次
@@ -170,6 +167,10 @@ str_view(x, 'C{1,3}?')
 str_view(x, 'C[LX]+')
 str_view(x, 'C[LX]+?')
 
+x <- 'colour panels'
+str_view(x, 'colou?r') # color or colour
+
+
 ## exercise
 ## 因此，?/+/*可以用数字范围来表示
 ## ?:{0,1}
@@ -178,27 +179,63 @@ str_view(x, 'C[LX]+?')
 
 ## 14.3.5 Grouping and backreferences
 str_view(fruit, '(..)\\1', match = TRUE)
+str_view(fruit, '(.)\\1', match = TRUE)
+str_view(fruit, '(.)\1\1', match = TRUE)
 
+# 14.4 Tools =========================================================
+x <- c("apple", "banana", "pear")
+str_detect(x, 'e')
+## words中有多少个单词是元音结尾的？
+sum(str_detect(words, '[aeiou]$'))
+## words中有多少比例的单词是元音结尾的？
+mean(str_detect(words, '[aeiou]$'))
+## 找出不含元音的单词
+novowels_1 <- !str_detect(words, '[aeiou]')
+novowels_2 <- str_detect(words, "^[^aeiou]+$")
+identical(novowels_1, novowels_2)
+## 第一个方法更简单易懂，不要写太复杂的正则表达式，如果太复杂了，就拆开来。
+words[str_detect(words, 'x$')]
+str_subset(words, 'x$')
+## 用filter筛选
+df <- tibble(
+  word = words, 
+  i = seq_along(word)
+)
+df %>% 
+  filter(str_detect(word, 'x$'))
+## str_count(),有多少个匹配的
+str_count(x, 'a')
+## 一个单词中平均有多少个元音字母
+mean(str_count(words, '[aeiou]'))
+mean(str_length(words))
+df %>% 
+  mutate(
+    word_len  = str_length(word),
+    vowels = str_count(word, '[aeiou]'),
+    consonants = str_count(word, '[^aeiou]')
+  )
+## 正则表达式匹配的内容不会重叠
+str_detect('abababa', 'aba')
+str_count('abababa', 'aba')
+str_view_all('abababa', 'aba')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## exercise
+str_subset(words, '^x|x$')
+words[str_detect(words, '^x') | str_detect(words, 'x$')]
+str_subset(words, '^[aeiou]' & '[^aeiou]$') # 还有问题
+words[str_detect(words, '^[aeiou]') & str_detect(words, '[^aeiou]$')]
+df %>% 
+  mutate(
+    vowels = str_count(word, '[aeiou]')
+  ) %>% 
+  arrange(-vowels)
+df %>% 
+  mutate(
+    word_len = str_length(word),
+    vowels = str_count(word, '[aeiou]'),
+    vowel_p = vowels / word_len
+  ) %>% 
+  arrange(-vowel_p)
 
 
 
