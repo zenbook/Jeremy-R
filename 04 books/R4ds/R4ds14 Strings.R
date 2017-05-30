@@ -183,6 +183,8 @@ str_view(fruit, '(.)\\1', match = TRUE)
 str_view(fruit, '(.)\1\1', match = TRUE)
 
 # 14.4 Tools =========================================================
+
+# 14.4.1 Detect matches
 x <- c("apple", "banana", "pear")
 str_detect(x, 'e')
 ## words中有多少个单词是元音结尾的？
@@ -236,6 +238,47 @@ df %>%
     vowel_p = vowels / word_len
   ) %>% 
   arrange(-vowel_p)
+
+# 14.4.3 Extract matches
+
+length(sentences)
+head(sentences)
+colors <- c('red', 'orange', 'yellow', 'green', 'blue', 'purple')
+color_match <- str_c(colors, collapse = '|')
+has_color <- str_subset(sentences, color_match)
+matches <- str_extract(has_color, color_match)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
