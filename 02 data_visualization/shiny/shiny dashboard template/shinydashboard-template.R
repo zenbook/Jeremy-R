@@ -9,7 +9,7 @@ ui <- dashboardPage(
   ## dashboardHeader ---------------------------------
   dashboardHeader(
     
-    title = 'mgt.11wlw.cn'
+    title = 'JollyChic.com'
   ),
   
   ## dashboardSiderbar -------------------------------
