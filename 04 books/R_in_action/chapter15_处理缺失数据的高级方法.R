@@ -51,7 +51,7 @@ mean(!complete.cases(tsleep))
 # ============================ 15.3 探索缺失值的模式 ============================
 
 ## 15.3.1 列表展示缺失值模式
-## misc包的md.pattern()
+## mice包的md.pattern()
 md.pattern(tsleep)
 
 ## 15.3.2 图形展示缺失值模式
