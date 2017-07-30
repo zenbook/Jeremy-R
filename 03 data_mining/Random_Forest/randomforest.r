@@ -1,14 +1,20 @@
 
 # library packages ===================================================
-library('randomForest')
-library('caret')
-library('mice')
-library('tidyverse')
-
+library(randomForest)
+library(caret)
+library(mice)
+library(tidyverse)
+library(party)
+library(MASS)
+library(pROC)
 
 # case stydy 01 ======================================================
+## 01 business understanding ===================
 
-data <- read.csv('Cardiotocographic.csv', header = TRUE)
+
+
+## 02 prepare data =============================
+Cardiotocographic <- read.csv('./data/Cardiotocographic.csv', header = TRUE)
 
 # 把响应变量NSP转变成因子型
 data$NSP <- as.factor(data$NSP)
@@ -94,6 +100,8 @@ partialPlot(rf2, train, ASTV, '1')
 partialPlot(rf2, train, ASTV, '3')
 partialPlot(rf2, train, ASTV, '2')
 
+## others ======================================
+
 # 获取随机森林中的决策树
 getTree(rf2, 1, labelVar = TRUE)
 
@@ -101,8 +109,9 @@ getTree(rf2, 1, labelVar = TRUE)
 MDSplot(rf2, train$NSP)
 
 
-# case study 02 ======================================================
 
+
+# case study 02 ======================================================
 ## 01 business understanding ===================
 # In this example, the bank wanted to cross-sell term deposit product to its customers.
 # Contacting all customers is costly and does not create good customer experience. 
@@ -116,7 +125,7 @@ bank_add_full <- read.csv(
   sep = ';'
 )
 str(bank_add_full)
-table(bank_add$y)
+table(bank_add_full$y)
 prop.table(table(bank_add_full$y))
 
 ## 03 clean and transform data =================
@@ -135,6 +144,7 @@ sum(bank_add_full$pdays == 0)
 ## 虽然有异常值，但是目前还无法确定这些异常值是否可进一步处理，所以暂不处理
 
 ## split data into train and validation sample
+## 1.use createDataPartition，无放回
 set.seed(1234)
 bank_index <- createDataPartition(bank_add_full$y, 
                                   p = 0.7, 
@@ -142,6 +152,16 @@ bank_index <- createDataPartition(bank_add_full$y,
                                   times = 1)
 bank_train <- bank_add_full[bank_index, ]
 bank_valid <- bank_add_full[-bank_index, ]
+prop.table(table(bank_train$y))
+prop.table(table(bank_valid$y))
+## 2.use sample，有放回
+set.seed(123)
+bank_index <- sample(2, 
+                     nrow(bank_add_full), 
+                     replace = TRUE, 
+                     prob = c(0.6, 0.4))
+bank_train <- bank_add_full[bank_index == 1, ]
+bank_valid <- bank_add_full[bank_index == 2, ]
 prop.table(table(bank_train$y))
 prop.table(table(bank_valid$y))
 ## 训练集和验证集中样本分布基本无差异，OK！
@@ -157,7 +177,7 @@ rf_formu <- as.formula(paste('y', varnames, sep = ' ~ '))
 ## modeling
 rf_model <- randomForest(rf_formu, 
                          bank_train, 
-                         ntree = 500, 
+                         ntree = 200, 
                          importance = TRUE)
 attributes(rf_model)
 rf_model
@@ -178,14 +198,169 @@ var_impo <- var_impo %>%
   arrange(-MeanDecreaseGini)
 
 ## model performance
-
-
-
-## 
-
 confusionMatrix(data = rf_model$predicted, 
                 reference = bank_train$y, 
                 positive = 'yes')
+## 精度91.48%，对yes的分类精度低，差不多是随机猜测，所以模型并不太好
+
+## 05 validation ================================
+bank_valid$predicted <- predict(rf_model, bank_valid)
+confusionMatrix(data = bank_valid$predicted, 
+                reference = bank_valid$y, 
+                positive = 'yes')
+## 精度91.14%，yes分类精度低；因此还有很大的改善空间
+
+## 06 application ===============================
+
+## 把模型应用到新的样本中，这些样本我们并不知道是否响应
+## 通过模型，我们来预测其是否响应我们的活动
+
+
+# case study 03 ======================================================
+## 01 business understanding ===================
+## 我们是否可以根据年龄、鞋码、得分三个变量来判断一个学生是否nativespeaker?
+
+## 02 prepare data =============================
+str(readingSkills)
+summary(readingSkills)
+## 发现数据正常，没有异常值，没有缺失值，可以直接使用
+
+## 03 clean and transform data =================
+set.seed(1234)
+reading_index <- createDataPartition(readingSkills$nativeSpeaker, 
+                                     times = 1, 
+                                     p = 0.7, 
+                                     list = FALSE)
+reading_train <- readingSkills[reading_index, ]
+reading_valid <- readingSkills[-reading_index, ]
+prop.table(table(reading_train$nativeSpeaker))
+prop.table(table(reading_valid$nativeSpeaker))
+
+## 04 modeling =================================
+
+reading_rf_model <- randomForest(nativeSpeaker ~ age + shoeSize + score, 
+                                 reading_train)
+reading_rf_model
+importance(reading_rf_model, type = 2)
+varImpPlot(reading_rf_model, sort = TRUE)
+
+## 05 validation ===============================
+reading_valid$predicted <- predict(reading_rf_model, 
+                                   reading_valid)
+confusionMatrix(data = reading_valid$predicted, 
+                reference = reading_valid$nativeSpeaker)
+## 精度100%
+
+# case study 04 ======================================================
+## 01 business understanding ===================
+## 根据孕妈的身体指标和行为数据，是否可以预测一个小孩是否体重过轻？
+help('birthwt')
+
+## 02 prepare data =============================
+str(birthwt)
+dim(birthwt)
+table(birthwt$low)
+prop.table(table(birthwt$low))
+summary(birthwt)
+apply(birthwt, 2, function(x) length(unique(x)))
+
+## 03 clean and transform data =================
+
+## change data type
+cols <- c('low', 'race', 'smoke', 'ptl', 'ht', 'ui', 'ftv')
+for (i in cols){
+  birthwt[, i] = as.factor(birthwt[, i])
+}
+str(birthwt)
+
+## split data into train and validation data
+set.seed(1234)
+birth_index <- createDataPartition(birthwt$low, 
+                                   p = 0.7,
+                                   list = FALSE, 
+                                   times = 1)
+train_birthwt <- birthwt[birth_index, ]
+valid_birthwt <- birthwt[-birth_index, ]
+prop.table(table(train_birthwt$low))
+prop.table(table(valid_birthwt$low))
+
+## 04 modeling =================================
+
+## parameters
+## mtry: number of variables selected at each split
+## ntree: number of decision trees to grow
+
+## make formula
+varnames <- colnames(birthwt)
+varnames <- varnames[-c(1, 10)]
+varnames <- paste(varnames, collapse = '+')
+model_formula <- as.formula(paste('low', varnames, sep = ' ~ '))
+
+## modeling
+model_birth_rf <- randomForest(model_formula, 
+                               data = train_birthwt, 
+                               mtry = 3, 
+                               ntree = 200)
+model_birth_rf
+plot(model_birth_rf)
+
+## variable importance
+importance(model_birth_rf)
+varImpPlot(model_birth_rf)
+varImpPlot(model_birth_rf, 
+           sort = TRUE,
+           n.var = 5)
+
+## find the best mtry
+bestmtry <- tuneRF(train_birthwt, 
+                   train_birthwt$low, 
+                   ntreeTry = 200, 
+                   stepFactor = 1.2, 
+                   improve = 0.01, 
+                   trace = TRUE, 
+                   plot = TRUE)
+bestmtry
+
+## 05 validation ================================
+
+valid_birthwt$predict <- predict(model_birth_rf, 
+                                 valid_birthwt)
+confusionMatrix(data = valid_birthwt$predict, 
+                reference = valid_birthwt$low)
+## 精度100%
+
+## ROC curve
+predict_prob <- predict(model_birth_rf, 
+                        valid_birthwt, 
+                        type = 'prob')
+predict_prob
+plot(roc(valid_birthwt$low, predict_prob[, 2]))
+auc(valid_birthwt$low, predict_prob[, 2])
+## 模型非常好，AUC = 1，ROC曲线也是最好的形式（会不会是过拟合了？）
+
+## 06 application ===============================
+
+
+# case study 05 ======================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

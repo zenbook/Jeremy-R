@@ -204,3 +204,54 @@ recall(data = test_set$pred, reference = test_set$obs)
 
 
 
+# case study by max khun -- the author of caret ======================
+
+## 01 business understanding ==================
+## 电信行业，根据用户的属性和消费数据，预测用户数会否流失
+
+## 02 prepare data ============================
+library(C50)
+data(churn)
+str(churnTrain)
+prop.table(table(churnTrain$churn))
+prop.table(table(churnTest$churn))
+
+## 03 pre-processing ==========================
+
+sum(is.na(churnTrain))
+
+
+## 04 modeling ================================
+
+predictors <- names(churnTrain)[names(churnTrain) != 'churn']
+
+
+# boost
+
+library(gbm)
+forgbm <- churnTrain
+forgbm$churn <- ifelse(forgbm$churn == 'yes', 1, 0)
+str(forgbm)
+gbmfit <- gbm(formula = churn ~ ., 
+              distribution = 'bernoulli', 
+              data = forgbm, 
+              n.trees = 2000, 
+              interaction.depth = 7, 
+              shrinkage = 0.01, 
+              verbose = FALSE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
