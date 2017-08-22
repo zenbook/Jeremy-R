@@ -233,28 +233,6 @@ leaflet() %>%
 
 
 
-# 准备数据
-## 创建JDBC连接
-library(RJDBC)
-drv <-JDBC("oracle.jdbc.driver.OracleDriver","E:/R/ojdbc6.jar",identifier.quote="`")
-conn_b2btest_151 <-dbConnect(drv,"jdbc:oracle:thin:@117.121.48.147:1521/bjdb01","b2btest","inet21")
-
-store_addr <- dbGetQuery(
-  conn_b2btest_151, 
-  "SELECT user_name, name, longitude, latitude 
-  FROM scuser 
-  WHERE longitude IS NOT NULL AND rownum < 100")
-
-head(store_addr)
-leaflet(data = store_addr) %>% 
-addTiles() %>%
-addMarkers(popup = ~NAME)
-
-
-addCircles(lat = ~ LATITUDE, lng = ~ LONGITUDE)
-leaflet(store_addr) %>% 
-  addTiles() %>% 
-  addMarkers(clusterOptions = markerClusterOptions())
 
 
 

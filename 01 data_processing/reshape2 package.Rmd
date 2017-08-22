@@ -71,7 +71,8 @@ data:数据集, coln:melt后,表中分组的列, variable:需还原的列
 - 函数示例
 
 ```{r results = 'hide'}
-airquality %>% melt(id.vars = c('Ozone', 'Month', 'Day'), measure.vars = c(2:4), variable.name = 'v.type', value.name = 'value') %>% 
+airquality %>% 
+  melt(id.vars = c('Ozone', 'Month', 'Day'), measure.vars = c(2:4), variable.name = 'v.type', value.name = 'value') %>% 
   dcast(Ozone + Month + Day ~ v.type)
 ```
 
