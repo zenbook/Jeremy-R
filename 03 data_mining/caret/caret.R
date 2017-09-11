@@ -232,16 +232,20 @@ library(gbm)
 forgbm <- churnTrain
 forgbm$churn <- ifelse(forgbm$churn == 'yes', 1, 0)
 str(forgbm)
-gbmfit <- gbm(formula = churn ~ ., 
+gbmfit <- gbm(formula = churn ~ .,          # use all variables
               distribution = 'bernoulli', 
               data = forgbm, 
               n.trees = 2000, 
               interaction.depth = 7, 
               shrinkage = 0.01, 
               verbose = FALSE)
+gbmfit
+attributes(gbmfit)
+
+churnTrain$predict <- predict(gbmfit, churnTrain)
 
 
-
+confusionMatrix()
 
 
 
