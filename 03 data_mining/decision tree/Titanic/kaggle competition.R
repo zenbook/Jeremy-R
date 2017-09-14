@@ -84,16 +84,28 @@ test$Survived[test$Sex == 'female'] <- 1
 test$Survived[test$Sex == 'female' & Pclass == 3 & Fare >= 20] <- 0
 
 
-# mocel ======================================================================
+# model ======================================================================
 
+# 1.Survived ~ Sex
 fit <- rpart(Survived ~ Sex, 
              data = train, 
              method = 'class')
 fancyRpartPlot(fit)
+# 只用sex作为特征，那么决策树的划分很简单，male标记为died，female标记为survived
 
+# 2.多一些特征
+fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, 
+             data = train, 
+             method = 'class')
+fancyRpartPlot(fit)
+# how to download the tree picture?
 
+# 预测
+prediction <- predict(fit, test, type = 'class')
+submit <- data.frame(PassengerId = test$PassengerId, Survived = prediction)
 
-
-
-
-
+# 3.再多一些特征，特征工程
+test$Survived <- NA
+combi <- rbind(train, test)
+combi$Name[0:10]
+strsplit(combi$Name[1], split = '[,.]')[[1]][2]
