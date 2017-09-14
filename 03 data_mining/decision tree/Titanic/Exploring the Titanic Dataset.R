@@ -61,6 +61,34 @@ mosaicplot(table(full$FsizeD, full$Survived),
            main = 'Family Size by Survived', 
            shade = TRUE)
 
+# 4.舱位和甲板
+full$Cabin[1:20]
+# 第一个字母代表甲板
+strsplit(full$Cabin[2], NULL)[[1]]
+# 救生艇甲板（The Boat Deck）：该甲板位于最顶层，因两侧安放了救生艇而得名
+# A甲板（A Deck）：又被称为“散步甲板”（Promenade Deck），该层专供一等舱乘客使用，前部是一等客舱
+# B甲板（B Deck）：又被称为“船桥甲板”（Bridge Deck），前甲板、后甲板与该层平齐但并不相连。B甲板前部为一等舱
+
+# C甲板（C Deck），又被称为“遮盖甲板”（Shelter Deck）
+# D甲板（D Deck），又被称为“沙龙甲板”（Saloon Deck）
+# E甲板（E Deck），又被称为“上层甲板”（Upper Deck）
+# F甲板（F Deck），又被称为“中层甲板”（Middle Deck）
+# G甲板（G Deck），又被称为“下层甲板”（Lower Deck）
+# 底层甲板（Orlop Deck）
+full$Deck <- factor(sapply(full$Cabin, function(x) strsplit(x, NULL)[[1]][1]))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
