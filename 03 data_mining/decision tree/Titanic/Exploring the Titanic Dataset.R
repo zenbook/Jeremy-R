@@ -120,7 +120,8 @@ full$Fare[1044] <- median(full$Fare[full$Pclass == 3 & full$Embarked == 'S'],
 
 # Age
 sum(is.na(full$Age))
-
+factor_vars <- c('PassengerId', 'Pclass', 'Sex', 'Embarked', 'Title', 
+                 'Surname', 'Family', 'FsizeD')
 
 
 
