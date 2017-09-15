@@ -66,9 +66,10 @@ full$Cabin[1:20]
 # 第一个字母代表甲板
 strsplit(full$Cabin[2], NULL)[[1]]
 # 救生艇甲板（The Boat Deck）：该甲板位于最顶层，因两侧安放了救生艇而得名
-# A甲板（A Deck）：又被称为“散步甲板”（Promenade Deck），该层专供一等舱乘客使用，前部是一等客舱
-# B甲板（B Deck）：又被称为“船桥甲板”（Bridge Deck），前甲板、后甲板与该层平齐但并不相连。B甲板前部为一等舱
-
+# A甲板（A Deck）：又被称为“散步甲板”（Promenade Deck），该层专供一等舱乘客使用，
+#                  前部是一等客舱
+# B甲板（B Deck）：又被称为“船桥甲板”（Bridge Deck），前甲板、后甲板与该层平齐但并不相连。
+#                  B甲板前部为一等舱
 # C甲板（C Deck），又被称为“遮盖甲板”（Shelter Deck）
 # D甲板（D Deck），又被称为“沙龙甲板”（Saloon Deck）
 # E甲板（E Deck），又被称为“上层甲板”（Upper Deck）
@@ -78,18 +79,47 @@ strsplit(full$Cabin[2], NULL)[[1]]
 full$Deck <- factor(sapply(full$Cabin, function(x) strsplit(x, NULL)[[1]][1]))
 
 
+# missing values =======================================================
+
+# Embarked
+# passenger_id为62和830的乘客的登船码头缺失
+full[c(62, 830), 'Embarked']
+full[c(62, 830), ]
+# 这两位乘客的票价是80
+# 根据票价我们来推测一下这两位乘客的登船码头
+embark_fare <- full %>% filter(PassengerId != 62 & PassengerId != 830)
+ggplot(embark_fare, aes(x = Embarked, y = Fare, fill = factor(Pclass))) + 
+  geom_boxplot() +
+  geom_hline(aes(yintercept = 80), 
+             colour = 'red', 
+             linetype = 'dashed', 
+             lwd = 2) + 
+  scale_y_continuous(labels = dollar_format()) + 
+  theme_bw()
+# 发现Pclass = 1 & Fare平均值在80的只有C港口，其余港口的基本都低于80美元
+full$Embarked[c(62, 830)] <- 'C'
 
 
+# Fare
+sum(is.na(full$Fare))
+full[is.na(full$Fare), ]
+# 发现1044号乘客的Fare缺失
+# 这位乘客Pclass = 3, Embarked = S, 求得中位数，用中位数来代替
+ggplot(full[full$Pclass == 3 & full$Embarked == 'S', ], 
+       aes(x = Fare)) + 
+  geom_density(fill = '#99d6ff', alpha = 0.4) + 
+  geom_vline(aes(xintercept = median(Fare, na.rm = TRUE)), 
+             color = 'red', 
+             linetype = 'dashed', 
+             lwd = 1) + 
+  scale_x_continuous(labels = dollar_format()) + 
+  theme_bw()
+median(full$Fare[full$Pclass == 3 & full$Embarked == 'S'], na.rm = TRUE)
+full$Fare[1044] <- median(full$Fare[full$Pclass == 3 & full$Embarked == 'S'], 
+                          na.rm = TRUE)
 
-
-
-
-
-
-
-
-
-
+# Age
+sum(is.na(full$Age))
 
 
 
