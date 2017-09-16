@@ -123,6 +123,80 @@ sum(is.na(full$Age))
 factor_vars <- c('PassengerId', 'Pclass', 'Sex', 'Embarked', 'Title', 
                  'Surname', 'Family', 'FsizeD')
 
+full[factor_vars] <- lapply(full[factor_vars], function(x) as.factor(x))
+set.seed(129)
+mice_mod <- mice(full[, !names(full) %in% c('PassengerId','Name','Ticket','Cabin',
+                                            'Family','Surname','Survived')], 
+                 method = 'rf')
+mice_output <- complete(mice_mod)
+
+# plot
+par(mfrow = c(1, 2))
+hist(full$Age, freq = FALSE, main = 'Age:Original Data', 
+     col = 'green', ylim = c(0, 0.04))
+hist(mice_output$Age, freq = FALSE, main = 'Age:MICE output', 
+     col = 'lightgreen', ylim = c(0, 0.04))
+sum(is.na(full$Age))
+sum(is.na(mice_output$Age))
+
+full$Age <- mice_output$Age
+
+
+# featrue engineering round 2 =====================================================
+
+# 1.是否成年
+ggplot(full[1:891, ], aes(Age, fill = factor(Survived))) + 
+  geom_histogram() + 
+  facet_grid(. ~ Sex) + 
+  theme_few()
+full$Child[full$Age < 18] <- 'child'
+full$Child[full$Age >= 18] <- 'adult'
+table(full$Child, full$Survived)
+# 发现未成年的存活率大于50%，比成年人高一些
+
+# 2.是否妈咪
+full$Mother <- 'Not Mother'
+full$Mother[full$Sex == 'female' & 
+              full$Parch > 0 & 
+              full$Age >= 18 & 
+              full$Title != 'Miss'] <-  'Mother'
+table(full$Mother, full$Survived)
+
+full$Child <- factor(full$Child)
+full$Mother <- factor(full$Mother)
+md.pattern(full)
+
+
+# prediction ======================================================================
+
+# split data into train and test dataset
+train <- full[1:891, ]
+test <- full[892:1309, ]
+
+# modeling
+set.seed(754)
+rf_model <- randomForest(factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + 
+                           Fare + Embarked + Title + FsizeD + Child + Mother, 
+                         data = train)
+plot(rf_model, ylim = c(0, 0.36))
+legend('topright', colnames(rf_model$err.rate), col = 1:3, fill = 1:3)
+
+# variable importance
+importance <- importance(rf_model)
+var_importance <- data.frame(Variables = row.names(importance), 
+                             Importance = round(importance[, 'MeanDecreaseGini'], 2))
+rankImportance <- var_importance %>% 
+  mutate(Rank = paste0('#', dense_rank(desc(Importance))))
+# plot variabel importance
+ggplot(rankImportance, aes(x = reorder(Variables, Importance), 
+                           y = Importance, 
+                           fill = Importance)) + 
+  geom_bar(stat = 'identity') + 
+  geom_text(aes(x = Variables, y = 0.5, label = Rank), 
+            hjust = 0, vjust = 0.55, size = 4, colour = 'red') + 
+  labs(x = 'Variables') + 
+  coord_flip() + 
+  theme_few()
 
 
 
