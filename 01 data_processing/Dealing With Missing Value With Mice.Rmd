@@ -10,11 +10,11 @@ knitr::opts_chunk$set(echo = FALSE)
 # library packages ===========================================================
 library(mice)
 library(VIM)
+library(lattice)
 ```
 
 ## show dataset
 ```{r echo=TRUE}
-# explore dataset ============================================================
 head(nhanes)
 str(nhanes)
 ```
@@ -71,9 +71,28 @@ marginplot(nhanes[, c('chl', 'bmi')],
 - 左侧red的箱线图表示：3个bmi完整而chl缺失的bmi的分布；
 - 下方blue和red的箱线图类同；
 
+## imputation
 
+```{r echo=TRUE}
+imp <- mice(nhanes, seed = 23109)
+print(imp)
+```
+默认进行5次插补，也就是说每个缺失值都会有5个插补值
 
+## show imputation value
 
+```{r echo=TRUE}
+imp$imp$bmi
+```
+
+## 用第一列插补值，查看完整样本
+```{r echo=TRUE}
+complete(imp)
+```
+
+```{r}
+stripplot(imp, pch = 20, cex = 1.2)
+```
 
 
 
