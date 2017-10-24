@@ -37,9 +37,30 @@ ggplot(gcc_countries, aes(long, lat, group = group, fill = region)) +
   geom_polygon(colour = 'black') + 
   scale_fill_brewer(palette = 'Set1')
 
+# shapefile + ggplot2 + maptools ==========================================
+library(maptools)
+
+asia_map <- readShapePoly('./asia-natural-shape/natural.shp')
+china_map <- readShapePoly('./china-province-border-data/bou2_4p.shp')
+
+plot(asia_map)
+plot(china_map)
+
+x = asia_map@data
+
+asia_map1 <- fortify(asia_map)
+
+head(asia_map1)
 
 
-ggmap(ggmap = 'china')
+
+
+
+
+
+
+
+
 
 
 
