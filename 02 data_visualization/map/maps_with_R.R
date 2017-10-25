@@ -1,6 +1,7 @@
 
 # 1.maps =====================================================================
 library(maps)
+library(mapdata)
 ## 绘制一张世界地图
 map('world', fill = TRUE, col = colors())
 ## 问题：如何选择某个国家，绘制该国的地图？
@@ -37,32 +38,38 @@ ggplot(gcc_countries, aes(long, lat, group = group, fill = region)) +
   geom_polygon(colour = 'black') + 
   scale_fill_brewer(palette = 'Set1')
 
-# shapefile + ggplot2 + maptools ==========================================
+# 3.shapefile + ggplot2 + maptools ==========================================
 library(maptools)
 
-asia_map <- readShapePoly('./asia-natural-shape/natural.shp')
 china_map <- readShapePoly('./china-province-border-data/bou2_4p.shp')
 
-plot(asia_map)
 plot(china_map)
 
-x = asia_map@data
+x = china_map@data
+xs <- data.frame(x, id = seq(0:924)- 1)
 
-asia_map1 <- fortify(asia_map)
+china_map1 <- fortify(china_map)
+head(china_map1)
 
-head(asia_map1)
+library(plyr)
+china_mapdata <- join(china_map1, xs, type = 'full')
+head(china_mapdata)
 
-
-
-
-
-
-
-
-
-
-
+ggplot(china_mapdata, aes(x = long, y = lat, group = group, fill = NAME)) + 
+  geom_polygon() + 
+  geom_path(colour = 'grey40') + 
+  scale_fill_manual(values = colours(), guide = FALSE)
 
 
 
-library(ggmap)
+
+
+
+
+
+
+
+
+
+
+
