@@ -41,12 +41,20 @@ ggplot(gcc_countries, aes(long, lat, group = group, fill = region)) +
 # 3.shapefile + ggplot2 + maptools ==========================================
 library(maptools)
 
-china_map <- readShapePoly('./china-province-border-data/bou2_4p.shp')
+china_map <- readShapePoly('./china_shp/bou2_4p.shp')
+saudi_arabia_map <- readShapePoly('./saudi_arabia_shp/SAU_adm1.shp')
 
 plot(china_map)
+plot(saudi_arabia_map)
 
-x = china_map@data
+
+x <- saudi_arabia_map@data
+dim(x)
+x
+
+x <- china_map@data
 xs <- data.frame(x, id = seq(0:924)- 1)
+
 
 china_map1 <- fortify(china_map)
 head(china_map1)
