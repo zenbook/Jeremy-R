@@ -40,38 +40,45 @@ ggplot(gcc_countries, aes(long, lat, group = group, fill = region)) +
 
 # 3.shapefile + ggplot2 + maptools ==========================================
 library(maptools)
-
-china_map <- readShapePoly('./china_shp/bou2_4p.shp')
-saudi_arabia_map <- readShapePoly('./saudi_arabia_shp/SAU_adm1.shp')
-
+china_map <- readShapePoly('./China_shp/bou2_4p.shp')
 plot(china_map)
-plot(saudi_arabia_map)
 
-
-x <- saudi_arabia_map@data
-dim(x)
-x
-
+## 预处理
 x <- china_map@data
 xs <- data.frame(x, id = seq(0:924)- 1)
-
-
+### 把china_map转换成data_frame
 china_map1 <- fortify(china_map)
 head(china_map1)
-
+### 把地图坐标和省份信息join
 library(plyr)
 china_mapdata <- join(china_map1, xs, type = 'full')
 head(china_mapdata)
 
+## 绘制中国地图
 ggplot(china_mapdata, aes(x = long, y = lat, group = group, fill = NAME)) + 
   geom_polygon() + 
   geom_path(colour = 'grey40') + 
   scale_fill_manual(values = colours(), guide = FALSE)
 
+## 绘制省份的地图
+zhejiang <- subset(china_mapdata, NAME == '浙江省')
+ggplot(zhejiang, aes(long, lat, group = group, fill = NAME)) + 
+  geom_polygon(fill = 'beige') + 
+  geom_path(colour = 'grey40') + 
+  ggtitle('中华人民共和国浙江省') + 
+  geom_point(x = 120.12, y = 30.16) + 
+  annotate('text', x = 120.3, y = 30, label = '杭州市')
+
+
+saudi_arabia_map <- readShapePoly('./saudi_arabia_shp/SAU_adm1.shp')
+
+plot(saudi_arabia_map)
 
 
 
-
+x <- saudi_arabia_map@data
+dim(x)
+x
 
 
 
