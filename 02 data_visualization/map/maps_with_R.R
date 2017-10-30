@@ -34,8 +34,12 @@ gcc_countries = map_data('world',
                                     'Qatar', 
                                     'Saudi Arabia', 
                                     'United Arab Emirates'))
-ggplot(gcc_countries, aes(long, lat, group = group, fill = region)) + 
-  geom_polygon(colour = 'black') + 
+
+### 沙特
+saudi = map_data('world', region = 'Saudi Arabia')
+
+ggplot(saudi, aes(long, lat, group = group)) + 
+  geom_polygon(colour = 'black', fill = 'white') + 
   scale_fill_brewer(palette = 'Set1')
 
 # 3.shapefile + ggplot2 + maptools ==========================================
