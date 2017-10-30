@@ -1,0 +1,178 @@
+City,Ship_num,Rec_num,Receive_rate
+Riyadh,44798,38460,0.8585 
+Jeddah,24541,20122,0.8199 
+Makkah,11394,9092,0.7980 
+Madinah,10837,9295,0.8577 
+Al Hassa,8463,7556,0.8928 
+Dammam,8045,7033,0.8742 
+Taif,6552,5535,0.8448 
+Tabuk,5337,4468,0.8372 
+Buraidah,4678,4232,0.9047 
+Khamis Mushait,4575,3803,0.8313 
+Abha,3669,3080,0.8395 
+Hail,3411,2976,0.8725 
+Khobar,3266,2967,0.9085 
+Kharj,3263,2859,0.8762 
+Gizan,3260,2545,0.7807 
+Qatif,3014,2673,0.8869 
+Qunfudah,2876,2032,0.7065 
+Mohayel Aseer,2801,2269,0.8101 
+Najran,2743,2226,0.8115 
+Sakaka,2591,2319,0.8950 
+Hafer Al Batin,2531,2082,0.8226 
+Yanbu,2480,2131,0.8593 
+Jubail,2350,2011,0.8557 
+Abu Areish,1962,1291,0.6580 
+Sabya,1804,1192,0.6608 
+Onaiza,1703,1552,0.9113 
+Bisha,1702,1234,0.7250 
+Samtah,1582,1223,0.7731 
+Hofuf,1542,1381,0.8956 
+Arar,1535,1289,0.8397 
+Baha,1382,1198,0.8669 
+AlRass,1153,971,0.8422 
+Majarda,1135,939,0.8273 
+Wadi El Dwaser,1044,890,0.8525 
+Dhahran,978,878,0.8978 
+Dawadmi,959,876,0.9135 
+Bish,956,691,0.7228 
+Seihat,932,864,0.9270 
+Sabt El Alaya,913,749,0.8204 
+Mikhwa,904,685,0.7577 
+Ahad Masarha,878,636,0.7244 
+Hawea/Taif,838,725,0.8652 
+Qurayat,828,717,0.8659 
+Ahad Rufaidah,819,687,0.8388 
+Safwa,813,735,0.9041 
+Rabigh,782,635,0.8120 
+Majma,776,694,0.8943 
+Oula,707,592,0.8373 
+Mubaraz,678,626,0.9233 
+Khafji,660,510,0.7727 
+Zulfi,659,592,0.8983 
+Namas,625,488,0.7808 
+Afif,603,510,0.8458 
+Rafha,593,443,0.7470 
+BilJurashi,566,489,0.8640 
+Nwariah,523,407,0.7782 
+Bahara,478,326,0.6820 
+Duba,477,421,0.8826 
+Umluj,476,380,0.7983 
+Aflaj,476,386,0.8109 
+Domat Al Jandal,467,405,0.8672 
+Rania,461,395,0.8568 
+Quwei'ieh,452,378,0.8363 
+Muzahmiah,442,337,0.7624 
+Bukeiriah,434,393,0.9055 
+Haqil,434,381,0.8779 
+Badaya,433,384,0.8868 
+Ras Tanura,429,348,0.8112 
+Gilwa,424,350,0.8255 
+Dere'iyeh,422,371,0.8791 
+Bader,421,349,0.8290 
+Tarut,420,385,0.9167 
+Wajeh (Al Wajh),414,344,0.8309 
+Midinhab,391,349,0.8926 
+Daelim,374,344,0.9198 
+Damad,372,226,0.6075 
+Mandak,371,302,0.8140 
+Abqaiq,367,304,0.8283 
+Shefa'a,354,294,0.8305 
+Khurma,332,278,0.8373 
+Turba,331,283,0.8550 
+Hinakeya,328,238,0.7256 
+Hawtat Bani Tamim,322,286,0.8882 
+Khaibar,314,218,0.6943 
+Uyun,283,251,0.8869 
+Shaqra,277,258,0.9314 
+Riyadh Al Khabra,273,237,0.8681 
+Qarah,273,251,0.9194 
+Yanbu Al Baher,262,245,0.9351 
+Tanuma,260,224,0.8615 
+Anak,255,212,0.8314 
+Sarat Obeida,251,199,0.7928 
+Sajir,249,213,0.8554 
+Ayn Fuhayd,238,195,0.8193 
+Rwaydah,228,176,0.7719 
+Sulaiyl,220,179,0.8136 
+Khulais,213,161,0.7559 
+Artawiah,209,174,0.8325 
+Farasan,209,174,0.8325 
+Dhahran Al Janoob,201,158,0.7861 
+Bareq,191,162,0.8482 
+Tabrjal,190,154,0.8105 
+Uqlat Al Suqur,187,140,0.7487 
+Wadeien,180,138,0.7667 
+Hotat Sudair,158,148,0.9367 
+Ja'araneh,155,109,0.7032 
+Balasmar,154,138,0.8961 
+Nimra,149,111,0.7450 
+Mulaija,140,102,0.7286 
+Dhurma,129,94,0.7287 
+Qaysoomah,124,105,0.8468 
+Horaimal,119,92,0.7731 
+Thumair,110,107,0.9727 
+Qariya Al Olaya,107,94,0.8785 
+Hareeq,104,95,0.9135 
+Qassim,97,87,0.8969 
+Jouf,80,69,0.8625 
+Alhada,78,59,0.7564 
+Mrat,77,73,0.9481 
+Muzneb,71,65,0.9155 
+Alghat,68,58,0.8529 
+Assiyah,67,64,0.9552 
+Al-Jsh,61,56,0.9180 
+Sarar,47,40,0.8511 
+Qasab,46,41,0.8913 
+Halat Ammar,44,40,0.9091 
+Noweirieh,44,37,0.8409 
+Jafar,41,38,0.9268 
+Awamiah,41,32,0.7805 
+Laith,39,28,0.7179 
+Darb,36,28,0.7778 
+Sharourah,31,27,0.8710 
+Jumum,30,22,0.7333 
+Turaif,22,19,0.8636 
+Zahban,20,10,0.5000 
+Aqiq,19,17,0.8947 
+Tayma,19,16,0.8421 
+Kara,19,16,0.8421 
+Ain Dar,15,10,0.6667 
+Salbookh,15,8,0.5333 
+Tatleeth,13,12,0.9231 
+Balahmar,13,13,1.0000 
+Mahad Al Dahab,13,12,0.9231 
+Safanyah,13,8,0.6154 
+Al Bada,12,11,0.9167 
+Mastura,12,9,0.7500 
+Kara'a,11,9,0.8182 
+Salwa,11,9,0.8182 
+Nabiya,10,8,0.8000 
+Ash Shuqaiq,10,10,1.0000 
+Amaq,9,6,0.6667 
+Rahima,8,6,0.7500 
+Udhaliyah,8,5,0.6250 
+Rejal Alma'a,8,4,0.5000 
+Remah,8,8,1.0000 
+Atawleh,7,6,0.8571 
+Muthaleif,6,5,0.8333 
+Karboos,6,4,0.6667 
+Batha,5,4,0.8000 
+Khamaseen,5,5,1.0000 
+Rowdat Sodair,4,3,0.7500 
+Al Dalemya,4,3,0.7500 
+Shraie'e,4,2,0.5000 
+Jalajel,4,3,0.7500 
+Ojam,4,3,0.7500 
+Sahna,3,2,0.6667 
+Ras Al Kheir,3,3,1.0000 
+Khasawyah,3,2,0.6667 
+Oyaynah,3,3,1.0000 
+Deraab,3,3,1.0000 
+Bahrat Al Moujoud,2,2,1.0000 
+Haweyah,2,1,0.5000 
+Othmanyah,1,0,0.0000 
+Thabya,1,1,1.0000 
+Harjah,1,0,0.0000 
+Asfan,1,1,1.0000 
+Harad,1,0,0.0000 
