@@ -34,8 +34,12 @@ gcc_countries = map_data('world',
                                     'Qatar', 
                                     'Saudi Arabia', 
                                     'United Arab Emirates'))
-ggplot(gcc_countries, aes(long, lat, group = group, fill = region)) + 
-  geom_polygon(colour = 'black') + 
+
+### 沙特
+saudi = map_data('world', region = 'Saudi Arabia')
+
+ggplot(saudi, aes(long, lat, group = group)) + 
+  geom_polygon(colour = 'black', fill = 'white') + 
   scale_fill_brewer(palette = 'Set1')
 
 # 3.shapefile + ggplot2 + maptools ==========================================
@@ -61,19 +65,27 @@ ggplot(china_mapdata, aes(x = long, y = lat, group = group, fill = NAME)) +
   scale_fill_manual(values = colours(), guide = FALSE)
 
 ## 绘制省份的地图
+### 浙江省
 zhejiang <- subset(china_mapdata, NAME == '浙江省')
 ggplot(zhejiang, aes(long, lat, group = group, fill = NAME)) + 
   geom_polygon(fill = 'beige') + 
   geom_path(colour = 'grey40') + 
+  scale_fill_manual(values = colours(), guide = FALSE) + 
   ggtitle('中华人民共和国浙江省') + 
   geom_point(x = 120.12, y = 30.16) + 
   annotate('text', x = 120.3, y = 30, label = '杭州市')
+### 香港
+hongkong <- subset(china_mapdata, NAME == '香港特别行政区')
+ggplot(hongkong, aes(long, lat, group = group, fill = NAME)) + 
+  geom_polygon(fill = 'beige') + 
+  geom_path(colour = 'grey40') + 
+  scale_fill_manual(values = colours(), guide = FALSE) + 
+  ggtitle('香港特别行政区')
 
 
-saudi_arabia_map <- readShapePoly('./saudi_arabia_shp/SAU_adm1.shp')
+saudi_arabia_map <- readShapePoly('./Saudi_arabia_shp/SAU_adm1.shp')
 
 plot(saudi_arabia_map)
-
 
 
 x <- saudi_arabia_map@data
