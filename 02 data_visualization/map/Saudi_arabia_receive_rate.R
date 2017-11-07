@@ -9,10 +9,10 @@ saudi_arabia_cities <- read.csv('./Saudi_arabia_city_longitude_latitude.csv', se
 ## 沙特各城市签收率
 saudi_arabia_data <- read.csv('./map_for_sa.csv', sep = ',')
 ## join两表
-receive_rate_df <- left_join(saudi_arabia_data[, c('City', 'Ship_num', 'Receive_rate')], 
+receive_rate_df <- left_join(saudi_arabia_data[, c('City', 'ship_num', 'COD_rec_rate', 'cnw_time_span')], 
                              saudi_arabia_cities[, c('City', 'long', 'lat')], 
                              by = 'City')
-receive_rate_df$rate_pct <- paste(receive_rate_df$Receive_rate * 100, "%", sep = '')
+receive_rate_df$rate_pct <- paste(receive_rate_df$COD_rec_rate * 100, "%", sep = '')
 
 # plot maps ==================================================================
 leaflet(receive_rate_df) %>% 
@@ -20,16 +20,13 @@ leaflet(receive_rate_df) %>%
   addCircleMarkers(~long, 
                    ~lat, 
                    radius = 6, 
-                   color = ~ifelse(Receive_rate >= 0.88, '#63BE7B', 
-                                   ifelse(Receive_rate >= 0.85, '#B1D580',
-                                          ifelse(Receive_rate >= 0.82, '#FFEB84',
-                                                 ifelse(Receive_rate >= 0.80, '#FBAA77','#F8696B')))), 
-                   stroke = TRUE,
+                   color = ~ifelse(COD_rec_rate >= 0.9, '#63BE7B', 
+                                   ifelse(COD_rec_rate >= 0.85, '#B1D580',
+                                          ifelse(COD_rec_rate >= 0.80, '#FFEB84',
+                                                 ifelse(COD_rec_rate >= 0.75, '#FBAA77','#F8696B')))), 
+                   stroke = FALSE,
                    fillOpacity = 1, 
                    label = ~paste(as.character(City), ' ',
-                                  'Ship_num:', 
-                                  as.character(Ship_num), ';',
-                                  'Receive_rate:',
-                                  as.character(rate_pct), ';')) 
-
-
+                                  as.character(ship_num), ';',
+                                  as.character(rate_pct), ';', 
+                                  as.character(cnw_time_span), ';')) 
