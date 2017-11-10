@@ -1,0 +1,14 @@
+,ID_0,ISO,NAME_0,ID_1,NAME_1,HASC_1,CCN_1,CCA_1,TYPE_1,ENGTYPE_1,NL_NAME_1,VARNAME_1,id
+0,200,SAU,Saudi Arabia,1,`Asir,SA.AS,0,NA,Emirate|Mintaqah,Region,NA,Asir|Aseer|Assyear,0
+1,200,SAU,Saudi Arabia,2,Al Bahah,SA.BA,0,NA,Emirate|Mintaqah,Region,NA,Baha,1
+2,200,SAU,Saudi Arabia,3,Al Hudud ash Shamaliyah,SA.HS,0,NA,Emirate|Mintaqah,Region,NA,Northern Frontier,2
+3,200,SAU,Saudi Arabia,4,Al Jawf,SA.JF,0,NA,Emirate|Mintaqah,Region,NA,JawfAl Joaf|Al-Jouf|Jowf,3
+4,200,SAU,Saudi Arabia,5,Al Madinah,SA.MD,0,NA,Emirate|Mintaqah,Region,NA,Madinah|Al Madinah al Munawwarah|Monwarah|Medina|Médine,4
+5,200,SAU,Saudi Arabia,6,Al Quassim,SA.QS,0,NA,Emirate|Mintaqah,Region,NA,Al Gassim|Gasim|Qaseem|Al Qasseem,5
+6,200,SAU,Saudi Arabia,7,Ar Riyad,SA.RI,0,NA,Emirate|Mintaqah,Region,NA,Riyad|Riad|Riyadh,6
+7,200,SAU,Saudi Arabia,8,Ash Sharqiyah,SA.SH,0,NA,Emirate|Mintaqah,Region,NA,Eastern Province,7
+8,200,SAU,Saudi Arabia,9,Ha'il,SA.HA,0,NA,Emirate|Mintaqah,Region,NA,Hail,8
+9,200,SAU,Saudi Arabia,10,Jizan,SA.JZ,0,NA,Emirate|Mintaqah,Region,NA,Jazan|Qizan,9
+10,200,SAU,Saudi Arabia,11,Makkah,SA.MK,0,NA,Emirate|Mintaqah,Region,NA,La Meca|La Mecca|La Mecque|Makka|Makkah al-Mukarramah|Mecca|Meca|Mecka|Mekka,10
+11,200,SAU,Saudi Arabia,12,Najran,SA.NJ,0,NA,Emirate|Mintaqah,Region,NA,NA,11
+12,200,SAU,Saudi Arabia,13,Tabuk,SA.TB,0,NA,Emirate|Mintaqah,Region,NA,Tabouk,12

@@ -1,7 +1,12 @@
-
-# 1.maps =====================================================================
+# 0.load packages ==========================================================
 library(maps)
 library(mapdata)
+library(maptools)
+library(ggplot2)
+library(plyr)
+
+# 1.maps =====================================================================
+
 ## 绘制一张世界地图
 map('world', fill = TRUE, col = colors())
 ## 问题：如何选择某个国家，绘制该国的地图？
@@ -9,7 +14,7 @@ map('usa', fill = TRUE, col = colors())
 ## 可以画美国的，但是其他国家的不知道怎么画
 
 # 2.maps + ggplot2 ===========================================================
-library(ggplot2)
+
 
 ## 绘制世界地图
 world_map = map_data('world')
@@ -43,7 +48,7 @@ ggplot(saudi, aes(long, lat, group = group)) +
   scale_fill_brewer(palette = 'Set1')
 
 # 3.shapefile + ggplot2 + maptools ==========================================
-library(maptools)
+
 china_map <- readShapePoly('./China_shp/bou2_4p.shp')
 plot(china_map)
 
@@ -53,8 +58,8 @@ xs <- data.frame(x, id = seq(0:924)- 1)
 ### 把china_map转换成data_frame
 china_map1 <- fortify(china_map)
 head(china_map1)
+dim(china_map1)
 ### 把地图坐标和省份信息join
-library(plyr)
 china_mapdata <- join(china_map1, xs, type = 'full')
 head(china_mapdata)
 
@@ -83,20 +88,48 @@ ggplot(hongkong, aes(long, lat, group = group, fill = NAME)) +
   ggtitle('香港特别行政区')
 
 
-saudi_arabia_map <- readShapePoly('./Saudi_arabia_shp/SAU_adm1.shp')
-
-plot(saudi_arabia_map)
 
 
-x <- saudi_arabia_map@data
-dim(x)
-x
+# 全球地图 ==============================================================
+library(rworldmap)
+data("countryExData")
+spdf <- joinCountryData2Map(countryExData, 
+                            joinCode = 'ISO3', 
+                            nameJoinColumn = 'ISO3V10')
+
+mapDevice()
+mapCountryData(spdf, nameColumnToPlot = 'PM10')
+
+## 自定义设置，让地图更好看
+
+### load data
+library(XML)
+url<-"http://en.worldstat.info/World/List_of_countries_by_Population_under_15_years_old"
+table <- readHTMLTable(url)
+raw <- as.data.frame(table[4])
+names(raw) <- c('country', 'pop')
+raw <- raw[-1, ]
+raw$country <- as.character(raw$country)
+raw$pop <- as.numeric(gsub(",",'',raw$pop))
+
+### plot
+map <- joinCountryData2Map(raw, joinCode = 'NAME', 
+                           nameJoinColumn = 'country')
+### 调色板
+op <- palette(c('green', 'yellow', 'orange', 'red'))
+### 按四分位数划分
+cutvector <- quantile(map$pop, na.rm = TRUE)
+map$category <- cut(map$pop, cutvector, include.lowest = TRUE)
+levels(map$category) <- c('low', 'med', 'high', 'vhigh')
+### plot
+mapCountryData(map, nameColumnToPlot = 'category', 
+               catMethod = 'categorical', 
+               mapTitle = '15岁以下的世界人口分布', 
+               colourPalette = 'palette', 
+               oceanCol = 'lightblue', 
+               missingCountryCol = 'white')
+### 问题：左下角的图例太大
 
 
-
-
-
-
-
-
-
+# 参考资料
+## https://site.douban.com/182577/room/2177990/
