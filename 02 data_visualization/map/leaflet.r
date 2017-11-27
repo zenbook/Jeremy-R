@@ -64,18 +64,11 @@ m %>% addProviderTiles(providers$OpenMapSurfer)
 m %>% addProviderTiles(providers$Stamen.Toner)
 m %>% addProviderTiles(providers$HikeBike)
 
-## 工作相关，展示沙特部分城市的数据
-sa_order <- read.csv('sa_order.csv', sep = ',')
-leaflet(sa_order) %>% 
-  addTiles() %>% 
-  addCircleMarkers(radius = ~round(orders/100), 
-                   popup = ~as.character(orders), 
-                   color = ~ifelse(orders >= 1000, 'red', 'blue'))
-
 # markers --------------------------------------------------------------------------
 leaflet(quakes[1:20, ]) %>% 
   addTiles() %>% 
   addMarkers()
+
 # 设置参数
 leaflet(quakes[1:20, ]) %>% 
   addTiles() %>% 
