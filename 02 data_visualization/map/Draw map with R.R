@@ -7,7 +7,7 @@
 
 # content ===========================================================================
 ## - 1.点
-## - 2.线
+## - 2.线【略】
 ## - 3.面
 
 
@@ -106,23 +106,48 @@ leaflet() %>%
                                          textsize = '15px', 
                                          direction = 'bottom'))
 
-# 2.线 ==============================================================================
+## 气泡
+province <- read.csv('./saudi_arabia_province_data.csv')
+leaflet(province) %>% 
+  addTiles() %>% 
+  addCircles(lng = ~long, lat = ~lat, 
+             weight = 1, 
+             color = 'green', 
+             radius = ~sqrt(ship_orders) * 300, 
+             label = ~paste(province, ': ', ship_orders))
 
 
+# 2.线【略】 ========================================================================
 
 
-
- 
 # 3.面 ==============================================================================
 
+library(maps)
+mapstates = map('state', fill = TRUE, plot = FALSE)
+leaflet(data = mapstates) %>% 
+  addTiles() %>% 
+  addPolygons(fillColor = topo.colors(10, alpha = NULL), 
+              stroke = FALSE)
+
+library(rgdal)
+
+chinamap = readOGR('./China_shp/bou2_4p.shp')
+
+leaflet(chinamap) %>% 
+  addPolygons(color = '#444444', 
+              weight = 1, 
+              smoothFactor = 0.5, 
+              opacity = 1.0, 
+              fillOpacity = 0.5, 
+              fillColor = ~colorQuantile('RdYlBu', domain = ALAND), 
+              #fillColor = topo.colors(10, alpha = NULL), 
+              highlightOptions = highlightOptions(color = 'white', 
+                                                  weight = 2, 
+                                                  bringToFront = TRUE))
 
 
 
-
-
-
-
-
+YlOrRd
 
 
 
