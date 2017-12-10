@@ -1,17 +1,18 @@
 
-# ===================================================================================
+# ============================================================================
 # title:Draw map with R
 # date:2017-11-27
 # author:Neo王政鸣
-# ===================================================================================
+# ============================================================================
 
-# content ===========================================================================
+# content ====================================================================
 ## - 1.点
 ## - 2.线【略】
 ## - 3.面
+## - 4.画中国地图
 
 
-# 1.点 ==============================================================================
+# 1.点 =======================================================================
 
 ## 加载包
 library(leaflet)
@@ -116,29 +117,37 @@ leaflet(province) %>%
              radius = ~sqrt(ship_orders) * 300, 
              label = ~paste(province, ': ', ship_orders))
 
-## 画一个框
-leaflet() %>% addTiles() %>%
-  addRectangles(
-    lng1=-118.456554, lat1=34.078039,
-    lng2=-118.436383, lat2=34.062717,
-    fillColor = "transparent"
-  )
 
 
+# 2.线【略】 ================================================================
 
 
+# 3.面 ======================================================================
 
-# 2.线【略】 ========================================================================
-
-
-# 3.面 ==============================================================================
+## 3.1 maps
 
 library(maps)
-mapstates = map('state', fill = TRUE, plot = FALSE)
-leaflet(data = mapstates) %>% 
+
+map('world')
+map('usa', fill = TRUE, col = colors())
+map('world', 'China')
+map.cities(country = 'China', capitals = 2)
+
+
+mapworld = map('world', fill = TRUE, plot = FALSE)
+
+leaflet(data = mapworld) %>% 
   addTiles() %>% 
-  addPolygons(fillColor = topo.colors(10, alpha = NULL), 
-              stroke = FALSE)
+  addPolygons(fillColor = topo.colors(20, alpha = NULL), 
+              stroke = FALSE, 
+              color = '#444444', 
+              weight = 1, 
+              smoothFactor = 0.5, 
+              opacity = 1.0, 
+              fillOpacity = 0.5, 
+              highlightOptions = highlightOptions(color = 'white', 
+                                                  weight = 2, 
+                                                  bringToFront = TRUE))
 
 library(rgdal)
 

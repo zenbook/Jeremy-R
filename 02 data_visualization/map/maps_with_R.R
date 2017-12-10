@@ -56,10 +56,11 @@ x <- china_map@data
 xs <- data.frame(x, id = seq(0:924)- 1)
 ### 把china_map转换成data_frame
 china_map1 <- fortify(china_map)
+china_map1$id <- as.numeric(china_map1$id)
 head(china_map1)
 dim(china_map1)
 ### 把地图坐标和省份信息join
-china_mapdata <- join(china_map1, xs, type = 'full')
+china_mapdata <- left_join(china_map1, xs, type = 'full')
 head(china_mapdata)
 
 ## 绘制中国地图
