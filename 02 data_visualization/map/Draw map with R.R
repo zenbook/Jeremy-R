@@ -112,9 +112,20 @@ leaflet(province) %>%
   addTiles() %>% 
   addCircles(lng = ~long, lat = ~lat, 
              weight = 1, 
-             color = 'green', 
+             color = 'red', 
              radius = ~sqrt(ship_orders) * 300, 
              label = ~paste(province, ': ', ship_orders))
+
+## 画一个框
+leaflet() %>% addTiles() %>%
+  addRectangles(
+    lng1=-118.456554, lat1=34.078039,
+    lng2=-118.436383, lat2=34.062717,
+    fillColor = "transparent"
+  )
+
+
+
 
 
 # 2.线【略】 ========================================================================
@@ -139,15 +150,15 @@ leaflet(chinamap) %>%
               smoothFactor = 0.5, 
               opacity = 1.0, 
               fillOpacity = 0.5, 
-              fillColor = ~colorQuantile('RdYlBu', domain = ALAND), 
-              #fillColor = topo.colors(10, alpha = NULL), 
+              #fillColor = ~colorQuantile('YlOrRd', ALAND)(ALAND), 
+              fillColor = topo.colors(10, alpha = NULL), 
               highlightOptions = highlightOptions(color = 'white', 
                                                   weight = 2, 
                                                   bringToFront = TRUE))
 
 
 
-YlOrRd
+
 
 
 
