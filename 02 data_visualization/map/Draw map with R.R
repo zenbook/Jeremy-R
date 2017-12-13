@@ -131,8 +131,37 @@ library(maps)
 map('world')
 map('usa', fill = TRUE, col = colors())
 map('world', 'China')
-map.cities(country = 'China', capitals = 2)
 
+## 3.2 ggplot
+
+library(ggplot2)
+
+worldmap = map_data('world')
+
+ggplot(world_map, aes(x = long, y = lat, group = group)) + 
+  geom_polygon(fill = 'white', colour = 'black')
+
+### 东亚
+east_asia = map_data('world', region = c('Japan', 'China', 'North Korea', 'South Korea'))
+
+ggplot(east_asia, aes(x = long, y = lat, group = group, fill = region)) + 
+  geom_polygon(colour = 'black') + 
+  scale_fill_brewer(palette = 'Set1')
+
+### 中东
+gcc_countries = map_data('world', 
+                         region = c('Bahrain', 
+                                    'Kuwait', 
+                                    'Oman', 
+                                    'Qatar', 
+                                    'Saudi Arabia', 
+                                    'United Arab Emirates'))
+ggplot(gcc_countries, aes(x = long, y = lat, group = group, fill = region)) + 
+  geom_polygon(colour = 'black') + 
+  scale_fill_brewer((palette = 'Set1'))
+
+
+## 3.3 leaflet
 
 mapworld = map('world', fill = TRUE, plot = FALSE)
 
@@ -148,6 +177,17 @@ leaflet(data = mapworld) %>%
               highlightOptions = highlightOptions(color = 'white', 
                                                   weight = 2, 
                                                   bringToFront = TRUE))
+
+
+
+
+
+
+
+
+
+
+
 
 library(rgdal)
 
