@@ -160,6 +160,13 @@ ggplot(gcc_countries, aes(x = long, y = lat, group = group, fill = region)) +
   geom_polygon(colour = 'black') + 
   scale_fill_brewer((palette = 'Set1'))
 
+### 沙特阿拉伯
+saudi = map_data('world', region = 'Saudi Arabia')
+
+ggplot(saudi, aes(long, lat, group = group)) + 
+  geom_polygon(colour = 'black', fill = 'white')
+
+
 
 ## 3.3 leaflet
 
@@ -180,18 +187,59 @@ leaflet(data = mapworld) %>%
 
 
 
+# 4.画中国地图 ===================================================================
+
+## 4.1 画一只最简单的鸡
+
+map('world', 'China')
+
+chinamap <- map_data('world', region = 'China')
+ggplot(chinamap, aes(x = long, y = lat, group = group)) + 
+  geom_polygon(color = 'black', fill = 'white')
 
 
+## 4.2 画一只丑丑的鸡
+china_map <- readOGR('./China_shp/bou2_4p.shp')
+plot(china_map)
 
+## 4.3 画一只稍微好看一些的鸡
+library(dplyr)
 
+x <- china_map@data
+xs <- data.frame(x, id = seq(0:924)- 1)
 
+### 把china_map转换成data_frame
+china_map1 <- fortify(china_map)
+china_map1$id <- as.numeric(china_map1$id)
+head(china_map1)
+dim(china_map1)
 
+### 把地图坐标和省份信息join
+china_mapdata <- left_join(china_map1, xs, type = 'full')
+head(china_mapdata)
 
+## 绘制中国地图
+ggplot(china_mapdata, aes(x = long, y = lat, group = group, fill = NAME)) + 
+  geom_polygon() + 
+  geom_path(colour = 'grey40') + 
+  scale_fill_manual(values = colours(), guide = FALSE)
 
+## 绘制省份的地图
+### 浙江省
+zhejiang <- subset(china_mapdata, NAME == '浙江省')
+ggplot(zhejiang, aes(long, lat, group = group, fill = NAME)) + 
+  geom_polygon(fill = 'white') + 
+  geom_path(colour = 'grey40') + 
+  scale_fill_manual(values = colours(), guide = FALSE) + 
+  ggtitle('中华人民共和国浙江省') + 
+  geom_point(x = 120.12, y = 30.16) + 
+  annotate('text', x = 120.3, y = 30, label = '杭州市')
 
+## 4.4 画一只漂亮的鸡
 library(rgdal)
 
 chinamap = readOGR('./China_shp/bou2_4p.shp')
+class(chinamap)
 
 leaflet(chinamap) %>% 
   addPolygons(color = '#444444', 
@@ -205,10 +253,28 @@ leaflet(chinamap) %>%
                                                   weight = 2, 
                                                   bringToFront = TRUE))
 
+## 4.5 画一只特别漂亮的鸡
+## https://recharts.cosx.org/
+## http://echarts.baidu.com/examples.html
+library(recharts)
 
+### 中国 + 省份
+mapdata <- data.frame(province = c('上海', '江苏', '浙江', '江西', '安徽'), 
+                      val1 = c(100, 200, 300, 400, 420), 
+                      val2 = c(200, 300, 400, 500, 520), 
+                      val3 = c(1, 2, 3, 5, 4), 
+                      stringsAsFactors = FALSE)
 
+eMap(mapdata, namevar = ~province, datavar = ~val1 + val2)
 
+## 省份 + 城市
+zhejiang <- data.frame(city = c('杭州市', '绍兴市', '宁波市', '舟山市'), 
+                       val1 = c(100, 200, 300, 400), 
+                       val2 = c(600, 200, 100, 400), 
+                       val3 = c(1, 2, 3, 4), 
+                       stringAsFactors = FALSE)
 
+eMap(zhejiang, namevar = ~city, datavar = ~val1 + val2, region = '浙江')
 
 
 
