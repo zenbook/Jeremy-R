@@ -109,6 +109,8 @@ leaflet() %>%
 
 ## 气泡
 province <- read.csv('./saudi_arabia_province_data.csv')
+
+head(province)
 leaflet(province) %>% 
   addTiles() %>% 
   addCircles(lng = ~long, lat = ~lat, 
@@ -130,19 +132,21 @@ library(maps)
 
 map('world')
 map('usa', fill = TRUE, col = colors())
-map('world', 'China')
+map('world', region = 'China')
 
-## 3.2 ggplot
+## 3.2 ggplot2
 
 library(ggplot2)
 
-worldmap = map_data('world')
+worldmap <- map_data('world')
 
-ggplot(world_map, aes(x = long, y = lat, group = group)) + 
+ggplot(data = worldmap, 
+       aes(x = long, y = lat, group = group)) + 
   geom_polygon(fill = 'white', colour = 'black')
 
 ### 东亚
-east_asia = map_data('world', region = c('Japan', 'China', 'North Korea', 'South Korea'))
+east_asia = map_data('world', 
+                     region = c('Japan', 'China', 'North Korea', 'South Korea'))
 
 ggplot(east_asia, aes(x = long, y = lat, group = group, fill = region)) + 
   geom_polygon(colour = 'black') + 
@@ -217,9 +221,11 @@ dim(china_map1)
 ### 把地图坐标和省份信息join
 china_mapdata <- left_join(china_map1, xs, type = 'full')
 head(china_mapdata)
+str(china_mapdata)
 
 ## 绘制中国地图
-ggplot(china_mapdata, aes(x = long, y = lat, group = group, fill = NAME)) + 
+ggplot(china_mapdata, 
+       aes(x = long, y = lat, group = group, fill = NAME)) + 
   geom_polygon() + 
   geom_path(colour = 'grey40') + 
   scale_fill_manual(values = colours(), guide = FALSE)
