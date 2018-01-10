@@ -2,7 +2,7 @@
 library(maps)
 library(mapdata)
 library(maptools)
-library(tidyverse)
+library(ggplot2)
 
 # 1.maps =====================================================================
 
@@ -38,6 +38,11 @@ gcc_countries = map_data('world',
                                     'Qatar', 
                                     'Saudi Arabia', 
                                     'United Arab Emirates'))
+
+ggplot(gcc_countries, aes(x = long, y = lat, group = group, fill = region)) + 
+  geom_polygon(colour = 'black') + 
+  scale_fill_brewer((palette = 'Set1'))
+
 
 ### 沙特
 saudi = map_data('world', region = 'Saudi Arabia')
