@@ -85,7 +85,7 @@ ggplot(test_data1, aes(goods_num, goods_amt)) +
 
 # 2.2 用sql玩数据
 
-# 查询数据病保存到R session中，data.frame
+# 查询数据并保存到R session中，data.frame
 test_data2 <- dbGetQuery(
   impala,
   "select country_name
@@ -103,7 +103,7 @@ str(test_data2)
 head(test_data2)
 
 
-# 查询数据不保存为data.frame，仍保留为lazy tbl格式
+# 查询数据，不保存为data.frame，仍保留为lazy tbl格式
 # 由于不是保存到Rsession中，所以不能使用一些函数，比如ggplot
 test_data3 <- tbl(impala, 
                   sql("select country_name
