@@ -39,6 +39,59 @@ filter_segment(cuts2, filter_words = c('我','的','听','在','你','就','能'
 
 # 2.文本情感分类，正负情感 ============================================
 
+## 2.0 load libraries
+library(jiebaR)
+library(plyr)
+library(stringr)
+library(tm)
+
+## 2.1 data processing
+
+### 加载评论数据
+evaluation <- read.csv("./sentiment_analysis_sim/Hotel Evaluation.csv", 
+                       header = TRUE, 
+                       stringsAsFactors = FALSE)
+
+### 查看数据
+str(evaluation)
+
+### 把Emotion字段的类型修改成factor
+evaluation$Emotion <- as.factor(evaluation$Emotion)
+
+### 分词
+engine <- worker(user = "./sentiment_analysis_sim/all_words.txt", 
+                 stop_word = "./sentiment_analysis_sim/mystopwords.txt")
+cuts <- llply(evaluation$Content, segment, engine)
+#### 分词结果是一个list
+class(cuts)
+#### 第一条评论的分词结果,注意结果中有6和8
+cuts[1]
+
+### 剔除文本中的数字和字母
+content <- lapply(cuts, str_replace_all, '[0-9a-zA-Z]', '')
+class(content)
+content[1]
+#### 发现6和8都已经替换成了""
+
+### 检查内容为空的评论，剔除掉
+idx <- which(content == "")
+idx
+#### 发现第98和391条评论是空内容
+#### 我们看最原始的评论内容，发现其实是有内容的，其中98条偏负面，391条偏正面；
+evaluation[c(98, 391), ]
+#### 而分词结果中只有数字了，问题出在自定义和停止词词库上，需要修改一下；
+cuts[98]
+cuts[391]
+content2 <- content[-idx]
+
+### 删除每条评论分词后的空字符元素
+content3 <- llply(content2, function(x) x[!x == ""])
+
+### 把切词后的评论转换为语料
+content_corpus <- Corpus(VectorSource(content3))
+class(content_corpus)
+
+### 创建文档-词条
 
 
 
