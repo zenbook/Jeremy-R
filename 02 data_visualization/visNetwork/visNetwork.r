@@ -1,8 +1,8 @@
 # how to get start -------------------------------------------------------------
 # cran
-install.packages('visNetwork')
+# install.packages('visNetwork')
 # github
-devtools::install_github('datastorm-open/visNetwork')
+# devtools::install_github('datastorm-open/visNetwork')
 # load library
 library('visNetwork')
 
