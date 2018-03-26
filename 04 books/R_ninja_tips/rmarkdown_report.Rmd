@@ -1,0 +1,88 @@
+---
+title: "tips about rmarkdown"
+author: "Neo Wang"
+date: "2018年3月23日"
+output: html_document
+---
+
+## 1.设置global options：不展示代码、消息和警告信息
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+## 2.添加r代码块code chuncks：快捷键**ctrl + alt + I**
+
+r代码的一些设置：
+
+- include = FALSE：不显示代码和代码的结果，但是可以被其他代码引用；
+
+- echo = FALSE:不显示代码，但是显示代码结果；
+
+- message = FALSE:不显示代码的相关消息；
+
+- warning = FALSE:不显示代码的警告信息；
+
+- fig.cap = "...":图片的说明文字；
+
+## 3.添加行内代码inline code:用一对反引号括起来`r code`
+
+**示例1：**
+
+```{r echo=TRUE}
+# colorfunc <- "heat.colors"
+# colorfunc <- "terrain.colors"
+# colorfunc <- "topo.colors"
+colorfunc <- "rainbow"
+```
+
+demostration of the `r colorfunc` function
+
+### `r colorfunc`
+
+```{r fig.cap="the maunga whau volcano", echo=FALSE}
+image(volcano, col = get(colorfunc)(200))
+```
+
+## 4.在代码块中执行其他语言
+
+code chunck中可以执行除R之外的其他语言：
+
+- python
+
+- bash
+
+- SQL
+
+- Rcpp
+
+- CSS
+
+- JavaScript
+
+```{bash}
+
+```
+
+
+
+
+
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
