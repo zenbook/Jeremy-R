@@ -59,7 +59,7 @@ months <- c('01', '02', '03', '04', '05', '06',
 chinese_city_list <- read.csv("./chinese_city_list.csv", 
                               header = TRUE, 
                               stringsAsFactors = FALSE)
-city <- chinese_city_list$name
+city <- chinese_city_list$pinyin
 baseurl <- 'http://lishi.tianqi.com/'
 ## 创建一个空数据框
 weather_history <- data.frame(t(rep(NA,7)))[-1,]

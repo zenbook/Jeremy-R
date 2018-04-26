@@ -1,17 +1,29 @@
-# echartR各类图形代码和数据格式
-detach("package:dplyr")
-require("plyr")
-require("dplyr")
-require("recharts")
-require("reshape2")
-source("E:/R/echartR.R",encoding="utf-8")
+# 说明：
+## 用recharts包绘制交互图形
+
+# 资源：
+## madlogos：https://github.com/madlogos/recharts2, https://madlogos.github.io/recharts/#-en
+## 谢益辉：https://recharts.yihui.name/ , https://recharts.yihui.name/
+## 谢益辉+魏太云：https://github.com/cosname/recharts, https://recharts.cosx.org/
+## 谢益辉个人的不建议继续使用了，应该不再维护了，建议使用谢益辉+魏太云一起做的
+
+# 安装recharts
+library(devtools)
+devtools::install_github("cosname/recharts")
+
+# 加载包
+library("recharts")
+library("tidyverse")
+
+# 开始制作图形
+eBar(cut(rnorm(1000), -4:4))
 
 
 ## echartR作图的数据源一般是long长型数据，而不是宽型数据
 
 # 1.scatter 散点图
 # 1.1 最简单的样式
-echartR(iris, x = ~Sepal.Width, y = ~Petal.Width)
+echartr(iris, x = ~Sepal.Width, y = ~Petal.Width)
 # 1.2 增加系列
 echartR(iris, x = ~Sepal.Width, y = ~Petal.Width, series = ~Species)
 # 1.3 添加标线和标记
