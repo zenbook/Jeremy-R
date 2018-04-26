@@ -1,21 +1,49 @@
-# 说明：
+
+# 说明 ==================================================================
 ## 用recharts包绘制交互图形
+
 
 # 资源：
 ## madlogos：https://github.com/madlogos/recharts2, https://madlogos.github.io/recharts/#-en
 ## 谢益辉：https://recharts.yihui.name/ , https://recharts.yihui.name/
 ## 谢益辉+魏太云：https://github.com/cosname/recharts, https://recharts.cosx.org/
-## 谢益辉个人的不建议继续使用了，应该不再维护了，建议使用谢益辉+魏太云一起做的
+## 谢益辉个人的不建议继续使用了，应该不再维护了
+## 谢益辉+魏太云一起做的，有一些bug，还不成熟，建议暂不使用
+## 因此，暂时使用madlogos的
 
-# 安装recharts
+# 安装统计之都的recharts
 library(devtools)
 devtools::install_github("cosname/recharts")
+
+# 安装madlogos的recharts
+library(devtools)
+devtools::install_github("madlogos/recharts")
+
+
+if (!require(devtools)) library(devtools)
+install_github("madlogos/recharts")
 
 # 加载包
 library("recharts")
 library("tidyverse")
 
-# 开始制作图形
+# 基本图形 ============================================================
+
+## 1.散点图
+## 输入data.famre，可指定xvar,yvar,series,theme
+## 一共有7个主题：1~7
+ePoints(dat = iris[, 3:5], 
+        xvar = ~Petal.Length, 
+        yvar = ~Petal.Width, 
+        series = ~Species, 
+        theme = 2)
+
+## 2.折线图
+head(WorldPhones)
+str(WorldPhones)
+
+head(iris)
+
 eBar(cut(rnorm(1000), -4:4))
 
 
