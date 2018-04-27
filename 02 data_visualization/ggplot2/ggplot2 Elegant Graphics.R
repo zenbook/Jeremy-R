@@ -202,6 +202,16 @@ p + geom_tile() + labs(tile = 'geom_tile')
 p + geom_text(aes(label = label)) + labs(title = 'geom_text')
 p + geom_point() + geom_text(aes(label = label), vjust = -1)
 
+
+## geom_area
+set.seed(11)
+df <- data.frame(a = rlnorm(30), b = 1:10, c = rep(LETTERS[1:3], each = 10))
+ggplot(data = df, 
+       aes(x = b, y = a, fill = c)) + 
+  geom_area(position = 'stack')
+
+
+
 # 5.4 展示数据的分布
 summary(diamonds$depth)
 ggplot(diamonds, aes(depth)) + geom_histogram(aes(y = ..density..), binwidth = 1)
@@ -314,10 +324,17 @@ p <- ggplot(mtcars, aes(wt, cyl, color = cyl)) + geom_point()
 p + scale_colour_gradient(breaks = c(5.5, 6.5))
 p + scale_colour_gradient(limits = c(5.5, 6.5))
 # 6.4.2 位置标度 scale_x_  scale_y_
-ggplot(diamonds, aes(carat, price)) + geom_point() + scale_x_log10() + scale_y_log10()
-ggplot(diamonds, aes(log(carat), log(price))) + geom_point()
+ggplot(diamonds, aes(carat, price)) + 
+  geom_point() + 
+  scale_x_log10() + 
+  scale_y_log10()
+ggplot(diamonds, aes(log(carat), log(price))) + 
+  geom_point()
 library('scales')
-p <- ggplot(economics, aes(date, psavert)) + geom_line() + ylab('personal saving rate') + geom_hline(yintercept = 0, color = 'grey50')
+p <- ggplot(economics, aes(date, psavert)) + 
+  geom_line() + 
+  ylab('personal saving rate') + 
+  geom_hline(yintercept = 0, color = 'grey50')
 p + scale_x_date(breaks = date_breaks('5 years'), labels = date_format('%Y'))
 p + scale_x_date(limits = as.Date(c('2004-01-01', '2005-01-01')),
                  labels = date_format('%Y-%m'))
@@ -333,7 +350,8 @@ erupt + scale_fill_gradient(limits = c(0, 0.04))
 erupt + scale_fill_gradient(limits = c(0, 0.04), low = 'white', high = 'black')
 erupt + scale_fill_gradient2(limits = c(-0.04, 0.04), midpoint = mean(df$density))
 point <- ggplot(msleep, aes(log(brainwt), log(bodywt), color = vore)) + geom_point() 
-hist <- ggplot(msleep, aes(log10(brainwt), fill = vore, color = I('white'))) + geom_histogram(binwidth = 1)
+hist <- ggplot(msleep, aes(log10(brainwt), fill = vore, color = I('white'))) + 
+  geom_histogram(binwidth = 1)
 point + scale_color_brewer(palette = 'Set1')
 point + scale_color_brewer(palette = 'Set2')
 point + scale_color_brewer(palette = 'Pastel1')
@@ -341,8 +359,11 @@ hist + scale_fill_brewer(palette = 'Set1')
 hist + scale_fill_brewer(palette = 'Set2')
 hist + scale_fill_brewer(palette = 'Pastel1')
 # 6.4.4 手动离散型标度
-plot <- ggplot(msleep, aes(log(brainwt), log(bodywt))) + geom_point()
-plot + aes(color = vore) + scale_color_manual(values = c('red', 'orange', 'yellow', 'green', 'blue'))
+plot <- ggplot(msleep, aes(log(brainwt), log(bodywt))) + 
+  geom_point()
+plot + 
+  aes(color = vore) + 
+  scale_color_manual(values = c('red', 'orange', 'yellow', 'green', 'blue'))
 colors <- c(carni = 'red', 'NA' = 'orange', insecti = 'yellow', herbi = 'green', omni = 'blue')
 plot + aes(color = vore) + scale_color_manual(values = colors)
 plot + aes(shape = vore) + scale_shape_manual(values = c(1, 2, 6, 0, 23))
@@ -381,14 +402,18 @@ library('plyr')
 library('ggplot2movies')
 data(movies)
 movies$decade <- round_any(movies$year, 10, floor)
-ggplot(subset(movies, decade > 1890), aes(rating, ..density..)) + geom_histogram(binwidth = 0.5) + facet_wrap(~ decade, ncol = 6)
+ggplot(subset(movies, decade > 1890), aes(rating, ..density..)) + 
+  geom_histogram(binwidth = 0.5) + 
+  facet_wrap(~ decade, ncol = 6)
 # 7.2.3 标度控制 scales = 'fixed', 'free', 'free_x', "free_y"
 p <- ggplot(mpg, aes(cty, hwy)) + geom_point()
 p + facet_wrap(~ cyl)
 p + facet_wrap(~ cyl, scales = 'free')
 library('reshape2')
 em <- melt(economics, id = 'date')
-ggplot(em, aes(date, value, group = variable, color = variable)) + geom_line() + facet_grid(variable ~ ., scales = 'free_y')
+ggplot(em, aes(date, value, group = variable, color = variable)) + 
+  geom_line() + 
+  facet_grid(variable ~ ., scales = 'free_y')
 mpg3 <- within(mpg2, {model <- reorder(model, cty)
                       manufacturer <- reorder(manufacturer, -cty)
 })
@@ -396,13 +421,16 @@ mpg3 <- within(mpg2, {model <- reorder(model, cty)
 p <- ggplot(mpg3, aes(cty, model)) + geom_point()
 p + facet_grid(manufacturer ~ ., scales = 'free', space = 'free') + 
   theme(strip.text.y = element_text())
-p <- ggplot(subset(diamonds, color %in% c('D', 'E', 'G', 'J')), aes(log(carat), log(price), color = color, group = color))
+p <- ggplot(subset(diamonds, color %in% c('D', 'E', 'G', 'J')), 
+            aes(log(carat), log(price), color = color, group = color))
 p + geom_point()
 p + geom_point() + facet_grid(. ~ color)
 p + geom_smooth(method = 'lm', se = F)
 p + geom_smooth(method = 'lm', se = F) + facet_grid(. ~ color)
 # 7.2.6 并列与分面
-ggplot(subset(diamonds, color %in% c('D', 'E', 'G', 'J')), aes(color, fill = cut)) + geom_bar(position = 'dodge', color = 'white')
+ggplot(subset(diamonds, color %in% c('D', 'E', 'G', 'J')), 
+       aes(color, fill = cut)) + 
+  geom_bar(position = 'dodge', color = 'white')
 ggplot(subset(diamonds, color %in% c('D', 'E', 'G', 'J')), aes(color, fill = cut)) + geom_bar(position = 'fill', color = 'white')
 ggplot(subset(diamonds, color %in% c('D', 'E', 'G', 'J')), aes(cut, fill = cut)) + 
   geom_bar(position = 'dodge', color = 'white') + 
@@ -484,9 +512,13 @@ pdf(file = 'output.pdf', width = 6, height = 6)
 dev.off()
 
 # 8.4 一页多图
-a <- ggplot(economics, aes(date, unemploy)) + geom_line()
-b <- ggplot(economics, aes(uempmed, unemploy)) + geom_point() + geom_smooth(se = F)
-c <- ggplot(economics, aes(uempmed, unemploy)) + geom_path()
+a <- ggplot(economics, aes(date, unemploy)) + 
+  geom_line()
+b <- ggplot(economics, aes(uempmed, unemploy)) + 
+  geom_point() + 
+  geom_smooth(se = F)
+c <- ggplot(economics, aes(uempmed, unemploy)) + 
+  geom_path()
 pdf('output.pdf')
 (a <- ggplot(economics, aes(date, unemploy)) + geom_line())
 (b <- ggplot(economics, aes(uempmed, unemploy)) + geom_point() + geom_smooth(se = F))

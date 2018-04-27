@@ -1,7 +1,7 @@
 
 # load packages ----------------------------------------------------------------------
 library('plotly')
-library('dplyr')
+library('tidyverse')
 
 ## try coding below to see if plotly is correctly installed --------------------------
 plot_ly(z = ~volcano)
