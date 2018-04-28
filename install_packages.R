@@ -1,22 +1,20 @@
 
 
 # R和RStudio
-install.packages('devtools')  # 安装非官方的R包
-install.packages('rattle', dep = T)  # 可交互的数据挖掘界面
-install.packages("rstudioapi")
-devtools::install_github("rstudio/rstudioapi")
-install.packages('swirl')
+install.packages('devtools')  # 通过devtools可安装非官方的R包
+install.packages('swirl') # 教你用R
 
 # 数据处理
-install.packages('dplyr')
-install.packages('xlsx')
-install.packages('VIM')   #
-install.packages('mice')  #
+install.packages('tidyverse') # 一个包就包含了很多包
+install.packages('mice')  # 处理缺失数据
+install.packages('lubridate') # 处理日期
+install.packages('stringr') # 处理字符串
+install.packages('caret') # 应用广泛的数据处理包，必备
+install.packages('VIM')   # 
+
 install.packages('sqldf')  # sql query
 install.packages('reshape2')
-install.packages('openxlsx')
 install.packages('xts')   #
-install.packages('caret')
 install.packages('RCurl')
 install.packages('RANN')
 install.packages('datalegreyar')
@@ -32,32 +30,40 @@ install.packages('RJDBC')   # JDBC方式连接数据库，更适合Linux系统
 install.packages('RMySQL')  # 连接MySQL数据库的包
 install.packages('ROracle') # 连接Oracle数据库的包
 
+
 # 描述性统计/可视化/报告
-install.packages('ggplot2')
-install.packages('shiny')
-install.packages('shinydashboard')
-install.packages('shinythemes')
+install.packages('ggthemes')  # ggplot2的扩展包
+install.packages('shiny')  # shiny
+install.packages('shinydashboard')  # shinydashboard
+install.packages('shinythemes')  # shinythemes
+install.packages('plotly')   # 交互式图表
 install.packages('wordcloud2')   # 新版词云
 install.packages('rmarkdown') # 写文章/报告/可视化
-install.packages('DT')  # 可交互的表格(排序/筛选/分页)
-install.packages('plotly')   # ggplotly
-devtools::install_github('yihui/recharts')  # 谢益辉修改的recharts，封装了百度echarts
+install.packages('DT')  # 交互式报表
+install.packages('highcharter')  # highchart for R
+install.packages('dygraphs')  # 时间序列的可视化包
+install.packages('crosstalk')  # 多图联动
+install.packages('leaflet')  # 地图可视化
+install.packages('GGally')
+install.packages('htmltools')
+library(devtools)
+
+
+devtools::install_github('madlogos/recharts')  # madlogos的recharts，封装了百度echarts
+devtools::install_github("rstudio/crosstalk")
 install.packages('knitr')
+
+
 install.packages('pROC')
 devtools::install_github('yihui/xaringan')
-install.packages('highcharter')
 devtools::install_github('jcheng5/bubbles')
 devtools::install_github("jcheng5/d3scatter")
-devtools::install_github("rstudio/crosstalk")
 install.packages('treemap')  #
 devtools::install_github('rstudio/shinyapps')
 install.packages('rsconnect')  # 部署shinyapp时使用
-devtools::install_github('rstudio/leaflet')
 install.packages('igraph')
-install.packages('dygraphs')
 install.packages('sysfonts')
 install.packages('showtext')
-install.packages('ggthemes')
 install.packages('Cairo')  #
 install.packages("visNetwork")
 install.packages('ggstance')
