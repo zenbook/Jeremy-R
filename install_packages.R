@@ -8,7 +8,6 @@ install.packages('swirl') # 教你用R
 install.packages('tidyverse') # 一个包就包含了很多包
 install.packages('mice')  # 处理缺失数据
 install.packages('lubridate') # 处理日期
-install.packages('stringr') # 处理字符串
 install.packages('caret') # 应用广泛的数据处理包，必备
 install.packages('VIM')   # 
 

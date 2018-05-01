@@ -181,9 +181,70 @@ p2 <- leaflet(quakes_sd) %>%
   addTiles() %>% 
   addCircles()
 bscols(widths = c(6, 6), p1, p2)
+## 有个问题：右侧点的颜色没有和左侧的同步
 
 
+## select
+txh_sd <- SharedData$new(txhousing, ~city, group = 'Choose a city')
+plot_ly(txh_sd, x = ~date, y = ~median) %>% 
+  group_by(city) %>% 
+  add_lines(text = ~city, hoverinfo = 'text') %>% 
+  highlight(on = 'plotly_selected', persistent = TRUE, selectize = TRUE, color = 'red')
+## 这个样例非常好，应用度很高
 
+## 总图和分图联动
+## 也是应用度非常高的图
+txh_sd <- SharedData$new(txhousing, ~city, 'Select a city')
+base <- plot_ly(txh_sd, color = I('black'), height = 400) %>% 
+  group_by(city)
+base
+## 总图-bar
+p1 <- base %>% 
+  summarise(miss_n = sum(is.na(median))) %>% 
+  filter(miss_n >= 1) %>% 
+  arrange(miss_n) %>% 
+  add_bars(x = ~miss_n, y = ~factor(city, levels = city), hoverinfo = 'x+y') %>% 
+  layout(
+    barmode = 'overlay', 
+    xaxis = list(title = 'Number of months missing'), 
+    yaxis = list(title = '')
+  )
+p1
+## 分图-时间序列
+p2 <- base %>% 
+  add_lines(x = ~date, y = ~median, alpha = 0.3) %>% 
+  layout(xaxis = list(title = ''))
+p2
+## 结合总图和分图，联动
+subplot(p1, p2, titleX = TRUE, widths = c(0.3, 0.7)) %>% 
+  layout(margin = list(l = 120)) %>% 
+  hide_legend() %>% 
+  highlight(dynamic = TRUE, selectize = TRUE)
+
+## 动态汇总
+### case_01
+mtcars_sd <- SharedData$new(mtcars)
+p1 <- plot_ly(mtcars_sd, x = ~mpg, y = ~disp) %>% 
+  add_markers(color = I('black'))
+p1
+p2 <- plot_ly(mtcars_sd, y = ~disp, color = I('black')) %>% 
+  add_boxplot(name = 'overall')
+p2
+subplot(p2, p1, shareY = TRUE) %>% 
+  hide_legend() %>% 
+  highlight('plotly_selected')
+
+### case_02
+p2 <- plot_ly(mtcars_sd, x = ~factor(cyl)) %>% 
+  add_histogram(color = I('black')) %>% 
+  layout(xaxis = list(title = ''))
+subplot(p2, p1) %>% 
+  layout(barmode = 'overlay') %>% 
+  hide_legend() %>% 
+  highlight('plotly_selected')
+
+
+# 动画图表 ============================================================
 
 
 
