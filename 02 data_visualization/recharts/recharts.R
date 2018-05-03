@@ -20,9 +20,6 @@ library(devtools)
 devtools::install_github("madlogos/recharts")
 
 
-if (!require(devtools)) library(devtools)
-install_github("madlogos/recharts")
-
 # 加载包
 library("recharts")
 library("tidyverse")
