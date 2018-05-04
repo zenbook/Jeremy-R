@@ -29,9 +29,9 @@ head(mtcars)
 echartr(mtcars, wt, mpg)
 ## 2.series:group的含义，分组
 echartr(mtcars, wt, mpg, series = cyl)
-## factor: am = 0:Automatics; am = 1:Auto
-factor(mtcars$am[1:10], labels = c('Automatics', 'Manual'))
-echartr(mtcars, wt, mpg, series = factor(am, labels = c('Automatics', 'Manual')))
+## factor: am = 0:Automatic; am = 1:Auto
+factor(mtcars$am[1:10], labels = c('Automatic', 'Manual'))
+echartr(mtcars, wt, mpg, series = factor(am, labels = c('Automatic', 'Manual')))
 ## 气泡图
 echartr(mtcars, wt, mpg, weight = hp, type = 'bubble')
 
@@ -74,7 +74,7 @@ echartr(d1, x, y, s, facet = f, type = 'radar',
         subtype = list(c('fill', ''), c('', 'fill')))
 
 ## 图形各项设置
-g <- echartr(mtcars, wt, mpg, factor(am, labels = c('Automatics', 'Manual')))
+g <- echartr(mtcars, wt, mpg, factor(am, labels = c('Automatic', 'Manual')))
 ## 1. series
 ## 不同类型的图，可以设置不同的参数，可通过?setSeries查阅
 ## 设置第二个序列。。。
@@ -86,11 +86,56 @@ economics %>%
   filter(date >= '2008-01-01') %>% 
   echartr(date, uempmed, type = 'line') %>% 
   addMarkLine(data = data.frame(type = 'average', name1 = 'Avg'))
-## 添加自定义值对应的线
-g %>% addMarkLine(data = data.frame(name1 = 'best', value1 = 18, name2 = 'worst', value2 = 10))
+## 添加自定义值对应的线???
+g %>% addMarkLine(data = data.frame())
 
 ## 3.markPoints
 g %>% addMarkPoint(series = 1, data = data.frame(type = 'max', name = 'Max'))
+## 添加自定义值对应的点???
+g %>% addMarkPoint(series = 1, data = data.frame())
+## 4.添加标题，默认位置是6点钟，即下方
+g %>% setTitle('wt V.S mpg')
+g %>% setTitle('wt V.S mpg', pos = 12)
+## 通过textStyle参数，来设置标题的样式
+g %>% setTitle(title = 'wt V.S mpg', 
+               pos = 12, 
+               textStyle = textStyle(fontsize = 16, color = 'red'))
+## 设置服标题和链接
+g %>% setTitle(title = 'wt V.S mpg', 
+               subtitle = '[百度一下，你就后悔](https://www.baidu.com)',
+               pos = 12, 
+               textStyle = textStyle(fontsize = 16, color = 'red'))
+## 5.设置图例
+g %>% setLegend(selected = 'Automatic')
+## 修改图例位置...
+g %>% setLegend(selected = 'Automatic', 
+                pos = 6, 
+                show = TRUE, 
+                selectedMode = 'multiple',
+                textStyle = list(fontsize = 12, 
+                                 color = 'auto', 
+                                 fontFamily = 'Courier New'))
+## 6.设置工具箱
+g %>% setToolbox(pos = 3, 
+                 show = TRUE, 
+                 language = 'cn', 
+                 itemSize = 14, 
+                 itemGap = 10, 
+                 controls = c('mark', 'dataZoom', 'dataView', 'restore', 'saveAsImage'))
+## 7.设置datazoom
+g %>% setDataZoom()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 head(economics)
