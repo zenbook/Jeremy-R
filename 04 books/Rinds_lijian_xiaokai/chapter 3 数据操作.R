@@ -1,8 +1,8 @@
-# chapter 3 Êý¾Ý²Ù×÷
+# chapter 3 æ•°æ®æ“ä½œ
 
-# 3.1 ÏòÁ¿»¯²Ù×÷
+# 3.1 å‘é‡åŒ–æ“ä½œ
 
-## ¶¨ÒåÒ»¸öº¯Êýfunc£¬ÅÐ¶ÏÒ»¸öÊý×ÖÊÇ·ñÅ¼Êý
+## å®šä¹‰ä¸€ä¸ªå‡½æ•°funcï¼Œåˆ¤æ–­ä¸€ä¸ªæ•°å­—æ˜¯å¦å¶æ•°
 func <- function(x){
   if (x %% 2 == 0){
     rec <- "even"
@@ -13,66 +13,66 @@ func <- function(x){
   return(rec)
 }
 func(34)
-## ÉÏÃæ¶¨ÒåµÄº¯ÊýÖ»ÄÜ´¦Àíµ¥¸öÊý×Ö£¬²¢²»ÄÜ´¦ÀíÏòÁ¿
+## ä¸Šé¢å®šä¹‰çš„å‡½æ•°åªèƒ½å¤„ç†å•ä¸ªæ•°å­—ï¼Œå¹¶ä¸èƒ½å¤„ç†å‘é‡
 
-## Èç¹ûÒª´¦ÀíÏòÁ¿£¬¿ÉÒÔÓÃsapplyº¯Êý
+## å¦‚æžœè¦å¤„ç†å‘é‡ï¼Œå¯ä»¥ç”¨sapplyå‡½æ•°
 vec <- round(runif(4) * 100)
 func(vec)
-sapply(vec, func)  # µÚÒ»¸ö²ÎÊýÊÇÒª´¦ÀíµÄÊý¾Ý¼¯£¬µÚ¶þ¸ö²ÎÊýÊÇº¯Êý
+sapply(vec, func)  # ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯è¦å¤„ç†çš„æ•°æ®é›†ï¼Œç¬¬äºŒä¸ªå‚æ•°æ˜¯å‡½æ•°
 
-## »¹¿ÉÒÔ½«º¯Êý¸Ä³É¿É½ÓÊÜÏòÁ¿µÄº¯Êý
+## è¿˜å¯ä»¥å°†å‡½æ•°æ”¹æˆå¯æŽ¥å—å‘é‡çš„å‡½æ•°
 funcv <- Vectorize(func)
 funcv(vec)
 
-## Èç¹ûÖ»ÊÇÅÐ¶ÏÅ¼Êý£¬¿ÉÒÔÖ±½ÓÓÃifelseº¯Êý
+## å¦‚æžœåªæ˜¯åˆ¤æ–­å¶æ•°ï¼Œå¯ä»¥ç›´æŽ¥ç”¨ifelseå‡½æ•°
 ifelse(vec %% 2 == 0, "even", "odd")
 
-## sapplyº¯Êý»¹¿ÉÒÔ¼ÆËãÊý¾Ý¿ò
-op <- options()  #°Ñµ±Ç°µÄÉèÖÃ±£´æÔÚop¶ÔÏóÖÐ
-options(digits = 2)  #ÉèÖÃÐ¡ÊýÎ»Êý = 2
+## sapplyå‡½æ•°è¿˜å¯ä»¥è®¡ç®—æ•°æ®æ¡†
+op <- options()  #æŠŠå½“å‰çš„è®¾ç½®ä¿å­˜åœ¨opå¯¹è±¡ä¸­
+options(digits = 2)  #è®¾ç½®å°æ•°ä½æ•° = 2
 sapply(iris[, 1:4], function(x) sd(x)/mean(x))
-options(op)  #»Ö¸´ÉèÖÃ
+options(op)  #æ¢å¤è®¾ç½®
 
-## sapply»¹¿ÉÒÔ¼ÆËãÁÐ±í
+## sapplyè¿˜å¯ä»¥è®¡ç®—åˆ—è¡¨
 my_list <- as.list(iris[, 1:4])
 sapply(my_list, mean)
 
-## lapplyº¯ÊýÒ²¿ÉÒÔ¼ÆËãÏòÁ¿¡¢Êý¾Ý¿òºÍÁÐ±í£¬ÓësapplyµÄ²î±ðÊÇËü·µ»ØµÄ½á¹ûÊÇÁÐ±í
+## lapplyå‡½æ•°ä¹Ÿå¯ä»¥è®¡ç®—å‘é‡ã€æ•°æ®æ¡†å’Œåˆ—è¡¨ï¼Œä¸Žsapplyçš„å·®åˆ«æ˜¯å®ƒè¿”å›žçš„ç»“æžœæ˜¯åˆ—è¡¨
 lapply(vec, funcv)
 lapply(my_list, mean)
 
-## °Ñlapplyº¯ÊýµÄ½á¹û×ª³É¸ü·½±ã²é¿´µÄÐÎÊ½(3ÖÖ·½·¨)
+## æŠŠlapplyå‡½æ•°çš„ç»“æžœè½¬æˆæ›´æ–¹ä¾¿æŸ¥çœ‹çš„å½¢å¼(3ç§æ–¹æ³•)
 myfunc <- function(x){
-  ret <- c(mean(x), sd(x))  #Í¬Ê±¼ÆËã¾ùÖµºÍ±ê×¼²î
+  ret <- c(mean(x), sd(x))  #åŒæ—¶è®¡ç®—å‡å€¼å’Œæ ‡å‡†å·®
   return(ret)
 }
 result <- lapply(my_list, myfunc)
 result
-t(as.data.frame(result))   #·½·¨1£º×ª»»³ÉÊý¾Ý¿ò£¬È»ºó×ªÖÃ
-t(sapply(result, "["))    #·½·¨2£ºÓÃsapplyº¯Êý£¬ÆäÖÐÊ¹ÓÃÈ¡×Ó¼¯µÄ¶þÔª²Ù×÷·û"["£¬È»ºó×ªÖÃ
-do.call("rbind", result) #·½·¨3£ºÀûÓÃdo.call°Ñresult´«Èërbindº¯ÊýÖÐ
+t(as.data.frame(result))   #æ–¹æ³•1ï¼šè½¬æ¢æˆæ•°æ®æ¡†ï¼Œç„¶åŽè½¬ç½®
+t(sapply(result, "["))    #æ–¹æ³•2ï¼šç”¨sapplyå‡½æ•°ï¼Œå…¶ä¸­ä½¿ç”¨å–å­é›†çš„äºŒå…ƒæ“ä½œç¬¦"["ï¼Œç„¶åŽè½¬ç½®
+do.call("rbind", result) #æ–¹æ³•3ï¼šåˆ©ç”¨do.callæŠŠresultä¼ å…¥rbindå‡½æ•°ä¸­
 
-## ¼ÆËã¾ØÕóapply,applyÒ²¿ÉÒÔ¼ÆËãÊý¾Ý¿ò
+## è®¡ç®—çŸ©é˜µapply,applyä¹Ÿå¯ä»¥è®¡ç®—æ•°æ®æ¡†
 set.seed(1)
-data <- round(runif(12) * 100)  #Ëæ»úÉú³É12¸öÊý×ÖµÄÏòÁ¿
-data <- matrix(data, 3, 4)     #°ÑÏòÁ¿×ª³É3*4¾ØÕó£¬3ÐÐ4ÁÐ
-apply(data, MARGIN = 1, sum)  #MARGIN = 1£¬ÒÔÐÐÎª¼ÆËãµ¥Î»£¬¼´ÁÐ1+ÁÐ2+¡­¡­£¬µÃµ½µÄ½á¹ûÓ¦¸ÃÓëÐÐÊýÏàÍ¬
-apply(data, MARGIN = 2, function(x) max(x) - min(x)) #MARGIN = 2£¬ÒÔÁÐÎª¼ÆËãµ¥Î»£¬¼´ÐÐ1+ÐÐ2+¡­¡­£¬µÃµ½µÄ½á¹ûÓ¦¸ÃÓëÁÐÊýÏàÍ¬
+data <- round(runif(12) * 100)  #éšæœºç”Ÿæˆ12ä¸ªæ•°å­—çš„å‘é‡
+data <- matrix(data, 3, 4)     #æŠŠå‘é‡è½¬æˆ3*4çŸ©é˜µï¼Œ3è¡Œ4åˆ—
+apply(data, MARGIN = 1, sum)  #MARGIN = 1ï¼Œä»¥è¡Œä¸ºè®¡ç®—å•ä½ï¼Œå³åˆ—1+åˆ—2+â€¦â€¦ï¼Œå¾—åˆ°çš„ç»“æžœåº”è¯¥ä¸Žè¡Œæ•°ç›¸åŒ
+apply(data, MARGIN = 2, function(x) max(x) - min(x)) #MARGIN = 2ï¼Œä»¥åˆ—ä¸ºè®¡ç®—å•ä½ï¼Œå³è¡Œ1+è¡Œ2+â€¦â€¦ï¼Œå¾—åˆ°çš„ç»“æžœåº”è¯¥ä¸Žåˆ—æ•°ç›¸åŒ
 
-## ¸ù¾Ýð°Î²»¨ÖÖÀà£¬¼ÆËãSepal.LengthµÄ¾ùÖµ
-tapply(X = iris$Sepal.Length, INDEX = list(iris$Species), FUN = mean)  #tapplyº¯Êý
+## æ ¹æ®é¸¢å°¾èŠ±ç§ç±»ï¼Œè®¡ç®—Sepal.Lengthçš„å‡å€¼
+tapply(X = iris$Sepal.Length, INDEX = list(iris$Species), FUN = mean)  #tapplyå‡½æ•°
 with(iris, tapply(Sepal.Length, list(Species), mean))
 
-## ÓÃaggregate±Ètapply¸üºÃ,½á¹ûÓÃÊý¾Ý¿òÐÎÊ½ÏÔÊ¾
+## ç”¨aggregateæ¯”tapplyæ›´å¥½,ç»“æžœç”¨æ•°æ®æ¡†å½¢å¼æ˜¾ç¤º
 with(iris, aggregate(Sepal.Length, by = list(Species), mean))
 
-## Èç¹ûÓÐÁ½¸ö±äÁ¿ÒªÍ¬Ê±±ä»¯£¬ÔòÓÃmapply
+## å¦‚æžœæœ‰ä¸¤ä¸ªå˜é‡è¦åŒæ—¶å˜åŒ–ï¼Œåˆ™ç”¨mapply
 vec1 <- vec2 <- (1:9)
-para <- expand.grid(vec1, vec2)  #°Ñvec1ºÍvec2·Ö±ðÅä¶Ô£¬µÃµ½81¶Ô
+para <- expand.grid(vec1, vec2)  #æŠŠvec1å’Œvec2åˆ†åˆ«é…å¯¹ï¼Œå¾—åˆ°81å¯¹
 res <- mapply(FUN = prod, para[,1], para[, 2])
-## mapply¿ÉÒÔ¿´×öÊÇsapplyµÄÔöÇ¿°æ£¬¿ÉÒÔ´¦Àí2¸ö¼°ÒÔÉÏµÄ±äÁ¿
+## mapplyå¯ä»¥çœ‹åšæ˜¯sapplyçš„å¢žå¼ºç‰ˆï¼Œå¯ä»¥å¤„ç†2ä¸ªåŠä»¥ä¸Šçš„å˜é‡
 
-## Èç¹ûÖ»ÓÐ2¸ö±äÁ¿£¬¿ÉÒÔÓÃouterº¯Êý
+## å¦‚æžœåªæœ‰2ä¸ªå˜é‡ï¼Œå¯ä»¥ç”¨outerå‡½æ•°
 my_func <- function(x,y){
   left <- paste0(x, " * ", y, " = ")
   right <- x * y
@@ -81,129 +81,129 @@ my_func <- function(x,y){
 }
 outer(vec1, vec2, FUN = my_func)
 
-## replicateº¯Êý£¬¿ÉÒÔÈÃÄ³¸öº¯Êýµ÷ÓÃ¶à±é
-res <- replicate(100, mean(rnorm(10000)))   #Ëæ»ú³éÈ¡10000¸ö·þ´ÓÕýÌ¬·Ö²¼µÄÑù±¾£¬¼ÆËãÆä¾ùÖµ£¬È»ºóÖØ¸´ÒÔÉÏ¹ý³Ì100´Î
+## replicateå‡½æ•°ï¼Œå¯ä»¥è®©æŸä¸ªå‡½æ•°è°ƒç”¨å¤šé
+res <- replicate(100, mean(rnorm(10000)))   #éšæœºæŠ½å–10000ä¸ªæœä»Žæ­£æ€åˆ†å¸ƒçš„æ ·æœ¬ï¼Œè®¡ç®—å…¶å‡å€¼ï¼Œç„¶åŽé‡å¤ä»¥ä¸Šè¿‡ç¨‹100æ¬¡
 hist(res)
 
-## ×Ü½á£º
-## ¶ÔÄ³¸ö¶ÔÏóÊ¹ÓÃÄ³¸öº¯Êý¼ÆËã£ºsapply/lapply(Êä³öÒ»¸öÁÐ±í)/apply(ÉèÖÃmargin²ÎÊý)
-## ¸ù¾ÝÄ³¸ö±äÁ¿·Ö×é£ºtapply/aggregate
-## ¶ÔÁ½¸ö¶ÔÏóÊ¹ÓÃÄ³¸öº¯Êý¼ÆËã£ºouter
-## ¶ÔÈý¸ö¼°ÒÔÉÏ¶ÔÏóÊ¹ÓÃÄ³¸öº¯Êý¼ÆËã£ºmapply
-## ÖØ¸´µ÷ÓÃÄ³¸öº¯Êý£ºreplicate
+## æ€»ç»“ï¼š
+## å¯¹æŸä¸ªå¯¹è±¡ä½¿ç”¨æŸä¸ªå‡½æ•°è®¡ç®—ï¼šsapply/lapply(è¾“å‡ºä¸€ä¸ªåˆ—è¡¨)/apply(è®¾ç½®marginå‚æ•°)
+## æ ¹æ®æŸä¸ªå˜é‡åˆ†ç»„ï¼štapply/aggregate
+## å¯¹ä¸¤ä¸ªå¯¹è±¡ä½¿ç”¨æŸä¸ªå‡½æ•°è®¡ç®—ï¼šouter
+## å¯¹ä¸‰ä¸ªåŠä»¥ä¸Šå¯¹è±¡ä½¿ç”¨æŸä¸ªå‡½æ•°è®¡ç®—ï¼šmapply
+## é‡å¤è°ƒç”¨æŸä¸ªå‡½æ•°ï¼šreplicate
 
-# 3.2 Êý¾Ý×ª»»ÕûÀí
+# 3.2 æ•°æ®è½¬æ¢æ•´ç†
 
-# 3.2.1 È¡×Ó¼¯ºÍ±àÂë×ª»»
+# 3.2.1 å–å­é›†å’Œç¼–ç è½¬æ¢
 
-## subsetÌáÈ¡×Ó¼¯
-data_sub <- subset(iris, iris$Species == "setosa", 3:5)  #subset(Êý¾Ý¼¯, ËùÐèµÄÐÐ, ËùÐèµÄÁÐ)
+## subsetæå–å­é›†
+data_sub <- subset(iris, iris$Species == "setosa", 3:5)  #subset(æ•°æ®é›†, æ‰€éœ€çš„è¡Œ, æ‰€éœ€çš„åˆ—)
 head(data_sub)
 data_sub <- with(iris, iris[Species == "setosa", 3:5]) 
 
-## transform½øÐÐ±àÂë×ª»»£¬Èç×ª»»³É¶ÔÊý
+## transformè¿›è¡Œç¼–ç è½¬æ¢ï¼Œå¦‚è½¬æ¢æˆå¯¹æ•°
 iris_str <- transform(iris, v1 = log(Sepal.Length)) 
 
-## Á¬Ðø±äÁ¿ÀëÉ¢»¯
-q25 <- quantile(iris_str$v1, 0.25)   #ÌáÈ¡v1±äÁ¿µÄ25%·ÖÎ»Êý
-q50 <- quantile(iris_str$v1, 0.50)   #ÌáÈ¡v1±äÁ¿µÄ50%·ÖÎ»Êý
-q75 <- quantile(iris_str$v1, 0.75)   #ÌáÈ¡v1±äÁ¿µÄ75%·ÖÎ»Êý
+## è¿žç»­å˜é‡ç¦»æ•£åŒ–
+q25 <- quantile(iris_str$v1, 0.25)   #æå–v1å˜é‡çš„25%åˆ†ä½æ•°
+q50 <- quantile(iris_str$v1, 0.50)   #æå–v1å˜é‡çš„50%åˆ†ä½æ•°
+q75 <- quantile(iris_str$v1, 0.75)   #æå–v1å˜é‡çš„75%åˆ†ä½æ•°
 groupvec <- c(min(iris_str$v1), q25, q50, q75, max(iris_str$v1))  
 labels <- c("A", "B", "C", "D")
 iris_str$v2 <- cut(iris_str$v1, breaks = groupvec, labels = labels, include.lowest = T)
-## cut(Êý¾Ý¼¯±äÁ¿£¬ ·Ö×éµÄ¸öÊý»òÕßµã£¬ ±êÇ©£¬ ÊÇ·ñ°üº¬ÏÂÏÞ)
-## Èç¹ûÉèÖÃÁË±êÇ©£¬Ôò×ª»»³ÉÁËÒò×Ó
+## cut(æ•°æ®é›†å˜é‡ï¼Œ åˆ†ç»„çš„ä¸ªæ•°æˆ–è€…ç‚¹ï¼Œ æ ‡ç­¾ï¼Œ æ˜¯å¦åŒ…å«ä¸‹é™)
+## å¦‚æžœè®¾ç½®äº†æ ‡ç­¾ï¼Œåˆ™è½¬æ¢æˆäº†å› å­
 
-## ×ª»»³ÉÒò×Ó
-vec <- rep(c(1, 2), c(4, 6))  #rep(Öµ£¬Ã¿¸öÖµ³öÏÖ¶àÉÙ´Î)
-vec_fac <- factor(vec, labels = c("male", "female"))  #factorº¯Êý£¬ÉèÖÃlabels£¬¿ØÖÆÒò×ÓµÄÈ¡Öµ
+## è½¬æ¢æˆå› å­
+vec <- rep(c(1, 2), c(4, 6))  #rep(å€¼ï¼Œæ¯ä¸ªå€¼å‡ºçŽ°å¤šå°‘æ¬¡)
+vec_fac <- factor(vec, labels = c("male", "female"))  #factorå‡½æ•°ï¼Œè®¾ç½®labelsï¼ŒæŽ§åˆ¶å› å­çš„å–å€¼
 levels(vec_fac)
 str(vec_fac)
 
-## levelsÉèÖÃºÍÐÞ¸ÄÒò×Ó
+## levelsè®¾ç½®å’Œä¿®æ”¹å› å­
 vec <- rep(c(0, 1, 2),c(4, 6, 2))
 vec_fac <- factor(vec)
 levels(vec_fac) <- c("male", "female", "male")
 vec_fac
 
-## ÓÃfactor×ª»»Òò×ÓÊ±£¬levelsµÄÈ±Ê¡Ë³Ðò°´ÕÕ×Ö·ûË³Ðò»òÊý×ÖµÄ´óÐ¡Ë³Ðò£¬ÈçÐèÐÞ¸Ä£¬¿ÉÓÃrelevel()ÐÞ¸Ä
+## ç”¨factorè½¬æ¢å› å­æ—¶ï¼Œlevelsçš„ç¼ºçœé¡ºåºæŒ‰ç…§å­—ç¬¦é¡ºåºæˆ–æ•°å­—çš„å¤§å°é¡ºåºï¼Œå¦‚éœ€ä¿®æ”¹ï¼Œå¯ç”¨relevel()ä¿®æ”¹
 vec <- rep(c("b", "a"),c(4, 6))
-vec_fac <- factor(vec)   #levels()½á¹ûÎªlevels£ºa b
+vec_fac <- factor(vec)   #levels()ç»“æžœä¸ºlevelsï¼ša b
 vec_fac
-relevel(vec_fac, ref = "b") #levels()½á¹ûÎªlevels£ºb a
+relevel(vec_fac, ref = "b") #levels()ç»“æžœä¸ºlevelsï¼šb a
 
-# 3.2.2 ³¤¿í¸ñÊ½»¥×ª
+# 3.2.2 é•¿å®½æ ¼å¼äº’è½¬
 
-## ³¤ÐÍÊý¾Ý£ºvariable value variable×Ö¶ÎÏÂÓÐ¶à¸ö×Ö¶Î£»
-## ¿íÐÍÊý¾Ý£ºvariable1 variable2 variable3 ¡­¡­¿íÐÍÊý¾Ý¾ÍÈçÊý¾Ý¿âÖÐµÄÊý¾Ý±í
+## é•¿åž‹æ•°æ®ï¼švariable value variableå­—æ®µä¸‹æœ‰å¤šä¸ªå­—æ®µï¼›
+## å®½åž‹æ•°æ®ï¼švariable1 variable2 variable3 â€¦â€¦å®½åž‹æ•°æ®å°±å¦‚æ•°æ®åº“ä¸­çš„æ•°æ®è¡¨
 data_kuan <- iris[, 1:4]
-data_long <- stack(data_kuan)   #stack(),×ª³É³¤ÐÍÊý¾Ý
+data_long <- stack(data_kuan)   #stack(),è½¬æˆé•¿åž‹æ•°æ®
 View(data_long)
-data_kuan <- unstack(data_long)  #unstack(),×ª³É¿íÐÍÊý¾Ý
+data_kuan <- unstack(data_long)  #unstack(),è½¬æˆå®½åž‹æ•°æ®
 View(data_kuan)
 
-## ×ª»»³É¿îÐÍÊý¾Ý²¢¼ÆËãÆ½¾ùÖµ
+## è½¬æ¢æˆæ¬¾åž‹æ•°æ®å¹¶è®¡ç®—å¹³å‡å€¼
 data_long <- iris[, 4:5] 
 data_kuan <- unstack(data_long)
 View(data_kuan)
-colMeans(data_kuan)  #¼ÆËã¸÷ÁÐµÄÆ½¾ùÖù
+colMeans(data_kuan)  #è®¡ç®—å„åˆ—çš„å¹³å‡æŸ±
 apply(data_kuan, MARGIN = 2, FUN = mean)
-colSums(data_kuan)   #¼ÆËã¸÷ÁÐµÄºÍ
+colSums(data_kuan)   #è®¡ç®—å„åˆ—çš„å’Œ
 
-## Ç°ÃæµÄº¯Êý¶¼Ì«ÈõÁË£¬¿ÉÒÔÖ±½ÓÒ»²½µ½Î»µÄ£¬¼ÓÔØreshape2°ü
+## å‰é¢çš„å‡½æ•°éƒ½å¤ªå¼±äº†ï¼Œå¯ä»¥ç›´æŽ¥ä¸€æ­¥åˆ°ä½çš„ï¼ŒåŠ è½½reshape2åŒ…
 require(reshape2)
 dcast(data_long, Species~., value.var = "Petal.Width", fun = mean)
 
-## meltº¯Êý£¬½«¿îÐÍÊý¾ÝÈÚºÏ³É³¤ÐÍÊý¾Ý
+## meltå‡½æ•°ï¼Œå°†æ¬¾åž‹æ•°æ®èžåˆæˆé•¿åž‹æ•°æ®
 iris_long <- melt(iris, id = "Species")
 View(iris_long)
 dcast(iris_long, Species~variable, value.var = "value", fun = mean)
 dcast(iris_long, Species + variable~., value.var = "value", fun = mean)
-## melt¾ÍÏñÊÇÌú½³µÄÁ¶Â¯£¬°ÑÊý¾ÝÈÚ»¯£¬dcast¾ÍÏñÊÇ´¸×Ó£¬°ÑÊý¾ÝÖØÖý³É¸÷ÖÖ½á¹¹£¬ÒÔ±ã·ÖÎö
+## meltå°±åƒæ˜¯é“åŒ çš„ç‚¼ç‚‰ï¼ŒæŠŠæ•°æ®èžåŒ–ï¼Œdcastå°±åƒæ˜¯é”¤å­ï¼ŒæŠŠæ•°æ®é‡é“¸æˆå„ç§ç»“æž„ï¼Œä»¥ä¾¿åˆ†æž
 
-## ÓÃreshap2°üÖÐµÄtipsÊý¾Ý¼¯½øÐÐ·ÖÎö
+## ç”¨reshap2åŒ…ä¸­çš„tipsæ•°æ®é›†è¿›è¡Œåˆ†æž
 str(tips)
 View(tips)
-## ¹Û²ìÄÐÅ®¸øÐ¡·ÑÓÐÃ»ÓÐ²î±ð£¬·¢ÏÖÄÐ¿ÍÆ½¾ùÐ¡·Ñ½ð¶î±ÈÅ®¿Í¸ß
+## è§‚å¯Ÿç”·å¥³ç»™å°è´¹æœ‰æ²¡æœ‰å·®åˆ«ï¼Œå‘çŽ°ç”·å®¢å¹³å‡å°è´¹é‡‘é¢æ¯”å¥³å®¢é«˜
 dcast(tips, sex~., value.var = "tip", fun = mean)  
-## ÐÔ±ð½áºÏ¾Í²Í¿ÍÈËÈËÊý¶àÉÙÀ´¶Ô±È£¬·¢ÏÖ¿ÍÈË¶à£¬Ð¡·ÑÆÕ±é¸ü¶à£¬²»¹ýÄÐÐÔ¾Í²ÍÈËÊýÎª5ÈËÊ±£¬Ð¡·Ñ·´¶ø±È4/6ÈË¶¼ÉÙ£¬ÓÐµãÆæ¹Ö
+## æ€§åˆ«ç»“åˆå°±é¤å®¢äººäººæ•°å¤šå°‘æ¥å¯¹æ¯”ï¼Œå‘çŽ°å®¢äººå¤šï¼Œå°è´¹æ™®éæ›´å¤šï¼Œä¸è¿‡ç”·æ€§å°±é¤äººæ•°ä¸º5äººæ—¶ï¼Œå°è´¹åè€Œæ¯”4/6äººéƒ½å°‘ï¼Œæœ‰ç‚¹å¥‡æ€ª
 dcast(tips, sex~size, value.var = "tip", fun = mean)   
-## Å®ÐÔ£º³éÑÌµÄ±È²»³éÑÌµÄ´ó·½£¬ÄÐÐÔ£º²»³éÑÌµÄ±È³éÑÌµÄ´ó·½
+## å¥³æ€§ï¼šæŠ½çƒŸçš„æ¯”ä¸æŠ½çƒŸçš„å¤§æ–¹ï¼Œç”·æ€§ï¼šä¸æŠ½çƒŸçš„æ¯”æŠ½çƒŸçš„å¤§æ–¹
 dcast(tips, sex~smoker, value.var = "tip", fun = mean) 
-## ÏëÍ¬Ê±¿´Ð¡·ÑºÍ×ÜÏû·ÑÔÚ²»Í¬ÐÔ±ðÖ®¼äµÄÇø±ð£¬¿ÉÒÔÏÈÓÃmelt°Ñ¿íÐÍÊý¾ÝÈÚºÏ³É³¤ÐÍÊý¾Ý
+## æƒ³åŒæ—¶çœ‹å°è´¹å’Œæ€»æ¶ˆè´¹åœ¨ä¸åŒæ€§åˆ«ä¹‹é—´çš„åŒºåˆ«ï¼Œå¯ä»¥å…ˆç”¨meltæŠŠå®½åž‹æ•°æ®èžåˆæˆé•¿åž‹æ•°æ®
 tips_k <- melt(data = tips, id.vars = c("sex", "smoker", "day", "time", "size"))
 View(tips_k)
 dcast(tips_k, sex~variable, value.var = "value", fun = mean)
-## ÔÙ¼ÓÉÏÐ¡·ÑÕ¼·ÑÓÃµÄ±ÈÀý
+## å†åŠ ä¸Šå°è´¹å è´¹ç”¨çš„æ¯”ä¾‹
 tips_rate <- dcast(tips_k, sex~variable, value.var = "value", fun = mean)
 tips_rate$rate <- with(tips_rate,tip/total_bill)
 tips_rate
-## ¿ÉÒÔ¿´³ö£¬Å®ÐÔÐ¡·ÑÕ¼·ÑÓÃµÄ±ÈÀý¸ü¸ß£¬¿ÉÒÔËµÅ®ÐÔÆäÊµ¸ü´ó·½
-## ÔÙ°ÑÐÔ±ðºÍÊÇ·ñÎüÑÌ½áºÏÆðÀ´¿´
+## å¯ä»¥çœ‹å‡ºï¼Œå¥³æ€§å°è´¹å è´¹ç”¨çš„æ¯”ä¾‹æ›´é«˜ï¼Œå¯ä»¥è¯´å¥³æ€§å…¶å®žæ›´å¤§æ–¹
+## å†æŠŠæ€§åˆ«å’Œæ˜¯å¦å¸çƒŸç»“åˆèµ·æ¥çœ‹
 tips_smoker <- dcast(tips_k, sex + smoker~variable, value.var = "value", fun = mean)
 tips_smoker$rate <- with(tips_smoker, tip/total_bill)
 tips_smoker
-## ¿ÉÒÔ¿´³ö£¬´Ó±ÈÀýÀ´½²£¬Å®ÐÔ£ºÎüÑÌÕß±È²»ÎüÑÌÕß¸ü´ó·½£»ÄÐÐÔ£º²»ÎüÑÌÕß±ÈÎüÑÌÕß´ó·½
-## ÔÙÀ´¿´¿´ÐÔ±ðºÍ¾Í²ÍÈËÊý
+## å¯ä»¥çœ‹å‡ºï¼Œä»Žæ¯”ä¾‹æ¥è®²ï¼Œå¥³æ€§ï¼šå¸çƒŸè€…æ¯”ä¸å¸çƒŸè€…æ›´å¤§æ–¹ï¼›ç”·æ€§ï¼šä¸å¸çƒŸè€…æ¯”å¸çƒŸè€…å¤§æ–¹
+## å†æ¥çœ‹çœ‹æ€§åˆ«å’Œå°±é¤äººæ•°
 tips_size <- dcast(tips_k, sex + size~variable, value.var = "value", fun = mean)
 tips_size$rate <- with(tips_size, tip/total_bill)
 tips_size
 
-# 3.2.3 Êý¾ÝµÄ²ð·ÖºÍºÏ²¢
+# 3.2.3 æ•°æ®çš„æ‹†åˆ†å’Œåˆå¹¶
 
-## ¸ù¾ÝÄ³¸ö·ÖÀà±äÁ¿²ð·Ö
+## æ ¹æ®æŸä¸ªåˆ†ç±»å˜é‡æ‹†åˆ†
 require("reshape2")
 require("plyr")
 iris_split <- split(iris, f = iris$Species)
 class(iris_split)
 str(iris_split)
 
-## ½«²ð·ÖºóµÄÊý¾Ý¼¯ºÏ²¢
+## å°†æ‹†åˆ†åŽçš„æ•°æ®é›†åˆå¹¶
 iris_all <- unsplit(iris_split, f = iris$Species)
 class(iris_all)
 str(iris_all)
 
-## ²ð·ÖÖ®ºó¼ÆËã½á¹û
+## æ‹†åˆ†ä¹‹åŽè®¡ç®—ç»“æžœ
 fun_rate <- function(x) {
   sum(x$tip) / sum(x$total_bill)
 }
@@ -211,13 +211,13 @@ tips_split <- split(tips, f = tips$sex)
 result <- lapply(tips_split, fun_rate)
 do.call("rbind", result)
 
-## ÒÔÉÏ¼ÆËã¿ÉÒÔÒ»¸öº¯ÊýÍê³É£¬¼´plyr°üµÄddplyº¯Êý
+## ä»¥ä¸Šè®¡ç®—å¯ä»¥ä¸€ä¸ªå‡½æ•°å®Œæˆï¼Œå³plyråŒ…çš„ddplyå‡½æ•°
 ddply(tips, ~sex, fun_rate)
 ddply(tips, ~sex + smoker, fun_rate)
 ddply(tips, sex~smoker, fun_rate)
 ddply(tips, c("sex", "smoker"), fun_rate)
 
-## ¾ÙÀýËµÃ÷ddplyÈçºÎ¼ÆËã¶à¸ö½á¹û£¬ÈçÆ½¾ùÖµ£¬±ê×¼²î
+## ä¸¾ä¾‹è¯´æ˜Žddplyå¦‚ä½•è®¡ç®—å¤šä¸ªç»“æžœï¼Œå¦‚å¹³å‡å€¼ï¼Œæ ‡å‡†å·®
 dfx <- data.frame(
   group = c(rep('A', 8), rep('B', 15), rep('C', 6)),
   sex = sample(c("M", "F"), size = 29, replace = TRUE),
@@ -228,24 +228,24 @@ ddply(dfx, .(group, sex), summarise,
       mean = round(mean(age), 2),
       sd = round(sd(age), 2))
 
-## Êý¾ÝµÄºÏ²¢
-## Èç¹ûÊý¾Ý¶¼ÊÇÒ»Ò»¶ÔÓ¦µÄ£¬¿ÉÒÔÓÃcbindºÏ²¢
-## Èç¹û²»ÊÇÒ»Ò»¶ÔÓ¦µÄ£¬¿ÉÒÔÓÃmergeº¯Êý
+## æ•°æ®çš„åˆå¹¶
+## å¦‚æžœæ•°æ®éƒ½æ˜¯ä¸€ä¸€å¯¹åº”çš„ï¼Œå¯ä»¥ç”¨cbindåˆå¹¶
+## å¦‚æžœä¸æ˜¯ä¸€ä¸€å¯¹åº”çš„ï¼Œå¯ä»¥ç”¨mergeå‡½æ•°
 datax <- data.frame(id = c(1, 2, 3), gender = c(23, 44, 52))
 datay <- data.frame(id = c(3, 1, 2), name = c("Tom", "Jimmy", "halo"))
 merge(datax, datay, by = "id")
 
-## Èç¹û×ó±íÓÐ£¬ÓÒ±íÃ»ÓÐ£¬»áÔõÃ´ÑùÄØ£¿
+## å¦‚æžœå·¦è¡¨æœ‰ï¼Œå³è¡¨æ²¡æœ‰ï¼Œä¼šæ€Žä¹ˆæ ·å‘¢ï¼Ÿ
 datax <- data.frame(id = c(1, 2, 3, 4), gender = c(23, 44, 52, 25))
 merge(datax, datay, by = "id", all = T)
-## ½á¹ûÊÇÖ»±£ÁôÁËÁ½±í¶¼ÓÐµÄ¼ÇÂ¼
-## ÉèÖÃ²ÎÊýall = TRUE£¬ÏÔÊ¾ËùÓÐ¼ÇÂ¼
+## ç»“æžœæ˜¯åªä¿ç•™äº†ä¸¤è¡¨éƒ½æœ‰çš„è®°å½•
+## è®¾ç½®å‚æ•°all = TRUEï¼Œæ˜¾ç¤ºæ‰€æœ‰è®°å½•
 datax <- data.frame(id1 = c(1, 2, 3, 4), gender = c(23, 44, 52, 25))
 datay <- data.frame(id2 = c(3, 1, 2, 5), name = c("Tom", "Jimmy", "halo", "john"))
 merge(datax, datay, by.x = "id1", by.y = "id2", all = T)
 
-## ÏêÏ¸ÁË½âÒ»ÏÂmergeº¯Êý£º
-## Éú³ÉÊý¾Ý
+## è¯¦ç»†äº†è§£ä¸€ä¸‹mergeå‡½æ•°ï¼š
+## ç”Ÿæˆæ•°æ®
 authors <- data.frame(
   surname = c("Tukey", "Venables", "Tierney", "Ripley", "McNeil"),
   nationality = c("US", "Australia", "US", "UK", "Australia"),
@@ -261,108 +261,108 @@ books <- data.frame(
             "An Introduction to R"),
   other.author = c(NA, "Ripley", NA, NA, NA, NA,
                    "Venables & Smith"))
-## Á½¸öÊý¾Ý¿òÖÐidÁÐµÄÃû³Æ²»Í¬£¬Ôò·Ö±ðÉèÖÃby.x = "", by.y = ""
-## Í¬Ê±ÉèÖÃÁËby.xºÍby.y£¬±£ÁôÁ½¸ö±í¶¼ÓÐµÄ¼ÇÂ¼£¬ÒÔby.xÖÐÉèÖÃµÄÁÐËùÔÚµÄ±íÎª×ó±í
+## ä¸¤ä¸ªæ•°æ®æ¡†ä¸­idåˆ—çš„åç§°ä¸åŒï¼Œåˆ™åˆ†åˆ«è®¾ç½®by.x = "", by.y = ""
+## åŒæ—¶è®¾ç½®äº†by.xå’Œby.yï¼Œä¿ç•™ä¸¤ä¸ªè¡¨éƒ½æœ‰çš„è®°å½•ï¼Œä»¥by.xä¸­è®¾ç½®çš„åˆ—æ‰€åœ¨çš„è¡¨ä¸ºå·¦è¡¨
 m1 <- merge(authors, books, by.x = "surname", by.y = "name")  
 m2 <- merge(books, authors, by.x = "name", by.y = "surname")
-## ÉèÖÃall = TRUE£¬Ôò±£ÁôËùÓÐÊý¾Ý
+## è®¾ç½®all = TRUEï¼Œåˆ™ä¿ç•™æ‰€æœ‰æ•°æ®
 m3 <- merge(authors, books, by.x = "surname", by.y = "name", all = TRUE)
 
-## Éú³ÉÊý¾Ý
+## ç”Ÿæˆæ•°æ®
 x <- data.frame(k1 = c(NA,NA,3,4,5), k2 = c(1,NA,NA,4,5), data = 1:5)
 y <- data.frame(k1 = c(NA,2,NA,4,5), k2 = c(NA,NA,3,4,5), data = 1:5)
-## Í¬Ê±ÒÔk1,k2Á½¸ö×Ö¶ÎÀ´ºÏ²¢Êý¾Ý¼¯
+## åŒæ—¶ä»¥k1,k2ä¸¤ä¸ªå­—æ®µæ¥åˆå¹¶æ•°æ®é›†
 merge(x, y, by = c("k1","k2")) # NA's match
 merge(x, y, by = "k1") # NA's match, so 6 rows
 merge(x, y, by = "k2", incomparables = NA) # 2 rows
 
-## ÓÃsqlÓï¾äÀ´ÊÔÊÔ¿´
+## ç”¨sqlè¯­å¥æ¥è¯•è¯•çœ‹
 require(sqldf)
 iris10 <- sqldf("select  * from iris limit 10")
 iris_10 <- sqldf("select * from iris order by Species desc limit 10")
-## »¹ÓÐÐ©ÎÊÌâ£¬°´ÕÕÊý¾Ý¿âµÄ±ê×¼Óï¾ä¸ñÊ½Ð´µÄjoin²»ÄÜÖ´ÐÐ
+## è¿˜æœ‰äº›é—®é¢˜ï¼ŒæŒ‰ç…§æ•°æ®åº“çš„æ ‡å‡†è¯­å¥æ ¼å¼å†™çš„joinä¸èƒ½æ‰§è¡Œ
 sqldf("select * from books")
 sqldf("select * from authors")
 
-# 3.3 ÊäÈëÓëÊä³ö
+# 3.3 è¾“å…¥ä¸Žè¾“å‡º
 
-# 3.3.2 ¿ØÖÆÌ¨µÄÊäÈëºÍÊä³ö
+# 3.3.2 æŽ§åˆ¶å°çš„è¾“å…¥å’Œè¾“å‡º
 
-## format¿ØÖÆÊä³ö
+## formatæŽ§åˆ¶è¾“å‡º
 set.seed(1)
 out <- data.frame(x1 = runif(3) * 10, x2 = c("a", "b", "c"))
 print(out)
-out <- format(out, digits = 3)   #°ÑÊý×ÖÎ»ÊýÉèÖÃÎª3
+out <- format(out, digits = 3)   #æŠŠæ•°å­—ä½æ•°è®¾ç½®ä¸º3
 out
 
-## cat¿ØÖÆÏÔÊ¾
+## catæŽ§åˆ¶æ˜¾ç¤º
 cat(c("a", "b", "c"), sep = "\n")
 cat(paste(out$x2, out$x1, sep = " = "), sep = "\n")
 
-## ÔÚ¿ØÖÆÌ¨½»»¥ÊäÈë
-x <- readline()   #ÊäÈëºó£¬ÔÚconsole½çÃæÊäÈë×Ö·û´®
+## åœ¨æŽ§åˆ¶å°äº¤äº’è¾“å…¥
+x <- readline()   #è¾“å…¥åŽï¼Œåœ¨consoleç•Œé¢è¾“å…¥å­—ç¬¦ä¸²
 x <- scan()
 x
 
-# 3.3.2 ÎÄ±¾ÎÄ¼þ
+# 3.3.2 æ–‡æœ¬æ–‡ä»¶
 
-## ×î³£¼ûµÄÍâ²¿ÎÄ¼þ¸ñÊ½£¬±ÈÈçcsv/txt/excel
-## °ÑÒ»Ð©Êý¾ÝÊä³öµ½ÎÄ±¾ÎÄ¼þÖÐ
-output <- file("output.txt")   #½¨Á¢ÎÄ¼þÁ¬½Ó
-cat(1:100, sep = "\t", file = output)  #°Ñ1£º100¹²100¸öÊý×ÖÊä³öµ½outputÎÄ¼þÖÐ£¬·Ö¸ô·ûÊÇtab¼ü
-close(output)  #¹Ø±ÕÎÄ¼þÁ¬½Ó
+## æœ€å¸¸è§çš„å¤–éƒ¨æ–‡ä»¶æ ¼å¼ï¼Œæ¯”å¦‚csv/txt/excel
+## æŠŠä¸€äº›æ•°æ®è¾“å‡ºåˆ°æ–‡æœ¬æ–‡ä»¶ä¸­
+output <- file("output.txt")   #å»ºç«‹æ–‡ä»¶è¿žæŽ¥
+cat(1:100, sep = "\t", file = output)  #æŠŠ1ï¼š100å…±100ä¸ªæ•°å­—è¾“å‡ºåˆ°outputæ–‡ä»¶ä¸­ï¼Œåˆ†éš”ç¬¦æ˜¯tabé”®
+close(output)  #å…³é—­æ–‡ä»¶è¿žæŽ¥
 output <- file("output.txt")
 cat(1:50, sep = "\n", file = output)
-cat(51:100, sep = "\n", file = output, append = TRUE)  #append = TRUE£¬±íÊ¾ÔÚÎÄ¼þÎ²²¿Ôö¼ÓÊý¾Ý£¬¶ø²»ÊÇ¸²¸Ç¡£²»¹ýÓÃµÄÊ±ºò·¢ÏÖ¶¼ÊÇ¸²¸Ç£¬²»ÖªÎªºÎ£¿
+cat(51:100, sep = "\n", file = output, append = TRUE)  #append = TRUEï¼Œè¡¨ç¤ºåœ¨æ–‡ä»¶å°¾éƒ¨å¢žåŠ æ•°æ®ï¼Œè€Œä¸æ˜¯è¦†ç›–ã€‚ä¸è¿‡ç”¨çš„æ—¶å€™å‘çŽ°éƒ½æ˜¯è¦†ç›–ï¼Œä¸çŸ¥ä¸ºä½•ï¼Ÿ
 close(output)
 
-## ´ÓÎÄ±¾ÎÄ¼þÖÐ¶ÁÈëÊý¾Ý
+## ä»Žæ–‡æœ¬æ–‡ä»¶ä¸­è¯»å…¥æ•°æ®
 output <- file("output.txt")
 input <- scan(file = output)
 input
 
-## Ö»´¦Àí×Ö·û´®µÄÊäÈëÊä³ö
+## åªå¤„ç†å­—ç¬¦ä¸²çš„è¾“å…¥è¾“å‡º
 output <- file("output.txt")
 writeLines(as.character(1:12),con = output)
 input <- readLines(output)
 input
 
-## ¸´ÔÓÀý×Ó
-path <- .libPaths()[1]  #·µ»Ø°²×°°ü´æ·ÅµÄÄ¿Â¼
-doc.names <- dir(path)   #µÃµ½Ä¿Â¼ÏÂµÄ×ÓÄ¿Â¼Ãû³Æ
+## å¤æ‚ä¾‹å­
+path <- .libPaths()[1]  #è¿”å›žå®‰è£…åŒ…å­˜æ”¾çš„ç›®å½•
+doc.names <- dir(path)   #å¾—åˆ°ç›®å½•ä¸‹çš„å­ç›®å½•åç§°
 doc.path <- sapply(doc.names, function(name){
   paste(path, name, "DESCRIPTION", sep = "/")
 })
 doc <- sapply(doc.path, function(doc) readLines(doc))
 class(doc)
 doc[[1]]
-## ÒÔÉÏ´úÂëÊÇ´ÓRµÄÀ©Õ¹°üµÄÄ¿Â¼ÏÂ£¬¶ÁÈ¡Ã¿¸ö°üÖÐµÄDESCRIPTIONÎÄ¼þµÄÄÚÈÝ
+## ä»¥ä¸Šä»£ç æ˜¯ä»ŽRçš„æ‰©å±•åŒ…çš„ç›®å½•ä¸‹ï¼Œè¯»å–æ¯ä¸ªåŒ…ä¸­çš„DESCRIPTIONæ–‡ä»¶çš„å†…å®¹
 
-# 3.3.3 ±í¸ñÐÍÎÄ¼þ
+# 3.3.3 è¡¨æ ¼åž‹æ–‡ä»¶
 
-## ÓÃwrite.tableºÍread.table
+## ç”¨write.tableå’Œread.table
 write.table(iris, file = "iris.csv", sep = ",")
 iris2 <- read.table(file = "iris.csv", sep = ",", stringsAsFactors = FALSE)
 head(iris2)
 
-## ÓÃ¼ôÇÐ°å
+## ç”¨å‰ªåˆ‡æ¿
 data <- read.table("clipboard",header = TRUE)
 data
 
-## ÎÒ¸öÈËÏ²»¶ÓÃwrite.csv ºÍ read.csvÀ´×ö£º
+## æˆ‘ä¸ªäººå–œæ¬¢ç”¨write.csv å’Œ read.csvæ¥åšï¼š
 write.csv(iris, file = "iris1.csv")
 iris1 <- read.csv(file = "iris1.csv",header = TRUE, stringsAsFactors = FALSE)
 iris1$X <- NULL
 head(iris1)
-## ¿ÉÒÔÁ¬½ÓÊý¾Ý¿â£¬ÈçÊ¹ÓÃRODBCµÄ·½Ê½£¬»òÕßÊ¹ÓÃDBI·½Ê½
+## å¯ä»¥è¿žæŽ¥æ•°æ®åº“ï¼Œå¦‚ä½¿ç”¨RODBCçš„æ–¹å¼ï¼Œæˆ–è€…ä½¿ç”¨DBIæ–¹å¼
 
-# 3.3.4 ÆäËûÍâ²¿ÎÄ¼þ
-## ÓÐ×¨ÃÅ¶ÁÈ¡excelÎÄ¼þµÄ°ü£¬²»¹ý¸öÈËÈÏÎª²»ÊÇºÜºÃ£¨ÒÀÀµJava£©£¬²»½¨ÒéÓÃ
+# 3.3.4 å…¶ä»–å¤–éƒ¨æ–‡ä»¶
+## æœ‰ä¸“é—¨è¯»å–excelæ–‡ä»¶çš„åŒ…ï¼Œä¸è¿‡ä¸ªäººè®¤ä¸ºä¸æ˜¯å¾ˆå¥½ï¼ˆä¾èµ–Javaï¼‰ï¼Œä¸å»ºè®®ç”¨
 require("openxlsx")
 
-## SPSS/SASµÈÆäËûÍ³¼Æ·ÖÎöÈí¼þµÄ°ü
+## SPSS/SASç­‰å…¶ä»–ç»Ÿè®¡åˆ†æžè½¯ä»¶çš„åŒ…
 require("foreign")
-## write.foreignµÄÓï·¨£º
+## write.foreignçš„è¯­æ³•ï¼š
 #write.foreign(df, datafile, codefile,package = c("SPSS", "Stata", "SAS"), ...)
 datafile<-tempfile()
 codefile<-tempfile()
@@ -373,15 +373,15 @@ unlink(datafile)
 unlink(codefile)
 
 
-# 3.4 Ê±¼äÏà¹ØÊý¾ÝµÄ´¦Àí
+# 3.4 æ—¶é—´ç›¸å…³æ•°æ®çš„å¤„ç†
 
-## RÖÐµÄÊ±¼äÀàÐÍ¿ÉÒÔ·ÖÎªÁ½´óÀà£º1.Ê±¼äÀà¶ÔÏó£»2.Ê±¼äÐòÁÐÀà¶ÔÏó
+## Rä¸­çš„æ—¶é—´ç±»åž‹å¯ä»¥åˆ†ä¸ºä¸¤å¤§ç±»ï¼š1.æ—¶é—´ç±»å¯¹è±¡ï¼›2.æ—¶é—´åºåˆ—ç±»å¯¹è±¡
 
-# 3.4.1 Ê±¼äÀàÊý¾Ý´¦Àí
+# 3.4.1 æ—¶é—´ç±»æ•°æ®å¤„ç†
 
-## Ê±¼äÀàÊý¾Ý°üº¬Á½Àà£º
-##£¨1£©¼òµ¥µÄDateÀàÐÍ£ºÖ»°üº¬ÄêÔÂÈÕ£¬ÓÃas.Date()×ª»»
-##£¨2£©¸´ÔÓµÄPOSIXctÀàÐÍ£ºÍ¬Ê±°üº¬ÄêÔÂÈÕÊ±·ÖÃë£¬ÓÃas.POSIXct×ª»»
+## æ—¶é—´ç±»æ•°æ®åŒ…å«ä¸¤ç±»ï¼š
+##ï¼ˆ1ï¼‰ç®€å•çš„Dateç±»åž‹ï¼šåªåŒ…å«å¹´æœˆæ—¥ï¼Œç”¨as.Date()è½¬æ¢
+##ï¼ˆ2ï¼‰å¤æ‚çš„POSIXctç±»åž‹ï¼šåŒæ—¶åŒ…å«å¹´æœˆæ—¥æ—¶åˆ†ç§’ï¼Œç”¨as.POSIXctè½¬æ¢
 require(lubridate)
 date1 <- "1999-1-1"
 class(date1)
@@ -393,15 +393,15 @@ date2
 date3 <- "01-01-1999"
 date3 <- as.Date(date2,format = "%m-%d-%Y")
 date3
-## ±ê×¼µÄ¸ñÊ½ÊÇ"yyyy-mm-dd",Èç¹û²»Í¬£¬ÔòÐèÒªÉèÖÃformat²ÎÊý
+## æ ‡å‡†çš„æ ¼å¼æ˜¯"yyyy-mm-dd",å¦‚æžœä¸åŒï¼Œåˆ™éœ€è¦è®¾ç½®formatå‚æ•°
 date4 <- date1 + 365
 date4 - date1
-date4/date1   #±¨´í£¬Á½¸öÊ±¼ä²»ÄÜ³ý
+date4/date1   #æŠ¥é”™ï¼Œä¸¤ä¸ªæ—¶é—´ä¸èƒ½é™¤
 
-## RÖÐ³õÊ¼ÈÕÆÚÊÇ1970Äê1ÔÂ1ÈÕ
+## Rä¸­åˆå§‹æ—¥æœŸæ˜¯1970å¹´1æœˆ1æ—¥
 Sys.Date() - structure(0, class = "Date")
 
-## Ê±¼äÏòÁ¿
+## æ—¶é—´å‘é‡
 date1 <- "1990-05-01"
 date1 <- as.Date(date1)
 dates <- seq(date1, length.out = 4, by = "day")
@@ -409,7 +409,7 @@ dates
 format(dates, "%w")
 weekdays(dates)
 
-## ¸´ÔÓµÄÊ±¼äÀàÐÍPOSIXct
+## å¤æ‚çš„æ—¶é—´ç±»åž‹POSIXct
 time1 <- "1990-01-01"
 time1 <- as.POSIXct(time1)
 time1 <- "2014-01-01 13:00:00"
@@ -418,7 +418,7 @@ time1 <- as.POSIXct(time1, format = "%Y-%m-%d %H:%M:%S", tz = "GMT")
 time1
 time2 <- seq(from  = time1, to = Sys.time(), by = "month")
 
-## ÎÒÃÇÒ»°ãÊÇÏÈÐ´³É×Ö·û´®ÐÍ£¬ÔÙ×ª³ÉÏëÒªµÄÊ±¼ä¸ñÊ½£¬µ«ÎÒÃÇÒ²¿ÉÒÔÖ±½Ó´ÓÊýÖµ×ªÎªÊ±¼ä£º
+## æˆ‘ä»¬ä¸€èˆ¬æ˜¯å…ˆå†™æˆå­—ç¬¦ä¸²åž‹ï¼Œå†è½¬æˆæƒ³è¦çš„æ—¶é—´æ ¼å¼ï¼Œä½†æˆ‘ä»¬ä¹Ÿå¯ä»¥ç›´æŽ¥ä»Žæ•°å€¼è½¬ä¸ºæ—¶é—´ï¼š
 time1 <- ISOdatetime(2011, 1, 1, 13, 0, 0)
 time1
 rep(4:5, 5)
@@ -426,10 +426,10 @@ sample(30,10)
 time2 <- ISOdatetime(2016, rep(4:5, 5), sample(30, 10), 12, 0, 0)
 time2
 
-# 3.4.2 Ê±¼äÐòÁÐÊý¾Ý
+# 3.4.2 æ—¶é—´åºåˆ—æ•°æ®
 
-## Ê±¼äÐòÁÐÊý¾Ý£¬¿ÉÒÔ¼òµ¥µÄÀí½âÎªÒ»¸öÆÕÍ¨µÄÏòÁ¿°ó¶¨ÁËÒ»¸öÊ±¼äÀàÏòÁ¿
-## ÓÃxts´´½¨Ò»¸öÊ±¼äÐòÁÐÊý¾Ý
+## æ—¶é—´åºåˆ—æ•°æ®ï¼Œå¯ä»¥ç®€å•çš„ç†è§£ä¸ºä¸€ä¸ªæ™®é€šçš„å‘é‡ç»‘å®šäº†ä¸€ä¸ªæ—¶é—´ç±»å‘é‡
+## ç”¨xtsåˆ›å»ºä¸€ä¸ªæ—¶é—´åºåˆ—æ•°æ®
 require("xts")
 x <- sample(100, 4)
 y <- seq(as.Date("2016-05-01"), length.out = 4, by = "day")
@@ -439,78 +439,74 @@ class(date1)
 str(date1)
 dim(date1)
 
-## ÌáÈ¡Ê±¼äÐòÁÐÊý¾ÝÖÐµÄÊý¾ÝÄÚÈÝºÍÊ±¼äÊôÐÔ
+## æå–æ—¶é—´åºåˆ—æ•°æ®ä¸­çš„æ•°æ®å†…å®¹å’Œæ—¶é—´å±žæ€§
 value <- coredata(date1)
 coredata(date1) <- sample(30, 4)
 time <- index(date1)
 
-## Ê±¼äÐòÁÐÊý¾ÝµÄÕûÀí·½·¨
+## æ—¶é—´åºåˆ—æ•°æ®çš„æ•´ç†æ–¹æ³•
 x <- sample(10, 4)
 y <- seq(as.Date("2015-05-01"), length.out = 4, by = "day")
 date2 <- xts(x, y)
 date2
-date3 <- cbind(date1, date2)   #cbindÆäÊµ²¢²»ºÏÀí£¬Ö»ÊÇÑÝÊ¾
+date3 <- cbind(date1, date2)   #cbindå…¶å®žå¹¶ä¸åˆç†ï¼Œåªæ˜¯æ¼”ç¤º
 date3
 str(date3)
 names(date3) <- c("V1", "V2")
 date4 <- rbind(date1, date2)
 date4
 
-## Ê±¼äÐòÁÐÊý¾ÝÈ¡×Ó¼¯£¬¿ÉÒÔÓÃË÷Òý£¬Ò²¿ÉÒÔÓÃwindowº¯Êý
+## æ—¶é—´åºåˆ—æ•°æ®å–å­é›†ï¼Œå¯ä»¥ç”¨ç´¢å¼•ï¼Œä¹Ÿå¯ä»¥ç”¨windowå‡½æ•°
 date4[4]
 window(date4, start = as.Date("2016-05-01"))
-## É¸Ñ¡×Ó¼¯Ö®ºó¿ÉÒÔÖ±½Ó¸³Öµ
+## ç­›é€‰å­é›†ä¹‹åŽå¯ä»¥ç›´æŽ¥èµ‹å€¼
 window(date4, start = as.Date("2016-05-01")) <- c(20, 35, 61, 14)
 date4
 
-## Í¬Ñù£¬Ê±¼äÐòÁÐÊý¾Ý»¹Ö§³ÖÖÍºóÏîºÍÀë²îÏîµÄ¼ÆËã
-lag(date2)  #ÖÍºóÏî
+## åŒæ ·ï¼Œæ—¶é—´åºåˆ—æ•°æ®è¿˜æ”¯æŒæ»žåŽé¡¹å’Œç¦»å·®é¡¹çš„è®¡ç®—
+lag(date2)  #æ»žåŽé¡¹
 date2
-diff(date2)  #Àë²îÏî
+diff(date2)  #ç¦»å·®é¡¹
 
-# 3.4.3 Ê±¼äÊý¾Ý´¦ÀíÊµÀý
+# 3.4.3 æ—¶é—´æ•°æ®å¤„ç†å®žä¾‹
 
-## ÒÔ¹ÉÆ±Êý¾ÝÎªÀý
+## ä»¥è‚¡ç¥¨æ•°æ®ä¸ºä¾‹
 require("quantmod")
 require("xts")
-getSymbols("^SSEC", src = "yahoo", from = "2001-01-01")   #´ÓyahooÍøÕ¾Ö±½ÓÏÂÔØÉÏÖ¤×ÛºÏÖ¸ÊýÊý¾Ý
+getSymbols("^SSEC", src = "yahoo", from = "2001-01-01")   #ä»Žyahooç½‘ç«™ç›´æŽ¥ä¸‹è½½ä¸Šè¯ç»¼åˆæŒ‡æ•°æ•°æ®
 class(SSEC)
 View(SSEC)
 head(SSEC)
-chartSeries(SSEC, TA=NULL)  #»æÍ¼
+chartSeries(SSEC, TA=NULL)  #ç»˜å›¾
 
-## ·ÖÎöµ÷ÕûÁË¹ÉÀûµÈÒòËØºóµÄÊÕÅÌ¼Û
+## åˆ†æžè°ƒæ•´äº†è‚¡åˆ©ç­‰å› ç´ åŽçš„æ”¶ç›˜ä»·
 data <- SSEC[, "SSEC.Adjusted"]
 head(data) 
 names(data) <- "close"
-data$ratio <- with(data, diff(close)/close)  #¼ÆËãÃ¿ÈÕÊÕÒæÂÊ£º(½ñÈÕÊÕÅÌ¼Û-×òÈÕÊÕÅÌ¼Û)/½ñÈÕÊÕÅÌ¼Û
+data$ratio <- with(data, diff(close)/close)  #è®¡ç®—æ¯æ—¥æ”¶ç›ŠçŽ‡ï¼š(ä»Šæ—¥æ”¶ç›˜ä»·-æ˜¨æ—¥æ”¶ç›˜ä»·)/ä»Šæ—¥æ”¶ç›˜ä»·
 
-## ×ª»»³ÉÊý¾Ý¿ò£¬ÅÅÐò£¬Ñ¡³ö¹É¼Û±ä¶¯ÂÊ×î´óµÄÇ°Ê®¸ö
+## è½¬æ¢æˆæ•°æ®æ¡†ï¼ŒæŽ’åºï¼Œé€‰å‡ºè‚¡ä»·å˜åŠ¨çŽ‡æœ€å¤§çš„å‰åä¸ª
 data.df <- as.data.frame(data)   
 data.df[order(abs(data.df$ratio), decreasing = TRUE), ][1:10, ]
 
-## ¼ÆËãÃ¿¸öÔÂµÄÆ½¾ùÊÕÒæÂÊ
+## è®¡ç®—æ¯ä¸ªæœˆçš„å¹³å‡æ”¶ç›ŠçŽ‡
 monthratio <- apply.monthly(data$ratio, mean, na.rm = TRUE)
 head(monthratio)
-class(monthratio)  #ÈÔÊÇÒ»¸öÊ±¼äÐòÁÐÊý¾Ý
+class(monthratio)  #ä»æ˜¯ä¸€ä¸ªæ—¶é—´åºåˆ—æ•°æ®
 
-## ¼ÆËã°´ÔÂµÄ¼Û¸ñ²¨¶¯£¬¼´¸ÃÔÂÄÚµÄ¿ªÅÌ¼Û(µÚÒ»¸ö½»Ò×ÈÕµÄÊÕÅÌ¼Û)¡¢×î¸ß¼Û¡¢×îµÍ¼Û¡¢ÊÕÅÌ¼Û(×îºóÒ»¸ö½»Ò×ÈÕµÄÊÕÅÌ¼Û)
+## è®¡ç®—æŒ‰æœˆçš„ä»·æ ¼æ³¢åŠ¨ï¼Œå³è¯¥æœˆå†…çš„å¼€ç›˜ä»·(ç¬¬ä¸€ä¸ªäº¤æ˜“æ—¥çš„æ”¶ç›˜ä»·)ã€æœ€é«˜ä»·ã€æœ€ä½Žä»·ã€æ”¶ç›˜ä»·(æœ€åŽä¸€ä¸ªäº¤æ˜“æ—¥çš„æ”¶ç›˜ä»·)
 data.month <- to.monthly(data$close)
 
-## ¼ÆËãÒÆ¶¯Æ½¾ùÖµ£¬¹ÉÆ±ÖÐ³£ÓÃµÄÊÇ90ÌìÒÆ¶¯Æ½¾ù
+## è®¡ç®—ç§»åŠ¨å¹³å‡å€¼ï¼Œè‚¡ç¥¨ä¸­å¸¸ç”¨çš„æ˜¯90å¤©ç§»åŠ¨å¹³å‡
 rollmean <- rollapply(data$close, width = 90, FUN = mean)
-rollmean <- rollmean[!is.na(rollmean)]   #ÅÅ³ýÇ°ÃæµÄ90¸ö¼ÇÂ¼£¬Ã»ÓÐÒÆ¶¯Æ½¾ùÖµ
+rollmean <- rollmean[!is.na(rollmean)]   #æŽ’é™¤å‰é¢çš„90ä¸ªè®°å½•ï¼Œæ²¡æœ‰ç§»åŠ¨å¹³å‡å€¼
 head(rollmean)
 sum(data$close > rollmean)
 sum(data$close < rollmean)
 
-## ¼ÆËã12¸öÔÂµÄÊÕÒæÂÊ
+## è®¡ç®—12ä¸ªæœˆçš„æ”¶ç›ŠçŽ‡
 require("lubridate")
-data$mday <- month(data)  #±ê×¢ËùÊôÔÂ·Ý
-res <- aggregate(data$ratio, data$mday, mean, na.rm = TRUE)  #¼ÆËã12¸öÔÂµÄÆ½¾ùÊÕÒæÂÊ
+data$mday <- month(data)  #æ ‡æ³¨æ‰€å±žæœˆä»½
+res <- aggregate(data$ratio, data$mday, mean, na.rm = TRUE)  #è®¡ç®—12ä¸ªæœˆçš„å¹³å‡æ”¶ç›ŠçŽ‡
 cat(format(res*100, digits = 2, sientific = FALSE))
-
-
-
-
 

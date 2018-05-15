@@ -21,8 +21,9 @@ devtools::install_github("madlogos/recharts")
 
 
 # 加载包
-library("recharts")
-library("tidyverse")
+library(recharts)
+library(tidyverse)
+library(reshape2)
 
 # 基本图形 ============================================================
 
@@ -80,14 +81,11 @@ names(dtspe) <- c("Species", "Mean")
 dtiris <- dcast(dfiris, Species + variable~., value.var = "value", mean)
 names(dtiris) <- c("Species","Param","Mean")
 # 3.1 最简单的样式,单个系列
-echartR(data = dtspe, x = ~Species, y = ~Mean, type = "bar")
+echartR(data = dtspe, x = ~Species, y = ~Mean, type = "column")
 # 3.2 多个系列
-echartR(data = dtiris, x = ~Param, y = ~Mean, series = ~Species, type = 'bar')
+echartR(data = dtiris, x = ~Param, y = ~Mean, series = ~Species, type = 'column')
 # 3.3 堆积柱形图 stack = T
-echartR(data = dtiris, x = ~Param, y = ~Mean, series = ~Species, 
-        stack = T, type = 'bar')
-
-echartr(dtiris, Param, Mean, Species, type = 'hbar', subtype = 'stack')
+echartr(dtiris, Param, Mean, Species, type = 'column', subtype = 'stack')
 
 
 # 4.bar 条形图
