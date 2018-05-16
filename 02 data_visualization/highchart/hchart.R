@@ -1,4 +1,8 @@
 
+# 
+# https://cran.r-project.org/web/packages/highcharter/highcharter.pdf
+
+
 # load packages ------------------------------------------------------
 library(dplyr)
 library(tidyr)
@@ -94,6 +98,11 @@ highchart() %>%
   hc_add_series(favorite_bars$percent, type = 'column', name = 'percent') %>% 
   hc_xAxis(categories = favorite_bars$bar) %>% 
   hc_add_theme(hc_theme_darkunica())
+
+mpgman2
+
+hchart(mpgman2, 'column', hcaes(x = manufacturer, y = n, group = year), stack = TRUE)
+
 
 # 条形图 ---------------------------------------------------------------
 ## hcbar() 快捷函数
