@@ -4,12 +4,9 @@
 
 
 # load packages ------------------------------------------------------
-library(dplyr)
-library(tidyr)
 library(highcharter)
 library(broom)
-library(forecast)
-library(ggplot2)
+library(tidyverse)
 library(quantmod)
 library(treemap)
 library(viridis)
@@ -159,7 +156,8 @@ highchart() %>%
                               dataLabels = list(enabled = FALSE)
   ) %>% 
   hc_xAxis(categories = favorite_bars$bar) %>% 
-  hc_legend(align = 'left') %>% 
+  hc_legend(align = 'left', 
+            enabled = TRUE) %>% 
   hc_tooltip(pointFormat = "数量占比：{point.y}%")
 
 # Sparklines -----------------------------------------------------------
