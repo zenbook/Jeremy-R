@@ -285,7 +285,7 @@ View(company_dataset)
 url <- 'http://brand.efu.com.cn/list-1-9-52-0-110000-0-1.html'
 url %>% 
   read_html(encoding = 'utf-8') %>% 
-  html_nodes('div.filter_cona>ul>li.lib>span.sp-a') %>% 
+  html_nodes('filter_cona') %>% 
   html_text()
 page_num
 
