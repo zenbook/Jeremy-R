@@ -134,16 +134,29 @@ pagenum <- url %>%
   read_html() %>% 
   html_nodes(xpath = '//*[@id="reviews-container"]/nav') %>% 
   html_text()
+pagenum
 
 
+# case study ====================================================
 
+url <- "http://www.tripadvisor.com/Hotel_Review-g37209-d1762915-Reviews-JW_Marriott_Indianapolis-Indianapolis_Indiana.html"
 
+reviews <- url %>%
+  read_html() %>%
+  html_nodes("#REVIEWS .innerBubble")
 
+id <- reviews %>%
+  html_node(".quote a") %>%
+  html_attr("id")
 
+quote <- reviews %>%
+  html_node(".quote span") %>%
+  html_text()
 
+reviews
+id
 
-
-
+quote
 
 
 

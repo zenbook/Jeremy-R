@@ -281,47 +281,16 @@ View(company_dataset)
 
 # 5. 先爬取每个三级分类下的页数 ==========================================
 
+## 遇到问题，爬取页数失败
 
 url <- 'http://brand.efu.com.cn/list-1-9-52-0-110000-0-1.html'
 ## 复制xpath
-## /html/body/div[1]/div[7]/div/div/div[2]/div[7]
+## /html/body/div[1]/div[7]/div/div/div[2]/div[7]/ul/li[2]/span[1]
 
-pagenum <- url %>% 
+url %>% 
   read_html(encoding = 'utf-8') %>% 
-  html_nodes(xpath = "/html/body/div[1]/div[7]/div/div/div[2]/div[7]") %>% 
+  html_nodes(xpath = "/html/body/div[1]/div[7]/div/div/div[2]/div[7]/ul") %>% 
   html_text()
-page_num
-
-
-## 编写函数get_pagenum()获取三级分类各省份的页数
-get_pagenum <- function(level_id1, level_id2, level_id3, province_id, page_num){
-  baseurl <- 'http://brand.efu.com.cn/list'
-  url <- paste(baseurl, level_id1, level_id2, level_id3, 0, province_id, 0, 1, sep = '-')
-  url <- paste(url, '.html', sep = '')
-  ## 获取页数
-  page_num <- url %>% 
-    read_html(encoding = 'utf-8') %>% 
-    html_nodes('div.lstPa') %>% 
-    html_text() %>% 
-    str_replace_all('\uFEFF', '') %>% 
-    str_replace_all("\r\n", "") %>% 
-    str_replace_all(' ', '') %>% 
-    str_replace('口碑关注\t所属企业：', '\t') %>% 
-    str_replace('品牌简介：\t【详情】', '\t') %>% 
-    str_replace('所在地区：', '') %>% 
-    str_replace('联系电话：', '\t') %>% 
-    str_replace('在线留言', '') %>% 
-    str_split('\t')
-}
-
-## 循环爬取男装三级分类下各省份的页数
-for (i in 1:length(level_id3_9)){
-  for (j in 1:length(province_id)) {
-    
-  }
-}
-
-# 6. 方法5 利用get_apparel()函数、循环，传入上面获取的页数 ===============
 
 
 
