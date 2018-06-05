@@ -283,9 +283,12 @@ View(company_dataset)
 
 
 url <- 'http://brand.efu.com.cn/list-1-9-52-0-110000-0-1.html'
-url %>% 
+## 复制xpath
+## /html/body/div[1]/div[7]/div/div/div[2]/div[7]
+
+pagenum <- url %>% 
   read_html(encoding = 'utf-8') %>% 
-  html_nodes('filter_cona') %>% 
+  html_nodes(xpath = "/html/body/div[1]/div[7]/div/div/div[2]/div[7]") %>% 
   html_text()
 page_num
 

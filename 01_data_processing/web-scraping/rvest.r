@@ -1,7 +1,6 @@
 # load packages -------------------------------------------------------------------
-library('rvest')
-library('stringr')
-library('tidyr')
+library(rvest)
+library(tidyverse)
 
 # https://rpubs.com/Radcliffe/superbowl
 # https://cran.r-project.org/web/packages/rvest/rvest.pdf
@@ -119,6 +118,22 @@ legomovie %>%
 # To see these functions in action, check out package demos with demo(package = "rvest").
 
 
+# case study ====================================================
+webpage <- read_html("https://www.nytimes.com/interactive/2017/06/23/opinion/trumps-lies.html")
+webpage
+
+
+
+
+# case study ====================================================
+url <- "http://www.trustpilot.com/review/www.amazon.com"
+
+## Xpath://*[@id="reviews-container"]/nav
+
+pagenum <- url %>% 
+  read_html() %>% 
+  html_nodes(xpath = '//*[@id="reviews-container"]/nav') %>% 
+  html_text()
 
 
 
