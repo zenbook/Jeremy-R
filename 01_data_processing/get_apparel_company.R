@@ -295,3 +295,59 @@ url %>%
 
 
 
+
+# 6.test =================================================================
+url <- 'http://brand.efu.com.cn/list-1-9-53-0-440000-0-23.html'
+
+company_info <- url %>% 
+  read_html(encoding = 'utf-8') %>% 
+  html_nodes('div.lstPa') %>% 
+  html_text() %>% 
+  str_replace_all('\uFEFF', '') %>% 
+  str_replace_all("\r\n", "") %>% 
+  str_replace_all(' ', '') %>% 
+  str_replace('口碑关注\t所属企业：', '\t') %>% 
+  str_replace('品牌简介：\t【详情】', '\t') %>% 
+  str_replace('所在地区：', '') %>% 
+  str_replace('联系电话：', '\t') %>% 
+  str_replace('在线留言', '') %>% 
+  str_split('\t')
+## 判断list是否为空，如果不为空，则转换为数据框，如果为空，转换成空数据框
+if (length(company_info) >= 1){
+  company_info <- unlist(company_info) %>% 
+    matrix(ncol = 5, byrow = TRUE) %>% 
+    data.frame(stringsAsFactors = FALSE)
+  ## 重命名列名称
+  names(company_info) <- c('brand_name', 'company_name', 'company_intro', 'address', 'telephone')
+} else {
+  ## 为空时，直接生成14列的数据框
+  company_info <- data.frame(t(rep(NA,14)))[-1,]
+  ## 重命名列名称
+  names(company_info) <- c('brand_name', 'company_name', 'company_intro', 'address', 'telephone', 
+                           'level_id1', 'level_name1', 'level_id2', 'level_name2', 'level_id3', 
+                           'level_name3', 'province_id', 'province_name', 'page_num')
+}
+
+
+View(company_info)
+
+
+str(apparel_company_list)
+View(apparel_company_list)
+
+apparel_company_list %>% 
+  filter(province_id == '440000', 
+         level_id3 == '53', 
+         page_num == 23) %>% 
+  View()
+
+detach("package:plyr", unload=TRUE) 
+apparel_company_list %>% 
+  group_by(province_id, province_name) %>% 
+  summarise(brand_n = n()) %>% 
+  arrange(-brand_n) %>% 
+  View()
+library(plyr)
+
+str(apparel_company_list)
+View(tail(apparel_company_list))

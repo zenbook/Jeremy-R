@@ -1,8 +1,9 @@
 
 # 加载包 ================================================================
 library(rvest)
-library(tidyverse)
 library(plyr)
+library(tidyverse)
+
 
 # 设置参数 ==============================================================
 ## 1. level_id1
@@ -48,19 +49,29 @@ level_name3_18 <- c('男鞋','女鞋','休闲鞋')
 level_id3_19 <- 0
 level_name3_19 <- '职业装'
 ## 省份信息
-province_id <- c('440000','330000','110000','310000','320000','350000','370000','130000','410000','210000','120000','510000'
-                 ,'340000','420000','500000','430000','810000','710000','820000','650000','540000','150000','630000','640000'
-                 ,'620000','610000','530000','520000','450000','360000','220000','140000','230000','460000')
+province_id <- c('440000','330000','110000','310000','320000','350000','370000','130000','410000','210000',
+                 '120000','510000','340000','420000','500000','430000','810000','710000','820000','650000',
+                 '540000','150000','630000','640000','620000','610000','530000','520000','450000','360000',
+                 '220000','140000','230000','460000')
 province_name <- c('广东','浙江','北京','上海','江苏','福建','山东','河北','河南','辽宁','天津','四川',
                    '安徽','湖北','重庆','湖南','香港','台湾','澳门','新疆','西藏','内蒙古','青海','宁夏',
                    '甘肃','陕西','云南','贵州','广西','江西','吉林','山西','黑龙江','海南')
-## 页码设置最多为43，应该够用了，目前最多页数的是广东女装中的时尚女装，43页
-page_num <- 1:43
+## 省份信息-广东和浙江
+province_id_1 <- c('440000','330000')
+province_name_1 <- c('广东','浙江')
+## 省份信息-非广东和浙江
+province_id_2 <- c('110000','310000','320000','350000','370000','130000','410000','210000','120000','510000',
+                   '340000','420000','500000','430000','810000','710000','820000','650000','540000','150000',
+                   '630000','640000','620000','610000','530000','520000','450000','360000','220000','140000',
+                   '230000','460000')
+province_name_2 <- c('北京','上海','江苏','福建','山东','河北','河南','辽宁','天津','四川',
+                   '安徽','湖北','重庆','湖南','香港','台湾','澳门','新疆','西藏','内蒙古','青海','宁夏',
+                   '甘肃','陕西','云南','贵州','广西','江西','吉林','山西','黑龙江','海南')
 
-## 创建一个空数据框
-company_dataset <- data.frame(t(rep(NA,13)))[-1,]
-names(company_dataset) <- c('brand_name', 'company_name', 'company_intro', 'address', 'telephone', 'level_id1', 'level_name1', 
-                            'level_id2', 'level_name2', 'level_id3', 'level_name3', 'province_id', 'province_name')
+
+## 页码设置最多为44，应该够用了，目前最多页数的是广东女装中的时尚女装，44页
+page_num_1 <- 1:44
+page_num_2 <- 1:15
 
 # 编写get_apparel()函数 =================================================
 ## 传入参数：
@@ -78,7 +89,7 @@ get_apparel <- function(level_id1, level_id2, level_id3, province_id, page_num){
     read_html(encoding = 'utf-8') %>% 
     html_nodes('div.lstPa') %>% 
     html_text() %>% 
-    str_replace_all('\uFEFF', '') %>% 
+    str_replace_all('\uFEFF', "") %>% 
     str_replace_all("\r\n", "") %>% 
     str_replace_all(' ', '') %>% 
     str_replace('口碑关注\t所属企业：', '\t') %>% 
@@ -86,6 +97,7 @@ get_apparel <- function(level_id1, level_id2, level_id3, province_id, page_num){
     str_replace('所在地区：', '') %>% 
     str_replace('联系电话：', '\t') %>% 
     str_replace('在线留言', '') %>% 
+    str_replace('\t\t', '\t') %>% 
     str_split('\t')
   ## 判断list是否为空，如果不为空，则转换为数据框，如果为空，转换成空数据框
   if (length(company_info) >= 1){
@@ -95,11 +107,12 @@ get_apparel <- function(level_id1, level_id2, level_id3, province_id, page_num){
     ## 重命名列名称
     names(company_info) <- c('brand_name', 'company_name', 'company_intro', 'address', 'telephone')
   } else {
-    ## 为空时，直接生成13列的数据框
-    company_info <- data.frame(t(rep(NA,13)))[-1,]
+    ## 为空时，直接生成14列的数据框
+    company_info <- data.frame(t(rep(NA,14)))[-1,]
     ## 重命名列名称
-    names(company_info) <- c('brand_name', 'company_name', 'company_intro', 'address', 'telephone', 'level_id1', 'level_name1', 
-                             'level_id2', 'level_name2', 'level_id3', 'level_name3', 'province_id', 'province_name')
+    names(company_info) <- c('brand_name', 'company_name', 'company_intro', 'address', 'telephone', 
+                             'level_id1', 'level_name1', 'level_id2', 'level_name2', 'level_id3', 
+                             'level_name3', 'province_id', 'province_name', 'page_num')
   }
   ## 返回数据
   return(company_info)
@@ -108,15 +121,27 @@ get_apparel <- function(level_id1, level_id2, level_id3, province_id, page_num){
 
 # 利用get_apparel()函数，编写循环语句 ===================================
 
-## 循环爬取女装公司：
+## 循环爬取女装公司： ===================================================
 ### level_id2 = level_id2[1]
 ### level_name2 = level_name2[1]
 ### level_id3 = level_id3_9
 ### level_name3 = level_name3_9
+
+### 女装1：广东和浙江
+### page_num_1
+### province_id_1
+### province_name_1
+
+## 创建一个空数据框
+apparel_company_list <- data.frame(t(rep(NA,14)))[-1,]
+names(apparel_company_list) <- c('brand_name', 'company_name', 'company_intro', 'address', 'telephone', 
+                                 'level_id1', 'level_name1', 'level_id2', 'level_name2', 'level_id3', 
+                                 'level_name3', 'province_id', 'province_name', 'page_num')
+
 for (i in 1:length(level_id3_9)){
-  for (j in 1:length(province_id)) {
-    for (k in page_num){
-      company_info <- get_apparel(level_id1, level_id2[1], level_id3_9[i], province_id[j], page_num[k])
+  for (j in 1:length(province_id_1)) {
+    for (k in page_num_1){
+      company_info <- get_apparel(level_id1, level_id2[1], level_id3_9[i], province_id_1[j], page_num_1[k])
       ## 判断数据框是否为空，如果为空，字段值也为空
       if (!empty(company_info)){
         ## 加上分类和省份
@@ -126,26 +151,75 @@ for (i in 1:length(level_id3_9)){
         company_info$level_name2 <- level_name2[1]
         company_info$level_id3 <- level_id3_9[i]
         company_info$level_name3 <- level_name3_9[i]
-        company_info$province_id <- province_id[j]
-        company_info$province_name <- province_name[j]
+        company_info$province_id <- province_id_1[j]
+        company_info$province_name <- province_name_1[j]
+        company_info$page_num <- page_num_1[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
+"女装1-广东浙江：爬取成功！"
 
-str(company_dataset)
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
 
-## 循环爬取男装公司：
+"女装1-广东浙江：导出成功！"
+
+### 女装2：非广东和浙江
+### page_num_2
+### province_id_2
+### province_name_2
+
+for (i in 1:length(level_id3_9)){
+  for (j in 1:length(province_id_2)) {
+    for (k in page_num_2){
+      company_info <- get_apparel(level_id1, level_id2[1], level_id3_9[i], province_id_2[j], page_num_2[k])
+      ## 判断数据框是否为空，如果为空，字段值也为空
+      if (!empty(company_info)){
+        ## 加上分类和省份
+        company_info$level_id1 <- level_id1
+        company_info$level_name1 <- level_name1
+        company_info$level_id2 <- level_id2[1]
+        company_info$level_name2 <- level_name2[1]
+        company_info$level_id3 <- level_id3_9[i]
+        company_info$level_name3 <- level_name3_9[i]
+        company_info$province_id <- province_id_2[j]
+        company_info$province_name <- province_name_2[j]
+        company_info$page_num <- page_num_2[k]
+      }
+      apparel_company_list <- rbind(apparel_company_list, company_info)
+    }
+  }
+}
+
+"女装2-非广东浙江：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"女装2-非广东浙江：导出成功！"
+
+## 循环爬取男装公司： ===================================================
 ### level_id2 = level_id2[2]
 ### level_name2 = level_name2[2]
 ### level_id3 = level_id3_10
 ### level_name3 = level_name3_10
+
+### 男装1：广东和浙江
+### page_num_1
+### province_id_1
+### province_name_1
+
 for (i in 1:length(level_id3_10)){
-  for (j in 1:length(province_id)) {
-    for (k in page_num){
-      company_info <- get_apparel(level_id1, level_id2[2], level_id3_10[i], province_id[j], page_num[k])
+  for (j in 1:length(province_id_1)) {
+    for (k in page_num_1){
+      company_info <- get_apparel(level_id1, level_id2[2], level_id3_10[i], province_id_1[j], page_num_1[k])
       ## 判断数据框是否为空，如果为空，字段值也为空
       if (!empty(company_info)){
         ## 加上分类和省份
@@ -155,23 +229,76 @@ for (i in 1:length(level_id3_10)){
         company_info$level_name2 <- level_name2[2]
         company_info$level_id3 <- level_id3_10[i]
         company_info$level_name3 <- level_name3_10[i]
-        company_info$province_id <- province_id[j]
-        company_info$province_name <- province_name[j]
+        company_info$province_id <- province_id_1[j]
+        company_info$province_name <- province_name_1[j]
+        company_info$page_num <- page_num_1[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取童装公司：
+"男装1-广东浙江：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"男装1-广东浙江：导出成功！"
+
+### 男装2：非广东和浙江
+### page_num_2
+### province_id_2
+### province_name_2
+
+for (i in 1:length(level_id3_10)){
+  for (j in 1:length(province_id_2)) {
+    for (k in page_num_2){
+      company_info <- get_apparel(level_id1, level_id2[2], level_id3_10[i], province_id_2[j], page_num_2[k])
+      ## 判断数据框是否为空，如果为空，字段值也为空
+      if (!empty(company_info)){
+        ## 加上分类和省份
+        company_info$level_id1 <- level_id1
+        company_info$level_name1 <- level_name1
+        company_info$level_id2 <- level_id2[2]
+        company_info$level_name2 <- level_name2[2]
+        company_info$level_id3 <- level_id3_10[i]
+        company_info$level_name3 <- level_name3_10[i]
+        company_info$province_id <- province_id_2[j]
+        company_info$province_name <- province_name_2[j]
+        company_info$page_num <- page_num_2[k]
+      }
+      apparel_company_list <- rbind(apparel_company_list, company_info)
+    }
+  }
+}
+
+"男装2-非广东浙江：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"男装2-非广东浙江：导出成功！"
+
+
+## 循环爬取童装公司： ===================================================
 ### level_id2 = level_id2[3]
 ### level_name2 = level_name2[3]
 ### level_id3 = level_id3_11
 ### level_name3 = level_name3_11
+
+### 童装1：广东和浙江
+### page_num_1
+### province_id_1
+### province_name_1
+
 for (i in 1:length(level_id3_11)){
-  for (j in 1:length(province_id)) {
-    for (k in page_num){
-      company_info <- get_apparel(level_id1, level_id2[3], level_id3_11[i], province_id[j], page_num[k])
+  for (j in 1:length(province_id_1)) {
+    for (k in page_num_1){
+      company_info <- get_apparel(level_id1, level_id2[3], level_id3_11[i], province_id_1[j], page_num_1[k])
       ## 判断数据框是否为空，如果为空，字段值也为空
       if (!empty(company_info)){
         ## 加上分类和省份
@@ -181,23 +308,75 @@ for (i in 1:length(level_id3_11)){
         company_info$level_name2 <- level_name2[3]
         company_info$level_id3 <- level_id3_11[i]
         company_info$level_name3 <- level_name3_11[i]
-        company_info$province_id <- province_id[j]
-        company_info$province_name <- province_name[j]
+        company_info$province_id <- province_id_1[j]
+        company_info$province_name <- province_name_1[j]
+        company_info$page_num <- page_num_1[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取内衣公司：
+"童装1-广东浙江：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"童装1-广东浙江：导出成功！"
+
+### 童装2：非广东和浙江
+### page_num_2
+### province_id_2
+### province_name_2
+
+for (i in 1:length(level_id3_11)){
+  for (j in 1:length(province_id_2)) {
+    for (k in page_num_2){
+      company_info <- get_apparel(level_id1, level_id2[3], level_id3_11[i], province_id_2[j], page_num_2[k])
+      ## 判断数据框是否为空，如果为空，字段值也为空
+      if (!empty(company_info)){
+        ## 加上分类和省份
+        company_info$level_id1 <- level_id1
+        company_info$level_name1 <- level_name1
+        company_info$level_id2 <- level_id2[3]
+        company_info$level_name2 <- level_name2[3]
+        company_info$level_id3 <- level_id3_11[i]
+        company_info$level_name3 <- level_name3_11[i]
+        company_info$province_id <- province_id_2[j]
+        company_info$province_name <- province_name_2[j]
+        company_info$page_num <- page_num_2[k]
+      }
+      apparel_company_list <- rbind(apparel_company_list, company_info)
+    }
+  }
+}
+
+"童装2-非广东浙江：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"童装2-非广东浙江：导出成功！"
+
+## 循环爬取内衣公司： ===================================================
 ### level_id2 = level_id2[4]
 ### level_name2 = level_name2[4]
 ### level_id3 = level_id3_12
 ### level_name3 = level_name3_12
+
+### 内衣1：广东和浙江
+### page_num_1
+### province_id_1
+### province_name_1
+
 for (i in 1:length(level_id3_12)){
-  for (j in 1:length(province_id)) {
-    for (k in page_num){
-      company_info <- get_apparel(level_id1, level_id2[4], level_id3_12[i], province_id[j], page_num[k])
+  for (j in 1:length(province_id_1)) {
+    for (k in page_num_1){
+      company_info <- get_apparel(level_id1, level_id2[4], level_id3_12[i], province_id_1[j], page_num_1[k])
       ## 判断数据框是否为空，如果为空，字段值也为空
       if (!empty(company_info)){
         ## 加上分类和省份
@@ -207,15 +386,64 @@ for (i in 1:length(level_id3_12)){
         company_info$level_name2 <- level_name2[4]
         company_info$level_id3 <- level_id3_12[i]
         company_info$level_name3 <- level_name3_12[i]
-        company_info$province_id <- province_id[j]
-        company_info$province_name <- province_name[j]
+        company_info$province_id <- province_id_1[j]
+        company_info$province_name <- province_name_1[j]
+        company_info$page_num <- page_num_1[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取休闲装公司：
+"内衣1-广东浙江：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"内衣1-广东浙江：导出成功！"
+
+### 内衣2：非广东和浙江
+### page_num_2
+### province_id_2
+### province_name_2
+
+for (i in 1:length(level_id3_12)){
+  for (j in 1:length(province_id_2)) {
+    for (k in page_num_2){
+      company_info <- get_apparel(level_id1, level_id2[4], level_id3_12[i], province_id_2[j], page_num_2[k])
+      ## 判断数据框是否为空，如果为空，字段值也为空
+      if (!empty(company_info)){
+        ## 加上分类和省份
+        company_info$level_id1 <- level_id1
+        company_info$level_name1 <- level_name1
+        company_info$level_id2 <- level_id2[4]
+        company_info$level_name2 <- level_name2[4]
+        company_info$level_id3 <- level_id3_12[i]
+        company_info$level_name3 <- level_name3_12[i]
+        company_info$province_id <- province_id_2[j]
+        company_info$province_name <- province_name_2[j]
+        company_info$page_num <- page_num_2[k]
+      }
+      apparel_company_list <- rbind(apparel_company_list, company_info)
+    }
+  }
+}
+
+"内衣2-非广东浙江：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"内衣2-非广东浙江：导出成功！"
+
+## 后续品类的页数较少，重置页面
+page_num <- 1:10
+
+## 循环爬取休闲装公司： ===================================================
 ### level_id2 = level_id2[5]
 ### level_name2 = level_name2[5]
 ### level_id3 = level_id3_13
@@ -235,13 +463,23 @@ for (i in 1:length(level_id3_13)){
         company_info$level_name3 <- level_name3_13[i]
         company_info$province_id <- province_id[j]
         company_info$province_name <- province_name[j]
+        company_info$page_num <- page_num[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取运动装公司：
+"休闲装：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"休闲装：导出成功！"
+
+## 循环爬取运动装公司： ===================================================
 ### level_id2 = level_id2[6]
 ### level_name2 = level_name2[6]
 ### level_id3 = level_id3_14
@@ -261,13 +499,23 @@ for (i in 1:length(level_id3_14)){
         company_info$level_name3 <- level_name3_14[i]
         company_info$province_id <- province_id[j]
         company_info$province_name <- province_name[j]
+        company_info$page_num <- page_num[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取皮革皮草公司：
+"运动装：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"运动装：导出成功！"
+
+## 循环爬取皮革皮草公司： ===================================================
 ### level_id2 = level_id2[7]
 ### level_name2 = level_name2[7]
 ### level_id3 = level_id3_15
@@ -287,13 +535,23 @@ for (i in 1:length(level_id3_15)){
         company_info$level_name3 <- level_name3_15[i]
         company_info$province_id <- province_id[j]
         company_info$province_name <- province_name[j]
+        company_info$page_num <- page_num[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取针织毛衫公司：
+"皮革皮草：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"皮革皮草：导出成功！"
+
+## 循环爬取针织毛衫公司： ===================================================
 ### level_id2 = level_id2[8]
 ### level_name2 = level_name2[8]
 ### level_id3 = level_id3_16
@@ -313,13 +571,23 @@ for (i in 1:length(level_id3_16)){
         company_info$level_name3 <- level_name3_16[i]
         company_info$province_id <- province_id[j]
         company_info$province_name <- province_name[j]
+        company_info$page_num <- page_num[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取羽绒服公司：
+"针织毛衫：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"针织毛衫：导出成功！"
+
+## 循环爬取羽绒服公司： ===================================================
 ### level_id2 = level_id2[9]
 ### level_name2 = level_name2[9]
 ### level_id3 = level_id3_17
@@ -339,13 +607,23 @@ for (i in 1:length(level_id3_17)){
         company_info$level_name3 <- level_name3_17[i]
         company_info$province_id <- province_id[j]
         company_info$province_name <- province_name[j]
+        company_info$page_num <- page_num[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取鞋业公司：
+"羽绒服：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"羽绒服：导出成功！"
+
+## 循环爬取鞋业公司： ===================================================
 ### level_id2 = level_id2[10]
 ### level_name2 = level_name2[10]
 ### level_id3 = level_id3_18
@@ -365,13 +643,23 @@ for (i in 1:length(level_id3_18)){
         company_info$level_name3 <- level_name3_18[i]
         company_info$province_id <- province_id[j]
         company_info$province_name <- province_name[j]
+        company_info$page_num <- page_num[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
-## 循环爬取职业装公司：
+"鞋业：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"鞋业：导出成功！"
+
+## 循环爬取职业装公司： ===================================================
 ### level_id2 = level_id2[11]
 ### level_name2 = level_name2[11]
 ### level_id3 = level_id3_19
@@ -391,9 +679,20 @@ for (i in 1:length(level_id3_19)){
         company_info$level_name3 <- level_name3_19[i]
         company_info$province_id <- province_id[j]
         company_info$province_name <- province_name[j]
+        company_info$page_num <- page_num[k]
       }
-      company_dataset <- rbind(company_dataset, company_info)
+      apparel_company_list <- rbind(apparel_company_list, company_info)
     }
   }
 }
 
+"职业装：爬取成功！"
+
+### 写出到csv文件中
+write.csv(apparel_company_list, 
+          file = './apparel_company_list.csv',
+          row.names = FALSE)
+
+"职业装：导出成功！"
+
+"全部服装类目导出成功！！！"
