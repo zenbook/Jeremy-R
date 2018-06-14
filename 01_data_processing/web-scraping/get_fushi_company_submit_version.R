@@ -97,6 +97,8 @@ for (i in 1:length(level_id2)){
         company_info$page_num <- page_num[k]
       }
       apparel_company_list <- rbind(apparel_company_list, company_info)
+      # 设置休息时间5秒
+      Sys.sleep(5)
     }
   }
 }
