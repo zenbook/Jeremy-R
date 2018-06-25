@@ -1,0 +1,93 @@
+
+R version 3.5.0 (2018-04-23) -- "Joy in Playing"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+RÊÇ×ÔÓÉÈí¼ş£¬²»´øÈÎºÎµ£±£¡£
+ÔÚÄ³Ğ©Ìõ¼şÏÂÄã¿ÉÒÔ½«Æä×ÔÓÉÉ¢²¼¡£
+ÓÃ'license()'»ò'licence()'À´¿´É¢²¼µÄÏêÏ¸Ìõ¼ş¡£
+
+RÊÇ¸öºÏ×÷¼Æ»®£¬ÓĞĞí¶àÈËÎªÖ®×ö³öÁË¹±Ï×.
+ÓÃ'contributors()'À´¿´ºÏ×÷ÕßµÄÏêÏ¸Çé¿ö
+ÓÃ'citation()'»á¸æËßÄãÈçºÎÔÚ³ö°æÎïÖĞÕıÈ·µØÒıÓÃR»òR³ÌĞò°ü¡£
+
+ÓÃ'demo()'À´¿´Ò»Ğ©Ê¾·¶³ÌĞò£¬ÓÃ'help()'À´ÔÄ¶ÁÔÚÏß°ïÖúÎÄ¼ş£¬»ò
+ÓÃ'help.start()'Í¨¹ıHTMLä¯ÀÀÆ÷À´¿´°ïÖúÎÄ¼ş¡£
+ÓÃ'q()'ÍË³öR.
+
+> 
+> # åŠ è½½åŒ… ================================================================
+> library(rvest)
+ÔØÈëĞèÒªµÄ³Ì¼­°ü£ºxml2
+> library(plyr)
+> library(tidyverse)
+-- Attaching packages --------------------------------------- tidyverse 1.2.1 --
+¡Ì ggplot2 2.2.1     ¡Ì purrr   0.2.4
+¡Ì tibble  1.4.2     ¡Ì dplyr   0.7.4
+¡Ì tidyr   0.8.0     ¡Ì stringr 1.3.0
+¡Ì readr   1.1.1     ¡Ì forcats 0.3.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::arrange()        masks plyr::arrange()
+x purrr::compact()        masks plyr::compact()
+x dplyr::count()          masks plyr::count()
+x dplyr::failwith()       masks plyr::failwith()
+x dplyr::filter()         masks stats::filter()
+x readr::guess_encoding() masks rvest::guess_encoding()
+x dplyr::id()             masks plyr::id()
+x dplyr::lag()            masks stats::lag()
+x dplyr::mutate()         masks plyr::mutate()
+x purrr::pluck()          masks rvest::pluck()
+x dplyr::rename()         masks plyr::rename()
+x dplyr::summarise()      masks plyr::summarise()
+x dplyr::summarize()      masks plyr::summarize()
+> 
+> # url %>% 
+> #   read_html(encoding = 'GBK') %>% 
+> #   html_nodes("div.brand") %>% 
+> #   html_text() %>% 
+> #   str_replace_all("\r\n                    \r\n", "\t") %>% 
+> #   str_replace_all(" ", "") %>% 
+> #   str_replace_all("\r\nè¡Œä¸šç±»åˆ«ï¼š", "") %>%
+> #   str_replace_all("\r\näººæ°”ï¼š", "\t") %>%
+> #   str_replace_all("åœ°åŒºï¼š", "\t") %>%
+> #   str_replace_all("\r\n", "\t") %>% 
+> #   str_split("\t")
+> #   
+> # url %>% 
+> #   read_html(encoding = 'GBK') %>% 
+> #   html_nodes("div.brand") %>% 
+> 
+> 
+> # è®¾ç½®å‚æ•° ==============================================================
+> base_url <- "http://www.chinasspp.com/brand"
+> level_id <- c("%E6%9C%8D%E8%A3%85%E5%93%81%E7%89%8C", 
++               "%E9%9E%8B%E4%B8%9A%E5%93%81%E7%89%8C", 
++               "%E7%9A%AE%E5%85%B7%E7%AE%B1%E5%8C%85", 
++               "%E6%AF%8D%E5%A9%B4", 
++               "%E9%85%8D%E9%A5%B0", 
++               "%E5%AE%B6%E7%BA%BA%E5%AE%B6%E9%A5%B0")
+> level_name <- c("æœè£…å“ç‰Œ","é‹ä¸šå“ç‰Œ","çš®å…·ç®±åŒ…","æ¯å©´","é…é¥°","å®¶çººå®¶é¥°")
+> level_page <- c(898, 94, 71, 149, 113, 46)
+> 
+> ## url <- paste(base_url, level_id[1], 898, "", sep = '/')
+> 
+> ## url <- paste(base_url, level_id[1], level_page[1], "", sep = '/')
+> 
+> # ç¼–å†™get_apparel()å‡½æ•° =================================================
+> ## ä¼ å…¥å‚æ•°ï¼š
+> ### 1. level_id
+> ### 2. level_page
+> 
+> get_apparel <- function(level_id, level_page){
++   
++   ## url
++   url <- paste(baseurl, level_id, level_page, "", sep = '/')
++   
++   ## äºŒçº§ä¸‰çº§åˆ†ç±»
++   level_23 <- url %>% 
++     read_html(encoding = 'GBK') %>% 
++     html_nodes("p.first span") %>% 
++     html_text() %>% 
++     str_replace_all("è¡Œä¸šç±»åˆ«ï¼š", "") %>% 
+´íÎó: ¾ä·¨·ÖÎöÆ÷11ĞĞÀï²»ÄÜÓĞ¶à×Ö½Ú×Ö·û
+Í£Ö¹Ö´ĞĞ
