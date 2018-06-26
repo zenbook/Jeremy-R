@@ -32,7 +32,7 @@ level_id <- c("%E6%9C%8D%E8%A3%85%E5%93%81%E7%89%8C",
 level_name <- c("服装品牌","鞋业品牌","皮具箱包","母婴","配饰","家纺家饰")
 level_page <- c(898, 94, 71, 149, 113, 46)
 
-## url <- paste(base_url, level_id[1], 898, "", sep = '/')
+# url <- paste(base_url, level_id[1], 898, "", sep = '/')
 
 ## url <- paste(base_url, level_id[1], level_page[1], "", sep = '/')
 
@@ -94,7 +94,8 @@ get_apparel <- function(level_id, level_page){
     company_name <- rbind(company_name, company)
   }
   company_name <- data.frame(company_name)
-  rownames(company_name) <- c(1:20)
+  company_name <- company_name %>% 
+    filter(!is.na(company_name))
   
   ## 公司介绍
   company_intro <- data.frame(t(rep(NA,1)))[-1,]
@@ -109,7 +110,6 @@ get_apparel <- function(level_id, level_page){
     company_intro <- rbind(company_intro, company)
   }
   company_intro <- data.frame(company_intro)
-  rownames(company_intro) <- c(1:20)
   
   ## 公司地区和人气
   company_addr <- url %>% 
@@ -150,7 +150,7 @@ names(apparel_company_list) <- c('level_name_2', 'level_name_3', 'brand_name', '
 
 ## 循环爬取数据
 for (i in 1:length(level_id)){
-  for (j in 1:level_page[i]) {
+  for (j in 234:level_page[i]) {
     
     ## 爬数据
     company_info <- get_apparel(level_id[i], j)
@@ -172,3 +172,6 @@ write.csv(apparel_company_list,
 "导出成功！"
 
 str(apparel_company_list)
+
+max(apparel_company_list$page_num)
+
