@@ -30,7 +30,7 @@ level_id <- c("%E6%9C%8D%E8%A3%85%E5%93%81%E7%89%8C",
               "%E9%85%8D%E9%A5%B0", 
               "%E5%AE%B6%E7%BA%BA%E5%AE%B6%E9%A5%B0")
 level_name <- c("服装品牌","鞋业品牌","皮具箱包","母婴","配饰","家纺家饰")
-level_page <- c(898, 94, 71, 149, 113, 46)
+level_page <- c(901, 94, 71, 149, 113, 46)
 
 # url <- paste(base_url, level_id[1], 898, "", sep = '/')
 
