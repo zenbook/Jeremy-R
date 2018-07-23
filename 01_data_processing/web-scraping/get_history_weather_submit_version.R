@@ -28,13 +28,15 @@ getweather <- function(city, date){
 
 # 2. 设置查询条件 =====================================================
 ## 设置year、month、city、baseurl
-years <- 2011:2018
+years <- 2016:2018
 months <- c('01', '02', '03', '04', '05', '06', 
             '07', '08', '09', '10', '11', '12')
 chinese_city_list <- read.csv("./chinese_city_list.csv", 
                               header = TRUE, 
                               stringsAsFactors = FALSE)
-city <- chinese_city_list$name
+# View(chinese_city_list)
+city <- chinese_city_list$pinyin
+# city <- 'guangzhou'
 baseurl <- 'http://lishi.tianqi.com/'
 ## 创建一个空数据框
 weather_history <- data.frame(t(rep(NA,7)))[-1,]
@@ -47,6 +49,7 @@ for (i in 1:length(city)){
     for (k in 1:length(months)){
       weather <- getweather(city[i], paste0(years[j], months[k]))
       weather_history <- rbind(weather_history, weather)
+      Sys.sleep(5)
     }
   }
 }
@@ -60,6 +63,11 @@ for (i in 1:length(city)){
 #          year == '2011') %>% 
 #   group_by(month) %>% 
 #   summarise(dates = n())
+
+# 5. 把天气写到本地文件 ===============================================
+write_csv(weather_history, 
+          path = './weather_history.csv')
+
 
 # 参考文档
 ## https://segmentfault.com/a/1190000011498596

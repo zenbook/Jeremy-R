@@ -5,7 +5,7 @@ library(tidyverse)
 # 1. 方法1 不编写函数 ===================================================
 ## 设置参数
 city <- 'guangzhou'
-month <- '201803'
+month <- '201607'
 baseurl <- 'http://lishi.tianqi.com/'
 url <- paste(baseurl, city, '/', month, '.html', sep = '')
 ## 解析天气
@@ -15,6 +15,14 @@ weather <- url %>%
   html_nodes('ul') %>% 
   html_text() %>% 
   strsplit("\\s{4,}")
+weather[5][[1]][6] <- ''
+weather[6][[1]][6] <- ''
+weather[7][[1]][6] <- ''
+weather[8][[1]][6] <- ''
+weather[9][[1]][6] <- ''
+weather[10][[1]][6] <- ''
+weather[11][[1]][6] <- ''
+weather[12][[1]][6] <- ''
 ## 转成dataframe
 weather <- unlist(weather[-1]) %>% 
   matrix(ncol = 6, byrow = TRUE) %>% 
@@ -23,6 +31,8 @@ weather <- unlist(weather[-1]) %>%
 names(weather) <- c('date', 'highdegree', 'lowdegree', 'weather', 'winddirection', 'windforce')
 ## 增加city
 weather$city <- city
+
+View(weather)
 
 # 2. 方法2 编写getweather()函数 =========================================
 getweather <- function(city, date){
@@ -48,18 +58,20 @@ getweather <- function(city, date){
   return(weather)
 }
 guangzhou_201803 <- getweather('guangzhou', '201803')
-guangzhou_201803
+# View(guangzhou_201803)
+# View(weather)
 
 # 3. 方法3 写循环，批量爬取历史天气 =====================================
 ## 查询广州2011-2018各月天气(历史天气最早的年份是2011年)
 ## 设置year、month、city、baseurl
-years <- c(2011:2012)
-months <- c('01', '02', '03', '04', '05', '06', 
-            '07', '08', '09', '10', '11', '12')
-chinese_city_list <- read.csv("./chinese_city_list.csv", 
-                              header = TRUE, 
+years <- 2016:2018
+# months <- c('03', '04', '05', '06', '07')
+months <- c('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12')
+chinese_city_list <- read.csv("./chinese_city_list.csv",
+                              header = TRUE,
                               stringsAsFactors = FALSE)
 city <- chinese_city_list$pinyin
+# city <- 'guangzhou'
 baseurl <- 'http://lishi.tianqi.com/'
 ## 创建一个空数据框
 weather_history <- data.frame(t(rep(NA,7)))[-1,]
@@ -90,9 +102,18 @@ for (i in 1:length(city)){
       weather$city <- city[i]
       ## 返回数据
       weather_history <- rbind(weather_history, weather)
+      ## 休息一下
+      Sys.sleep(3)
     }
   }
 }
+
+# View(weather_history)
+
+## 把天气数据写出到本地
+write_csv(weather_history, 
+          path = '/Users/yunshan/Documents/Jeremy-R/03_data_mining/sales_prediction_by_climate/gz_weather_history.csv', 
+          append = TRUE)
 
 # 4. 方法4 利用getweather()函数和循环 ==================================
 for (i in 1:length(city)){
