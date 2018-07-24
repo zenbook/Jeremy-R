@@ -16,6 +16,7 @@ library(lubridate)
 thdfbt_sales <- read_csv(file = './thdfbt_sales.csv')
 str(thdfbt_sales)
 View(thdfbt_sales)
+tail(thdfbt_sales)
 
 ## 历史天气
 weather_history <- read.csv(file = './weather_history.csv', 
@@ -26,12 +27,9 @@ weather_history$year <- year(weather_history$date)
 str(weather_history)
 View(weather_history)
 
-
-x <- ymd('2017-10-1')
-
 ### 天气
 weather_history %>% 
-  group_by(year, weather) %>% 
+  group_by(year, weather_new) %>% 
   summarise(record_n = n()) %>% 
   spread(year, record_n)
 ### 风向
@@ -62,3 +60,7 @@ weather_history %>%
 
 
 # ===================================================================================
+
+
+
+
