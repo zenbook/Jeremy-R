@@ -52,7 +52,7 @@ gather()与melt()相似，key:聚合后变量列的列名, value:聚合后值列
 # 除car列外，其他列均聚合起来，用-car来指定聚合的列
 mtcars2 %>% gather(variable, value, -car) %>% View()
 # 聚合mpg:gear的所有列
-mtcars2 %>% gather(variable, value, mpg:gear)
+mtcars2 %>% gather(variable, value, mpg:gear) %>% View()
 ```
 ```{r echo = FALSE}
 mtcars2 %>% gather(variable, value, mpg:gear) %>% head()

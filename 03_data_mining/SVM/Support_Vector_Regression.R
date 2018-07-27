@@ -5,6 +5,7 @@ library(e1071)
 
 # prepare data =========================================================
 data <- read.csv('regression.csv', header = TRUE)
+# View(data)
 ggplot(data, aes(X, Y)) + 
   geom_point() + 
   geom_smooth(method = 'loess')
