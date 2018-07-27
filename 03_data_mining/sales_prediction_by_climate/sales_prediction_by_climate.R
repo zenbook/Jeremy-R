@@ -10,18 +10,34 @@ library(tidyverse)
 library(lubridate)
 library(recharts)
 library(caret)
+library(e1071)
 
 
 # 1.数据 =============================================================================
 
 ## 历史销售
+
+### 导入数据
 thdfbt_sales <- read_csv(file = './thdfbt_sales.csv')
 thdfbt_sales$p_day <- as.Date(thdfbt_sales$p_day)
-str(thdfbt_sales)
-View(thdfbt_sales)
-tail(thdfbt_sales)
+
+# sum(is.na(thdfbt_sales))
+
+### 剔除以下的记录
+### 1.1 剔除月初和月末：无法断定月末是否有"买"业绩、月初"退"业绩的现象，因此剔除；
+### [已提前删除]
+### 1.2 剔除节假日：暂未计算节假日的权重指数，因此剔除；
+### [已提前删除]
+### 1.3 销售额为0的记录；
+thdfbt_sales <- thdfbt_sales[thdfbt_sales$sale_amount > 0,]
+
+# str(thdfbt_sales)
+# View(thdfbt_sales)
+# tail(thdfbt_sales)
 
 ## 历史天气
+
+### 导入数据
 weather_history <- read.csv(file = './weather_history.csv', 
                             header = TRUE, 
                             stringsAsFactors = FALSE, 
@@ -29,11 +45,17 @@ weather_history <- read.csv(file = './weather_history.csv',
 weather_history$date <- as.Date(weather_history$date)
 weather_history$year <- year(weather_history$date)
 weather_history$month <- month(weather_history$date)
-str(weather_history)
-View(weather_history)
-tail(weather_history)
 
-## 天气
+### 剔除缺失值
+weather_history <- weather_history[weather_history$winddirection != '',]
+weather_history <- weather_history[weather_history$windforce != '',]
+
+# str(weather_history)
+# View(weather_history)
+# tail(weather_history)
+# sum(is.na(weather_history))
+
+### 天气
 weather_history %>% 
   group_by(year, weather_level2, weather_new2) %>% 
   summarise(record_n = n()) %>% 
@@ -50,14 +72,16 @@ weather_history %>%
   summarise(record_n = n()) %>% 
   arrange(-record_n)
 
-## join
+## join销售和天气，保留既有销售又有天气的记录
+thdfbt_sales_weather <- inner_join(x = thdfbt_sales, 
+                                   y = weather_history, 
+                                   by = c('p_day' = 'date'))
 
-thdfbt_sales_weather <- left_join(x = thdfbt_sales, 
-                                  y = weather_history, 
-                                  by = c('p_day' = 'date'))
+# str(thdfbt_sales_weather)
+# sum(is.na(thdfbt_sales_weather))
+# View(thdfbt_sales_weather)
 
-View(thdfbt_sales_weather)
-
+### 把数据写出到本地
 write.csv(thdfbt_sales_weather, 
           './thdfbt_sales_weather.csv', 
           fileEncoding = 'gbk', 
@@ -115,15 +139,31 @@ thdfbt_sales_weather %>%
   setYAxis(min = 0)
 
 
-# 回归分析 ==========================================================================
+# 线性回归分析 =====================================================================
+
 lm_model <- lm(sale_amount_index ~ high_degree + low_degree, 
                data = thdfbt_sales_weather)
 
-attributes(lm_model)
+thdfbt_sales_weather[1:10, 'sale_amount_index']
+lm_model$fitted.values[1:10]
 
-# ===================================================================================
+rmse <- function(error){
+  sqrt(mean(error^2))
+}
+rmse(lm_model$residuals)
 
 
+
+
+
+
+
+
+# 支持向量回归分析 ==================================================================
+
+svr_model <- svm(sale_amount_index ~ high_degree + low_degree, 
+                 data = thdfbt_sales_weather)
+rmse(svr_model$residuals)
 
 # ===================================================================================
 
